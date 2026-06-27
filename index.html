@@ -248,9 +248,7 @@ input, textarea { font-family: inherit; }
     <div class="login-logo">📊</div>
     <h1 class="login-titulo">Portal Admin</h1>
     <p class="login-sub">FUNDACOOFISAM — Semana Formativa</p>
-    <input class="input-field" id="inp-admin-pass" type="password"
-           placeholder="Código de administrador"
-           onkeydown="if(event.key==='Enter')loginAdmin()">
+    <input class="input-field" id="inp-admin-pass" type="password" placeholder="Código de administrador">
     <button class="btn-login" id="btn-login-admin">Ingresar →</button>
     <div class="login-error" id="login-error">Código incorrecto.</div>
   </div>
@@ -789,20 +787,37 @@ window.exportarCSV = function() {
 };
 
 // ── EVENT LISTENERS ─────────────────────────────────────
-document.getElementById('btn-login-admin').addEventListener('click', loginAdmin);
-document.getElementById('inp-admin-pass').addEventListener('keydown', e => {
-  if (e.key === 'Enter') loginAdmin();
-});
-document.getElementById('btn-refresh').addEventListener('click', refrescarTodo);
-document.getElementById('btn-salir').addEventListener('click', salir);
-document.getElementById('btn-export')?.addEventListener('click', exportarCSV);
+document.addEventListener('DOMContentLoaded', function() {
+  
+// ══ EXPONER FUNCIONES GLOBALES ═══════════════════════
+window.loginAdmin = typeof loginAdmin !== "undefined" ? loginAdmin : function(){};
+window.salir = typeof salir !== "undefined" ? salir : function(){};
+window.refrescarTodo = typeof refrescarTodo !== "undefined" ? refrescarTodo : function(){};
+window.cambiarModulo = typeof cambiarModulo !== "undefined" ? cambiarModulo : function(){};
+window.cambiarSeccion = typeof cambiarSeccion !== "undefined" ? cambiarSeccion : function(){};
+window.exportarCSV = typeof exportarCSV !== "undefined" ? exportarCSV : function(){};
+window.cargarPanel = typeof cargarPanel !== "undefined" ? cargarPanel : function(){};
+window.cargarTermometros = typeof cargarTermometros !== "undefined" ? cargarTermometros : function(){};
+window.cargarReflexiones = typeof cargarReflexiones !== "undefined" ? cargarReflexiones : function(){};
+window.cargarMuro = typeof cargarMuro !== "undefined" ? cargarMuro : function(){};
+window.cargarAcuerdo = typeof cargarAcuerdo !== "undefined" ? cargarAcuerdo : function(){};
 
-document.querySelectorAll('[id^="modtab-"]').forEach(el => {
-  el.addEventListener('click', () => cambiarModulo(el.id.replace('modtab-','')));
-});
+document.getElementById('btn-login-admin').addEventListener('click', function() { window.loginAdmin(); });
+  document.getElementById('inp-admin-pass').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') window.loginAdmin();
+  });
+  document.getElementById('btn-refresh').addEventListener('click', function() { window.refrescarTodo(); });
+  document.getElementById('btn-salir').addEventListener('click', function() { window.salir(); });
+  var btnExp = document.getElementById('btn-export');
+  if (btnExp) btnExp.addEventListener('click', function() { window.exportarCSV(); });
 
-document.querySelectorAll('.sec-tab[data-sec]').forEach(el => {
-  el.addEventListener('click', () => cambiarSeccion(el.dataset.sec, el));
+  document.querySelectorAll('[id^="modtab-"]').forEach(function(el) {
+    el.addEventListener('click', function() { window.cambiarModulo(el.id.replace('modtab-','')); });
+  });
+
+  document.querySelectorAll('.sec-tab[data-sec]').forEach(function(el) {
+    el.addEventListener('click', function() { window.cambiarSeccion(el.dataset.sec, el); });
+  });
 });
 </script>
 </body>
