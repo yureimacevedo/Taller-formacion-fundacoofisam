@@ -3,822 +3,1337 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portal Admin — FUNDACOOFISAM</title>
+<title>Taller Formativo — FUNDACOOFISAM</title>
 <style>
+/* ── TOKENS ─────────────────────────────────────────────── */
 :root {
-  --naranja: #7D3C0F; --naranja-m: #E67E22; --naranja-c: #FAD7A0; --naranja-cc: #FEF5E7;
-  --verde: #1A5C2E; --verde-m: #27AE60; --verde-c: #D5F5E3; --verde-cc: #EAFAF1;
-  --azul: #154360; --azul-m: #2980B9; --azul-c: #D6EAF8;
-  --morado: #4A235A; --morado-c: #E8DAEF;
-  --rojo: #C0392B; --rojo-c: #FDEEEE;
-  --amarillo-m: #F39C12; --amarillo-c: #FEF9E7;
-  --gris-0: #FAFAF8; --gris-1: #F4F4F0; --gris-2: #E8E8E2; --gris-3: #C8C8C0;
-  --gris-txt: #5A5A54; --gris-dark: #3A3A34;
-  --negro: #1C1C18; --blanco: #FFFFFF;
-  --radio: 12px; --radio-sm: 8px;
-  --sombra: 0 2px 12px rgba(0,0,0,.07);
-  --sombra-m: 0 4px 20px rgba(0,0,0,.1);
+  --naranja:     #7D3C0F;
+  --naranja-m:   #E67E22;
+  --naranja-c:   #FAD7A0;
+  --naranja-cc:  #FEF5E7;
+  --verde:       #1A5C2E;
+  --verde-m:     #27AE60;
+  --verde-c:     #D5F5E3;
+  --verde-cc:    #EAFAF1;
+  --azul:        #154360;
+  --azul-m:      #2980B9;
+  --azul-c:      #D6EAF8;
+  --morado:      #4A235A;
+  --morado-c:    #E8DAEF;
+  --rojo:        #7B241C;
+  --gris-1:      #F8F8F6;
+  --gris-2:      #EFEFEB;
+  --gris-3:      #D0CFCA;
+  --gris-txt:    #5A5A54;
+  --negro:       #1C1C18;
+  --blanco:      #FFFFFF;
+  --radio:       14px;
+  --radio-sm:    8px;
+  --sombra:      0 2px 16px rgba(0,0,0,.08);
 }
+
+/* ── RESET ───────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { font-size: 15px; }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-       background: var(--gris-1); color: var(--negro); min-height: 100vh; }
+       background: var(--gris-1); color: var(--negro); min-height: 100dvh;
+       line-height: 1.55; }
 button { font-family: inherit; cursor: pointer; border: none; }
-input, textarea { font-family: inherit; }
+input, textarea, select { font-family: inherit; font-size: 1rem; }
+img { max-width: 100%; }
 
-/* SCREENS */
-.screen { display: none; }
-.screen.active { display: block; }
+/* ── LAYOUT ──────────────────────────────────────────────── */
+.app   { min-height: 100dvh; display: flex; flex-direction: column; }
+.screen { display: none; flex-direction: column; min-height: 100dvh; }
+.screen.active { display: flex; }
 
-/* LOGIN */
-#s-login {
-  min-height: 100vh; display: flex; align-items: center; justify-content: center;
-  background: linear-gradient(135deg, #1C1C18 0%, #2C2C28 100%);
-  padding: 24px;
+/* ── COMPONENTES GLOBALES ────────────────────────────────── */
+.card {
+  background: var(--blanco);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  padding: 28px 24px;
 }
-.login-card {
-  background: var(--blanco); border-radius: 20px; padding: 36px 28px;
-  width: 100%; max-width: 360px; box-shadow: var(--sombra-m);
+.card-sm { padding: 18px 20px; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 14px 28px; border-radius: 50px; font-size: 1rem; font-weight: 600;
+  transition: transform .15s, opacity .15s; cursor: pointer; border: none;
+  text-decoration: none; width: 100%;
 }
-.login-logo {
-  width: 56px; height: 56px; border-radius: 14px; background: var(--naranja);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.6rem; margin: 0 auto 16px;
-}
-.login-titulo { font-size: 1.3rem; font-weight: 800; text-align: center; margin-bottom: 4px; }
-.login-sub { font-size: .85rem; color: var(--gris-txt); text-align: center; margin-bottom: 24px; }
+.btn:active { transform: scale(.97); }
+.btn-primary { background: var(--naranja); color: var(--blanco); }
+.btn-secondary { background: var(--gris-2); color: var(--negro); }
+.btn-verde { background: var(--verde); color: var(--blanco); }
+.btn-outline { background: transparent; border: 2px solid currentColor; }
+.btn:disabled { opacity: .45; pointer-events: none; }
+
 .input-field {
-  width: 100%; padding: 12px 14px; border-radius: var(--radio-sm);
-  border: 1.5px solid var(--gris-2); font-size: .95rem; outline: none;
-  transition: border-color .15s; margin-bottom: 12px;
+  width: 100%; padding: 14px 16px; border-radius: var(--radio-sm);
+  border: 1.5px solid var(--gris-3); font-size: 1rem; background: var(--blanco);
+  outline: none; transition: border-color .15s;
 }
 .input-field:focus { border-color: var(--naranja-m); }
-.btn-login {
-  width: 100%; padding: 13px; border-radius: 50px; background: var(--negro);
-  color: var(--blanco); font-size: .95rem; font-weight: 700; cursor: pointer; border: none;
-  transition: opacity .15s;
-}
-.btn-login:hover { opacity: .85; }
-.login-error { background: var(--rojo-c); color: var(--rojo); border-radius: var(--radio-sm);
-               padding: 10px 14px; font-size: .85rem; margin-top: 8px; display: none; }
-.login-error.show { display: block; }
+.input-label { font-size: .85rem; font-weight: 600; color: var(--gris-txt);
+               margin-bottom: 6px; display: block; }
 
-/* PORTAL LAYOUT */
-#s-portal { min-height: 100vh; }
-
-/* TOP NAV */
-.top-nav {
-  background: var(--negro); color: var(--blanco); padding: 0 24px;
-  display: flex; align-items: center; gap: 16px; height: 56px;
-  position: sticky; top: 0; z-index: 50;
-}
-.top-nav-logo { font-size: 1.1rem; font-weight: 800; }
-.top-nav-sub { font-size: .78rem; color: rgba(255,255,255,.5); flex: 1; }
-.top-nav-refresh {
-  padding: 7px 14px; border-radius: 20px; background: rgba(255,255,255,.1);
-  color: var(--blanco); font-size: .8rem; font-weight: 600; border: none; cursor: pointer;
-  transition: background .15s;
-}
-.top-nav-refresh:hover { background: rgba(255,255,255,.2); }
-.top-nav-salir {
-  padding: 7px 14px; border-radius: 20px; background: rgba(255,255,255,.08);
-  color: rgba(255,255,255,.7); font-size: .8rem; border: none; cursor: pointer;
-}
-
-/* MODULE TABS */
-.mod-tabs {
-  display: flex; gap: 0; background: var(--blanco);
-  border-bottom: 1px solid var(--gris-2); padding: 0 24px; overflow-x: auto;
-}
-.mod-tab {
-  padding: 14px 20px; font-size: .88rem; font-weight: 600; cursor: pointer;
-  border-bottom: 3px solid transparent; white-space: nowrap; color: var(--gris-txt);
-  transition: color .15s;
-}
-.mod-tab.active-a { border-color: var(--naranja-m); color: var(--naranja); }
-.mod-tab.active-c { border-color: var(--verde-m); color: var(--verde); }
-
-/* SECTION TABS */
-.sec-tabs {
-  display: flex; gap: 8px; padding: 16px 24px 0; overflow-x: auto;
-}
-.sec-tab {
-  padding: 8px 16px; border-radius: 20px; font-size: .82rem; font-weight: 600;
-  cursor: pointer; border: 1.5px solid var(--gris-2); background: var(--blanco);
-  color: var(--gris-txt); white-space: nowrap; transition: all .15s;
-}
-.sec-tab.active { background: var(--negro); color: var(--blanco); border-color: var(--negro); }
-
-/* MAIN CONTENT */
-.portal-body { padding: 20px 24px 40px; }
-.section-content { display: none; }
-.section-content.active { display: block; }
-
-/* STAT CARDS */
-.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 24px; }
-.stat-card {
-  background: var(--blanco); border-radius: var(--radio); padding: 18px 16px;
-  box-shadow: var(--sombra); border-left: 4px solid transparent;
-}
-.stat-num { font-size: 2rem; font-weight: 800; line-height: 1; margin-bottom: 4px; }
-.stat-label { font-size: .78rem; color: var(--gris-txt); font-weight: 600;
-              text-transform: uppercase; letter-spacing: .04em; }
-.stat-detail { font-size: .8rem; color: var(--gris-txt); margin-top: 6px; }
-
-/* TABLA */
-.tabla-wrap { background: var(--blanco); border-radius: var(--radio); box-shadow: var(--sombra); overflow: hidden; margin-bottom: 20px; }
-.tabla-header { padding: 14px 18px; border-bottom: 1px solid var(--gris-2);
-                font-size: .82rem; font-weight: 700; color: var(--gris-txt);
-                text-transform: uppercase; letter-spacing: .04em; display: flex;
-                align-items: center; justify-content: space-between; }
-.tabla-row {
-  display: flex; align-items: center; padding: 12px 18px; gap: 12px;
-  border-bottom: 1px solid var(--gris-1); transition: background .1s;
-}
-.tabla-row:last-child { border-bottom: none; }
-.tabla-row:hover { background: var(--gris-0); }
-.tabla-nombre { flex: 1; font-size: .9rem; font-weight: 600; }
-.tabla-sub { font-size: .78rem; color: var(--gris-txt); margin-top: 2px; }
-.tabla-badge {
-  padding: 4px 10px; border-radius: 20px; font-size: .75rem; font-weight: 700;
-  flex-shrink: 0;
-}
-.badge-ok  { background: var(--verde-c);   color: var(--verde); }
-.badge-mid { background: var(--amarillo-c); color: var(--amarillo-m); }
-.badge-no  { background: var(--gris-1);     color: var(--gris-txt); }
-.badge-red { background: var(--rojo-c);     color: var(--rojo); }
-.tabla-progress { width: 80px; }
-.mini-bar { height: 6px; border-radius: 3px; background: var(--gris-2); overflow: hidden; }
-.mini-bar-fill { height: 100%; border-radius: 3px; transition: width .4s; }
-.tabla-pct { font-size: .78rem; font-weight: 700; text-align: right; margin-top: 3px; }
-
-/* TERMÓMETRO ADMIN */
-.termo-admin-card { background: var(--blanco); border-radius: var(--radio); box-shadow: var(--sombra); padding: 20px; margin-bottom: 16px; }
-.termo-admin-titulo { font-size: .88rem; font-weight: 700; margin-bottom: 14px; color: var(--gris-dark); }
-.termo-item-admin { margin-bottom: 14px; }
-.termo-item-label { font-size: .85rem; font-weight: 600; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
-.termo-prom { font-size: .85rem; font-weight: 800; }
-.termo-bar-wrap { height: 10px; background: var(--gris-2); border-radius: 5px; overflow: hidden; margin-bottom: 4px; }
-.termo-bar-fill { height: 100%; border-radius: 5px; transition: width .6s ease; }
-.termo-respondieron { font-size: .72rem; color: var(--gris-txt); }
-.termo-alerta { display: flex; align-items: center; gap: 8px; padding: 10px 14px;
-                background: var(--rojo-c); border-radius: var(--radio-sm);
-                font-size: .82rem; color: var(--rojo); margin-top: 12px;
-                border: 1px solid #F5C6C6; }
-
-/* REFLEXIONES */
-.reflx-card { background: var(--blanco); border-radius: var(--radio); box-shadow: var(--sombra); padding: 20px; margin-bottom: 16px; }
-.reflx-pregunta-label { font-size: .82rem; font-weight: 700; color: var(--gris-txt);
-                        text-transform: uppercase; letter-spacing: .04em; margin-bottom: 12px;
-                        padding-bottom: 8px; border-bottom: 1px solid var(--gris-2); }
-.reflx-respuesta {
-  padding: 12px 14px; border-radius: var(--radio-sm);
-  font-size: .88rem; line-height: 1.5; margin-bottom: 8px;
-  border-left: 3px solid transparent;
-}
-.reflx-autor { font-size: .72rem; font-weight: 700; margin-bottom: 4px; opacity: .6; }
-.reflx-empty { font-size: .85rem; color: var(--gris-txt); font-style: italic; padding: 8px 0; }
-
-/* MURO ADMIN */
-.muro-admin-post { background: var(--blanco); border-radius: var(--radio-sm); padding: 14px 16px;
-                   box-shadow: var(--sombra); margin-bottom: 10px; }
-.muro-admin-nombre { font-size: .75rem; font-weight: 700; color: var(--gris-txt); margin-bottom: 4px; }
-.muro-admin-texto { font-size: .9rem; line-height: 1.5; }
-
-/* ACUERDO ADMIN */
-.acuerdo-admin-item { background: var(--blanco); border-radius: var(--radio-sm); padding: 14px 16px;
-                      box-shadow: var(--sombra); margin-bottom: 10px;
-                      display: flex; gap: 12px; align-items: flex-start; }
-.acuerdo-votos { text-align: center; flex-shrink: 0; }
-.acuerdo-votos-num { font-size: 1.4rem; font-weight: 800; color: var(--verde); line-height: 1; }
-.acuerdo-votos-label { font-size: .68rem; color: var(--gris-txt); }
-.acuerdo-texto { font-size: .88rem; line-height: 1.5; flex: 1; }
-.acuerdo-autor { font-size: .72rem; color: var(--gris-txt); margin-top: 4px; }
-
-/* LOADING INLINE */
-.loading-inline { text-align: center; padding: 40px 20px; color: var(--gris-txt); font-size: .9rem; }
-.spinner { display: inline-block; width: 28px; height: 28px; border: 3px solid var(--gris-2);
-           border-top-color: var(--naranja-m); border-radius: 50%;
-           animation: spin 1s linear infinite; margin-bottom: 10px; }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* SECCION VACIA */
-.empty-state { text-align: center; padding: 48px 20px; color: var(--gris-txt); }
-.empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
-.empty-txt { font-size: .9rem; }
-
-/* RESUMEN EXPORTABLE */
-.export-btn {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 9px 18px; border-radius: 20px; font-size: .82rem; font-weight: 600;
-  background: var(--gris-2); color: var(--negro); border: none; cursor: pointer;
-  transition: background .15s;
-}
-.export-btn:hover { background: var(--gris-3); }
-
-/* LIVE BADGE */
-.live-badge {
+.chip {
   display: inline-flex; align-items: center; gap: 5px;
-  padding: 4px 10px; border-radius: 20px; font-size: .72rem; font-weight: 700;
-  background: #FEE2E2; color: #991B1B;
+  padding: 4px 12px; border-radius: 20px; font-size: .78rem; font-weight: 600;
 }
-.live-dot { width: 7px; height: 7px; border-radius: 50%; background: #EF4444;
-            animation: livepulse 1.2s ease infinite; }
-@keyframes livepulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+.chip-naranja { background: var(--naranja-c); color: var(--naranja); }
+.chip-verde   { background: var(--verde-c);   color: var(--verde);   }
+.chip-azul    { background: var(--azul-c);    color: var(--azul);    }
+.chip-morado  { background: var(--morado-c);  color: var(--morado);  }
 
-/* FIRMANTES */
-.firmantes-wrap { display: flex; flex-wrap: wrap; gap: 8px; padding: 16px; background: var(--blanco); border-radius: var(--radio); box-shadow: var(--sombra); }
-.firmante-chip { padding: 5px 12px; background: var(--verde-c); color: var(--verde); border-radius: 20px; font-size: .8rem; font-weight: 600; }
+/* ── BARRA DE PROGRESO ───────────────────────────────────── */
+.progress-bar-wrap { height: 4px; background: var(--gris-2); border-radius: 2px; overflow: hidden; }
+.progress-bar-fill { height: 100%; border-radius: 2px; transition: width .4s ease; }
 
-/* RESPONSIVE */
-@media (max-width: 600px) {
-  .portal-body { padding: 16px; }
-  .top-nav { padding: 0 16px; }
-  .mod-tabs { padding: 0 16px; }
-  .sec-tabs { padding: 12px 16px 0; }
-  .stat-grid { grid-template-columns: 1fr 1fr; }
+/* ── HEADER PANTALLAS INTERNAS ───────────────────────────── */
+.top-bar {
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px 20px 12px; background: var(--blanco);
+  border-bottom: 1px solid var(--gris-2); position: sticky; top: 0; z-index: 10;
 }
+.top-bar-back { width: 36px; height: 36px; border-radius: 50%; background: var(--gris-2);
+                display: flex; align-items: center; justify-content: center;
+                font-size: 1.1rem; flex-shrink: 0; border: none; }
+.top-bar-info { flex: 1; }
+.top-bar-title { font-size: .95rem; font-weight: 700; }
+.top-bar-sub   { font-size: .78rem; color: var(--gris-txt); }
+.top-bar-step  { font-size: .78rem; font-weight: 600; color: var(--gris-txt); flex-shrink: 0; }
+
+/* ── SCROLL BODY ─────────────────────────────────────────── */
+.scroll-body { flex: 1; overflow-y: auto; padding: 20px 16px 40px; }
+
+/* ── ANIMACIONES ─────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.04); }
+}
+@keyframes confetti-fall {
+  0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+.fade-up { animation: fadeUp .4s ease both; }
+
+/* ── PANTALLA: ACCESO ────────────────────────────────────── */
+#s-acceso {
+  background: linear-gradient(160deg, #FEF5E7 0%, #EAFAF1 100%);
+  justify-content: center; align-items: center; padding: 24px 20px;
+}
+.acceso-logo {
+  width: 72px; height: 72px; border-radius: 20px;
+  background: var(--naranja); display: flex; align-items: center;
+  justify-content: center; font-size: 2rem; margin: 0 auto 20px;
+  box-shadow: 0 4px 20px rgba(125,60,15,.3);
+}
+.acceso-titulo { font-size: 1.6rem; font-weight: 800; text-align: center;
+                 line-height: 1.2; margin-bottom: 6px; }
+.acceso-sub { font-size: .9rem; color: var(--gris-txt); text-align: center;
+              margin-bottom: 28px; }
+.acceso-form { display: flex; flex-direction: column; gap: 16px; }
+.error-msg { background: #FEE2E2; border-radius: var(--radio-sm); padding: 10px 14px;
+             font-size: .85rem; color: #991B1B; display: none; }
+.error-msg.show { display: block; }
+
+/* ── PANTALLA: MODO ──────────────────────────────────────── */
+#s-modo { justify-content: center; align-items: center; padding: 24px 20px;
+          background: var(--gris-1); }
+.modo-saludo { font-size: 1.4rem; font-weight: 800; text-align: center; margin-bottom: 6px; }
+.modo-sub { color: var(--gris-txt); text-align: center; margin-bottom: 28px; font-size: .95rem; }
+.modo-cards { display: flex; flex-direction: column; gap: 14px; width: 100%; }
+.modo-card {
+  background: var(--blanco); border-radius: var(--radio); padding: 22px 20px;
+  box-shadow: var(--sombra); cursor: pointer; border: 2px solid transparent;
+  transition: border-color .2s, transform .15s; display: flex; gap: 16px; align-items: flex-start;
+}
+.modo-card:active { transform: scale(.98); }
+.modo-card.selected { border-color: var(--naranja); }
+.modo-icono { font-size: 2rem; flex-shrink: 0; }
+.modo-nombre { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+.modo-desc { font-size: .85rem; color: var(--gris-txt); line-height: 1.4; }
+
+/* ── PANTALLA: BIENVENIDA ────────────────────────────────── */
+#s-bienvenida { background: var(--blanco); }
+.bienvenida-hero {
+  padding: 36px 24px 28px;
+  text-align: center;
+}
+.bienvenida-modulo-chip { margin-bottom: 16px; }
+.bienvenida-titulo { font-size: 1.7rem; font-weight: 800; line-height: 1.2; margin-bottom: 10px; }
+.bienvenida-desc { font-size: .95rem; color: var(--gris-txt); margin-bottom: 24px; }
+.temas-lista { display: flex; flex-direction: column; gap: 10px; padding: 0 16px 24px; }
+.tema-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px; border-radius: var(--radio-sm);
+  background: var(--gris-1); border: 1px solid var(--gris-2);
+}
+.tema-num {
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .85rem; font-weight: 700;
+}
+.tema-info { flex: 1; }
+.tema-nombre { font-size: .9rem; font-weight: 600; }
+.tema-tipo   { font-size: .78rem; color: var(--gris-txt); margin-top: 2px; }
+.tema-check  { font-size: 1.1rem; color: var(--gris-3); }
+.bienvenida-footer { padding: 0 16px 32px; }
+.duracion-badge {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--gris-1); border-radius: var(--radio-sm);
+  padding: 10px 14px; margin-bottom: 16px; font-size: .85rem; color: var(--gris-txt);
+}
+
+/* ── PANTALLA: QUIZ ──────────────────────────────────────── */
+#s-quiz { background: var(--gris-1); }
+.quiz-pregunta-wrap { display: flex; flex-direction: column; gap: 20px; }
+.quiz-num { font-size: .8rem; font-weight: 700; color: var(--gris-txt); margin-bottom: 4px; }
+.quiz-enunciado { font-size: 1.05rem; font-weight: 700; line-height: 1.4; margin-bottom: 16px; }
+.quiz-opciones { display: flex; flex-direction: column; gap: 10px; }
+.quiz-opcion {
+  padding: 14px 16px; border-radius: var(--radio-sm); border: 1.5px solid var(--gris-3);
+  background: var(--blanco); font-size: .95rem; cursor: pointer;
+  transition: all .15s; text-align: left; font-weight: 500;
+}
+.quiz-opcion:hover { border-color: var(--naranja-m); background: var(--naranja-cc); }
+.quiz-opcion.correcto { border-color: var(--verde-m); background: var(--verde-c); }
+.quiz-opcion.incorrecto { border-color: var(--rojo); background: #FDEEEE; }
+.quiz-feedback {
+  border-radius: var(--radio-sm); padding: 12px 14px; font-size: .9rem;
+  line-height: 1.45; display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.ok { background: var(--verde-c); color: var(--verde); }
+.quiz-feedback.fail { background: #FDEEEE; color: var(--rojo); }
+.quiz-score-final {
+  text-align: center; padding: 28px 0;
+}
+.quiz-score-num { font-size: 3rem; font-weight: 800; color: var(--naranja); }
+.quiz-score-label { font-size: 1rem; color: var(--gris-txt); margin-bottom: 12px; }
+.quiz-score-msg { font-size: .95rem; color: var(--negro); font-weight: 600; }
+
+/* ── PANTALLA: TEMA GENERAL ──────────────────────────────── */
+.tema-header {
+  padding: 24px 20px 16px;
+  border-bottom: 1px solid var(--gris-2);
+}
+.video-wrap {
+  border-radius: var(--radio-sm); overflow: hidden;
+  background: #000; aspect-ratio: 16/9; position: relative;
+  margin-bottom: 16px;
+}
+.video-placeholder {
+  width: 100%; height: 100%; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 10px;
+  background: linear-gradient(135deg, #1C1C18 0%, #2C2C28 100%);
+  color: #fff; cursor: pointer;
+}
+.video-play-btn {
+  width: 60px; height: 60px; border-radius: 50%;
+  background: rgba(255,255,255,.15); border: 2px solid rgba(255,255,255,.4);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem; transition: transform .2s;
+}
+.video-placeholder:hover .video-play-btn { transform: scale(1.1); }
+.video-titulo { font-size: .85rem; opacity: .7; text-align: center; padding: 0 16px; }
+iframe.video-frame { width: 100%; height: 100%; border: none; }
+
+.tarjetas-wrap { display: flex; overflow-x: auto; gap: 12px; padding: 4px 2px 12px;
+                 scroll-snap-type: x mandatory; }
+.tarjeta-slide {
+  min-width: 240px; max-width: 260px; flex-shrink: 0;
+  border-radius: var(--radio); padding: 20px; scroll-snap-align: start;
+  border: 1px solid var(--gris-2);
+}
+.tarjeta-icono { font-size: 1.8rem; margin-bottom: 10px; }
+.tarjeta-titulo { font-size: .95rem; font-weight: 700; margin-bottom: 6px; }
+.tarjeta-body   { font-size: .85rem; color: var(--gris-txt); line-height: 1.5; }
+
+.reflx-wrap { display: flex; flex-direction: column; gap: 12px; }
+.reflx-pregunta {
+  background: var(--blanco); border-radius: var(--radio-sm);
+  border: 1px solid var(--gris-2); padding: 14px 16px;
+}
+.reflx-q { font-size: .9rem; font-weight: 600; margin-bottom: 8px; line-height: 1.4; }
+.reflx-input {
+  width: 100%; border: 1.5px solid var(--gris-3); border-radius: var(--radio-sm);
+  padding: 10px 12px; font-size: .9rem; resize: none; outline: none;
+  min-height: 72px; transition: border-color .15s;
+}
+.reflx-input:focus { border-color: var(--naranja-m); }
+
+/* ── TERMÓMETRO ──────────────────────────────────────────── */
+.termo-item { background: var(--blanco); border-radius: var(--radio-sm);
+              border: 1px solid var(--gris-2); padding: 16px; margin-bottom: 12px; }
+.termo-label { font-size: .92rem; font-weight: 600; margin-bottom: 12px; line-height: 1.4; }
+.termo-slider-wrap { display: flex; align-items: center; gap: 10px; }
+.termo-slider {
+  flex: 1; -webkit-appearance: none; appearance: none;
+  height: 6px; border-radius: 3px; outline: none; cursor: pointer;
+}
+.termo-val {
+  width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; font-size: .85rem; font-weight: 700; flex-shrink: 0;
+  transition: background .2s, color .2s;
+}
+.termo-etiquetas { display: flex; justify-content: space-between; margin-top: 6px;
+                   font-size: .72rem; color: var(--gris-txt); }
+.termo-resultado {
+  margin-top: 16px; border-radius: var(--radio-sm); padding: 14px;
+  text-align: center; display: none;
+}
+.termo-resultado.show { display: block; }
+
+/* ── ESCUDO ──────────────────────────────────────────────── */
+.escudo-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 3px;
+  border-radius: var(--radio); overflow: hidden; border: 3px solid var(--verde);
+  margin-bottom: 16px;
+}
+.escudo-cuadrante {
+  padding: 16px 14px; min-height: 130px; cursor: pointer;
+  transition: opacity .15s; position: relative;
+}
+.escudo-cuadrante.filled { cursor: default; }
+.escudo-q-label { font-size: .72rem; font-weight: 700; text-transform: uppercase;
+                  letter-spacing: .04em; margin-bottom: 6px; opacity: .75; }
+.escudo-q-prompt { font-size: .8rem; opacity: .65; font-style: italic; }
+.escudo-q-respuesta { font-size: .85rem; font-weight: 600; line-height: 1.4; }
+.escudo-q-edit { position: absolute; top: 8px; right: 8px; font-size: .75rem;
+                 opacity: .5; }
+.escudo-lema {
+  text-align: center; font-size: 1rem; font-weight: 700; font-style: italic;
+  padding: 14px 16px; border-radius: var(--radio-sm);
+  background: var(--verde-c); color: var(--verde); margin-bottom: 16px;
+  border: 1px solid var(--verde-m);
+}
+.escudo-brillo {
+  animation: pulse 1s ease 2;
+}
+
+/* ── MURO DE ORGULLO ─────────────────────────────────────── */
+.muro-input-wrap { background: var(--blanco); border-radius: var(--radio);
+                   border: 1px solid var(--gris-2); padding: 16px; margin-bottom: 16px; }
+.muro-titulo-sec { font-size: .85rem; font-weight: 700; margin-bottom: 10px;
+                   color: var(--gris-txt); text-transform: uppercase; letter-spacing: .04em; }
+.muro-posts { display: flex; flex-direction: column; gap: 8px; }
+.muro-post {
+  border-radius: var(--radio-sm); padding: 12px 14px;
+  font-size: .88rem; line-height: 1.45; border: 1px solid var(--gris-2);
+  animation: fadeUp .3s ease both;
+}
+.muro-post-nombre { font-size: .75rem; font-weight: 700; margin-bottom: 4px; opacity: .7; }
+
+/* ── ACUERDO ─────────────────────────────────────────────── */
+.acuerdo-compromisos { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.acuerdo-comp {
+  display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px;
+  background: var(--blanco); border-radius: var(--radio-sm);
+  border: 1px solid var(--gris-2); font-size: .88rem; line-height: 1.4;
+}
+.acuerdo-comp-voto {
+  flex-shrink: 0; padding: 4px 10px; border-radius: 20px; font-size: .75rem;
+  font-weight: 700; cursor: pointer; border: none; background: var(--verde-c);
+  color: var(--verde); transition: background .15s;
+}
+.acuerdo-comp-voto.voted { background: var(--verde); color: #fff; }
+.acuerdo-comp-num { font-size: .72rem; color: var(--gris-txt); margin-top: 4px; }
+.acuerdo-firmantes { background: var(--verde-cc); border-radius: var(--radio-sm);
+                     padding: 14px 16px; border: 1px solid var(--verde-c); }
+.acuerdo-firmantes-titulo { font-size: .8rem; font-weight: 700; color: var(--verde);
+                             margin-bottom: 8px; }
+.firmantes-lista { display: flex; flex-wrap: wrap; gap: 6px; }
+.firmante-chip {
+  padding: 4px 10px; background: var(--verde-c); color: var(--verde);
+  border-radius: 20px; font-size: .78rem; font-weight: 600;
+  animation: fadeUp .3s ease both;
+}
+
+/* ── CIERRE / RESUMEN ────────────────────────────────────── */
+#s-cierre { background: var(--gris-1); }
+.cierre-hero {
+  text-align: center; padding: 36px 24px 24px;
+  background: linear-gradient(135deg, var(--naranja-cc) 0%, var(--verde-cc) 100%);
+}
+.cierre-emoji { font-size: 3.5rem; margin-bottom: 12px;
+                animation: pulse 1.5s ease infinite; }
+.cierre-titulo { font-size: 1.5rem; font-weight: 800; margin-bottom: 8px; }
+.cierre-nombre { font-size: 1rem; color: var(--gris-txt); }
+.resumen-cards { display: flex; flex-direction: column; gap: 12px; padding: 16px; }
+.resumen-card { background: var(--blanco); border-radius: var(--radio);
+                box-shadow: var(--sombra); overflow: hidden; }
+.resumen-card-header { padding: 12px 16px; font-size: .82rem; font-weight: 700;
+                       text-transform: uppercase; letter-spacing: .04em; }
+.resumen-card-body { padding: 14px 16px; font-size: .9rem; line-height: 1.5; }
+.compartir-btn {
+  margin: 0 16px 32px; display: flex; align-items: center; justify-content: center;
+  gap: 8px; padding: 14px; border-radius: 50px;
+  background: var(--naranja); color: var(--blanco);
+  font-size: 1rem; font-weight: 700; border: none; cursor: pointer; width: calc(100% - 32px);
+}
+
+/* ── CONFETI ─────────────────────────────────────────────── */
+.confeti-piece {
+  position: fixed; width: 10px; height: 10px; border-radius: 2px;
+  animation: confetti-fall 3s ease-out both;
+  pointer-events: none; z-index: 999;
+}
+
+/* ── LOADING ─────────────────────────────────────────────── */
+.loading-overlay {
+  position: fixed; inset: 0; background: rgba(255,255,255,.85);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  z-index: 100; gap: 12px; display: none;
+}
+.loading-overlay.show { display: flex; }
+.loading-spinner {
+  width: 36px; height: 36px; border: 3px solid var(--gris-2);
+  border-top-color: var(--naranja); border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-txt { font-size: .9rem; color: var(--gris-txt); }
 </style>
-</head>
-<body>
 
-<!-- ══════════ LOGIN ══════════ -->
-<div class="screen active" id="s-login">
-  <div class="login-card">
-    <div class="login-logo">📊</div>
-    <h1 class="login-titulo">Portal Admin</h1>
-    <p class="login-sub">FUNDACOOFISAM — Semana Formativa</p>
-    <input class="input-field" id="inp-admin-pass" type="password" placeholder="Código de administrador">
-    <button class="btn-login" id="btn-login-admin">Ingresar →</button>
-    <div class="login-error" id="login-error">Código incorrecto.</div>
-  </div>
-</div>
-
-<!-- ══════════ PORTAL ══════════ -->
-<div class="screen" id="s-portal">
-
-  <!-- NAV -->
-  <div class="top-nav">
-    <div class="top-nav-logo">📊 Admin</div>
-    <div class="top-nav-sub">FUNDACOOFISAM · en vivo</div>
-    <div class="live-badge"><div class="live-dot"></div>EN VIVO</div>
-    <button class="top-nav-refresh" id="btn-refresh">↻ Actualizar</button>
-    <button class="top-nav-salir" id="btn-salir">Salir</button>
-  </div>
-
-  <!-- MÓDULOS -->
-  <div class="mod-tabs">
-    <div class="mod-tab active-a" id="tab-artistica" id="modtab-artistica">🎭 Equipo Artístico</div>
-    <div class="mod-tab" id="tab-conexion" id="modtab-conexion_social">🤝 Conexión Social</div>
-  </div>
-
-  <!-- SECCIONES -->
-  <div class="sec-tabs" id="sec-tabs">
-    <div class="sec-tab active" data-sec="panel">Panel general</div>
-    <div class="sec-tab" data-sec="termometro">Termómetros</div>
-    <div class="sec-tab" data-sec="reflexiones">Reflexiones</div>
-    <div class="sec-tab" data-sec="muro" id="tab-muro" style="display:none">Muro de Orgullo</div>
-    <div class="sec-tab" data-sec="acuerdo" id="tab-acuerdo" style="display:none">Acuerdo</div>
-  </div>
-
-  <div class="portal-body">
-
-    <!-- PANEL GENERAL -->
-    <div class="section-content active" id="sec-panel">
-      <div class="stat-grid" id="stat-grid">
-        <div class="loading-inline"><div class="spinner"></div></div>
-      </div>
-      <div class="tabla-wrap">
-        <div class="tabla-header">
-          <span>Participantes</span>
-          <button class="export-btn" id="btn-export">⬇ Exportar CSV</button>
-        </div>
-        <div id="tabla-participantes">
-          <div class="loading-inline"><div class="spinner"></div><div>Cargando participantes...</div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- TERMÓMETROS -->
-    <div class="section-content" id="sec-termometro">
-      <div id="termo-admin-content">
-        <div class="loading-inline"><div class="spinner"></div><div>Cargando termómetros...</div></div>
-      </div>
-    </div>
-
-    <!-- REFLEXIONES -->
-    <div class="section-content" id="sec-reflexiones">
-      <div id="reflx-admin-content">
-        <div class="loading-inline"><div class="spinner"></div><div>Cargando reflexiones...</div></div>
-      </div>
-    </div>
-
-    <!-- MURO -->
-    <div class="section-content" id="sec-muro">
-      <div id="muro-admin-content">
-        <div class="loading-inline"><div class="spinner"></div><div>Cargando muro...</div></div>
-      </div>
-    </div>
-
-    <!-- ACUERDO -->
-    <div class="section-content" id="sec-acuerdo">
-      <div id="acuerdo-admin-content">
-        <div class="loading-inline"><div class="spinner"></div><div>Cargando acuerdo...</div></div>
-      </div>
-    </div>
-
-  </div>
-</div>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
+// ══ FIREBASE CONFIG ══════════════════════════════════════
 const firebaseConfig = {
   apiKey: "AIzaSyBNBuTUgQPGngvz1Sg_S33W2Qvb05wO-aI",
   authDomain: "escuela-de-formacion-31efb.firebaseapp.com",
   projectId: "escuela-de-formacion-31efb",
   storageBucket: "escuela-de-formacion-31efb.firebasestorage.app",
   messagingSenderId: "780641260708",
-  appId: "1:780641260708:web:ba857f6022d727961b4231",
-  measurementId: "G-P0RHGQXY2N"
+  appId: "1:780641260708:web:ba857f6022d727961b4231"
 };
-
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// ── CONSTANTES ──────────────────────────────────────────
-const ADMIN_CODE = "ADMIN2025";
-const TOTAL_ETAPAS = { artistica: 6, conexion_social: 6 };
-const TEMAS = {
-  artistica: ["Trabajo en equipo","Controla tu ego","Disciplina","Respeto","Planeación"],
-  conexion_social: ["Sentido de pertenencia","Amor por el trabajo","Identidad del equipo","Relaciones interpersonales","Identidad por la Fundación"],
+// ══ CÓDIGOS DE ACCESO ════════════════════════════════════
+const CODIGOS = {
+  "ARTE2025":     { modulo: "artistica",      nombre: "Equipo Artístico" },
+  "CONEXION2025": { modulo: "conexion_social", nombre: "Conexión Social"  }
 };
-const TERMOMETRO_ITEMS = {
-  artistica: [
-    ["t1","Me cuesta aceptar que modifiquen mi propuesta artística"],
-    ["t1","Busco reconocimiento más que el buen resultado"],
-    ["t1","Me incomoda cuando destacan más a un compañero"],
-    ["t1","Critico el trabajo ajeno pero me cuesta recibir crítica"],
-    ["t1","Siento resentimiento cuando el equipo no valora lo que aporto"],
-  ],
-  conexion_social: [
-    ["t3","Nos comunicamos abiertamente y sin miedo"],
-    ["t3","Nos apoyamos cuando alguien tiene dificultades"],
-    ["t3","Resolvemos los conflictos de forma constructiva"],
-    ["t3","Nos sentimos orgullosos de pertenecer a Conexión Social"],
-    ["t3","Cada persona aporta lo mejor de sí al equipo"],
-  ],
+
+// ══ ESTADO ═══════════════════════════════════════════════
+let estado = {
+  nombre:"", modulo:"", moduloNombre:"", modo:"",
+  quizIndex:0, quizScore:0, temaActual:0, completados:[],
+  reflexiones:{}, termometro:{}, escudo:["","","",""],
+  escudoCuadranteActual:-1
 };
-const REFLEXIONES_LABELS = {
+
+const CONTENIDO = {
   artistica: {
-    0: ["¿Algún momento en que trabajo más solo que en equipo?","¿Cuándo reconociste el aporte de alguien?"],
-    1: ["¿El ego te ha costado alguna relación en el equipo?","¿Hay alguien a quien te cueste reconocer?"],
-    2: ["¿Qué compromiso del equipo no cumples regularmente?","¿Qué hábito construirías en 30 días?"],
-    3: ["¿Hay alguien con quien la relación sea difícil?","¿Cómo hablas de FUNDACOOFISAM afuera?"],
-    4: ["¿Cuál es la actividad más importante del trimestre?","¿Qué necesita cambiar en la forma de planear?"],
+    duracion: "~45 minutos",
+    color: "var(--naranja)",
+    colorClaro: "var(--naranja-cc)",
+    chip: { texto: "🎭 Equipo Artístico", clase: "chip-naranja" },
+    bienvenidaTitulo: "¡Bienvenido/a al taller del equipo artístico!",
+    bienvenidaDesc: "Hoy trabajamos en lo que nos hace un gran equipo: confianza, respeto, disciplina y planeación.",
+    quiz: [
+      { p: "¿Cuántas personas forman el equipo artístico hoy?", ops: ["4","5","6","7"], c: 2,
+        fb: "¡Exacto! Somos 6: 4 profesores y 2 de danzas." },
+      { p: "¿Cuál es el mayor reto de un equipo artístico?", ops: ["Tener talentos diferentes","Coordinarse y funcionar juntos","Conseguir recursos","Tener tiempo de ensayo"], c: 1,
+        fb: "La coordinación es la clave — el talento individual no basta si no funciona como equipo." },
+      { p: "¿Qué separa el talento de los resultados en un equipo?", ops: ["La suerte","Los recursos","La disciplina y la constancia","El reconocimiento"], c: 2,
+        fb: "La disciplina convierte el talento en resultados consistentes." },
+      { p: "¿Cómo afecta el egocentrismo a un equipo artístico?", ops: ["No lo afecta","Lo hace más creativo","Destruye la confianza y la sincronía","Solo afecta al líder"], c: 2,
+        fb: "El ego sin control rompe la sincronía — exactamente lo que convierte un grupo en un equipo." },
+      { p: "Planeación en un equipo artístico significa:", ops: ["Hacer un documento que nadie lee","Improvisar con talento","Ponerse de acuerdo sobre qué, para qué, quién y cuándo","Copiar lo que hacen otros equipos"], c: 2,
+        fb: "Las 4 preguntas clave de la planeación: ¿Qué? ¿Para qué? ¿Quién? ¿Cuándo?" },
+    ],
+    temas: [
+      { num: 1, nombre: "Trabajo en equipo", tipo: "Video + tarjetas + reflexión",
+        video: { id: "9bHueFbX3uk", titulo: "¿Qué hace grande a un equipo?" },
+        tarjetas: [
+          { icono: "🤝", titulo: "Confianza", body: "Cada integrante confía en que el otro cumple su parte. Sin confianza, cada quien intenta controlar el trabajo del otro." },
+          { icono: "💬", titulo: "Comunicación", body: "Decir a tiempo lo que está pasando, sin esperar que el otro adivine. En equipos artísticos esto se nota en los ensayos." },
+          { icono: "🧩", titulo: "Complementariedad", body: "El mejor equipo aprovecha que todos son diferentes. Esas diferencias son una fortaleza, no un problema." },
+        ],
+        reflexiones: [
+          { q: "¿Hay algún momento en que siento que trabajo más solo que en equipo? ¿Por qué?" },
+          { q: "¿Cuándo fue la última vez que reconocí el aporte de alguien del equipo?" },
+        ],
+      },
+      { num: 2, nombre: "Controla tu ego", tipo: "Video + Termómetro del Ego",
+        video: { id: "H14bBuluwB8", titulo: "El ego vs. el equipo — la diferencia que lo cambia todo" },
+        tarjetas: [
+          { icono: "🪞", titulo: "¿Qué es el egocentrismo?", body: "No es arrogancia — es cuando el «yo» se vuelve más importante que el equipo. Viene en actitudes pequeñas que se acumulan." },
+          { icono: "⚠️", titulo: "Señales de alerta", body: "Necesito que mi idea sea la que se use. Me incomoda el reconocimiento de otros. Me cuesta aceptar críticas de mi trabajo." },
+          { icono: "🔑", titulo: "Cómo controlarlo", body: "Reconocer cuando actúa. Pausa antes de reaccionar. Ceder con dignidad. Celebrar al otro. Servir al mensaje colectivo." },
+        ],
+        reflexiones: [
+          { q: "¿Recuerdo algún momento en que mi ego me haya costado una relación en el equipo?" },
+          { q: "¿Hay alguien del equipo a quien me cueste reconocer? ¿Por qué?" },
+        ],
+        termometro: {
+          titulo: "Termómetro del Ego",
+          sub: "Califica del 1 al 10 qué tan frecuentemente te identificas con cada situación. Sé honesto/a — solo tú ves esto.",
+          items: [
+            "Me cuesta aceptar que modifiquen mi propuesta artística",
+            "Busco que me reconozcan más que buscar el buen resultado",
+            "Me incomoda cuando destacan más a un compañero",
+            "Critico el trabajo ajeno pero me cuesta recibir crítica del mío",
+            "Siento resentimiento cuando el equipo no valora lo que aporto",
+          ],
+        },
+      },
+      { num: 3, nombre: "Disciplina", tipo: "Tarjetas + compromiso",
+        video: null,
+        tarjetas: [
+          { icono: "👤", titulo: "Nivel 1 — Individual", body: "Cumplir con lo que me comprometí: llegar a tiempo, preparar el material, no cancelar sin avisar." },
+          { icono: "👥", titulo: "Nivel 2 — De equipo", body: "Respetar los acuerdos colectivos. Si acordamos ensayar los martes a las 3pm, todos están los martes a las 3pm." },
+          { icono: "🎨", titulo: "Nivel 3 — Creativa", body: "La disciplina crea el espacio para que aparezca la creatividad. Los grandes artistas no esperan el momento perfecto — crean el hábito." },
+        ],
+        reflexiones: [
+          { q: "¿Hay algún compromiso del equipo que regularmente no cumplo? ¿Qué me lo impide realmente?" },
+          { q: "¿Qué hábito podría construir en 30 días que mejoraría mi aporte al equipo?" },
+        ],
+      },
+      { num: 4, nombre: "Respeto", tipo: "Escenarios + reflexión",
+        video: null,
+        tarjetas: [
+          { icono: "🏛️", titulo: "Respeto institucional", body: "Llegar preparado. Cuidar los espacios y materiales. Hablar bien de la Fundación. Asumir con seriedad el impacto en la comunidad." },
+          { icono: "🤲", titulo: "Respeto entre personas", body: "No es solo no insultarse. Es reconocer que el otro tiene tanto derecho de estar aquí como yo, con sus diferencias y su ritmo." },
+        ],
+        reflexiones: [
+          { q: "¿Hay alguna persona del equipo con quien me cueste relacionarme? ¿Qué genera eso en mí?" },
+          { q: "¿Cómo hablo de FUNDACOOFISAM cuando estoy fuera de ella?" },
+        ],
+      },
+      { num: 5, nombre: "Planeación", tipo: "Video + Plan del Trimestre",
+        video: { id: "CAdE4bwwxWU", titulo: "De la idea a la realidad: planeación que funciona" },
+        tarjetas: [
+          { icono: "❓", titulo: "¿Qué?", body: "Nombre claro de la actividad. No «algo de música» — sino exactamente qué vamos a hacer." },
+          { icono: "🎯", titulo: "¿Para qué?", body: "El objetivo real — no el que suena bonito, sino el que le importa a la comunidad y a la Fundación." },
+          { icono: "🙋", titulo: "¿Quién?", body: "Responsable claro por fortaleza, no solo por cargo. ¿Quién lo hace mejor, aunque no sea «el que le toca»?" },
+          { icono: "📅", titulo: "¿Cuándo?", body: "Fechas reales con margen para imprevistos. Una fecha sin compromiso no es una fecha." },
+        ],
+        reflexiones: [
+          { q: "¿Cuál es la actividad más importante del equipo en el próximo trimestre? Descríbela con las 4 preguntas." },
+          { q: "¿Qué necesita cambiar en nuestra forma de planear para que esto realmente suceda?" },
+        ],
+      },
+    ],
   },
+
   conexion_social: {
-    0: ["Llegué a Conexión Social porque...","Lo que más valoro de trabajar aquí es...","Mi momento más orgulloso fue..."],
-    1: ["¿Recuerdas cuando tu trabajo le cambió algo a alguien?","¿Qué harías diferente si supieras que alguien depende de ti?"],
-    2: ["¿Cuál sería el lema perfecto del equipo?"],
-    3: ["¿Hay alguien con quien la relación no fluya?","¿Hay alguna conversación pendiente?"],
-    4: ["¿Cómo describes FUNDACOOFISAM cuando alguien pregunta?","¿Qué puedes hacer TÚ para que la Fundación sea más valorada?"],
+    duracion: "~55 minutos",
+    color: "var(--verde)",
+    colorClaro: "var(--verde-cc)",
+    chip: { texto: "🤝 Conexión Social", clase: "chip-verde" },
+    bienvenidaTitulo: "Hoy vamos a hablar de nosotros",
+    bienvenidaDesc: "Identidad, sentido de pertenencia, amor por el trabajo y por FUNDACOOFISAM.",
+    quiz: [
+      { p: "¿Cuántos promotores tiene el equipo Conexión Social?", ops: ["15","17","19","22"], c: 2,
+        fb: "19 promotores + líder + Dirección y Subdirección = 22 personas en total." },
+      { p: "El sentido de pertenencia es:", ops: ["Tener muchos años en la empresa","Sentir que este equipo y este trabajo son parte de mí","Cumplir el horario de trabajo","Recibir reconocimientos"], c: 1,
+        fb: "El sentido de pertenencia es el motor interno que ningún jefe puede encender por nosotros." },
+      { p: "¿Qué construye identidad en un equipo?", ops: ["Solo los resultados","Historia compartida, reconocimiento y propósito claro","El salario y los beneficios","El tamaño del equipo"], c: 1,
+        fb: "La identidad se construye con historia compartida, reconocimiento y propósito — no con números." },
+      { p: "Una relación que RESTA en el equipo es:", ops: ["La que genera energía y colaboración","La que genera tensión o desgaste aunque no haya conflicto visible","La que divide en bandos","Solo las peleas abiertas"], c: 1,
+        fb: "Las relaciones que restan son las más difíciles de ver — no hay pelea, solo incomodidad que se acumula." },
+      { p: "¿Qué significa representar a FUNDACOOFISAM como promotor?", ops: ["Usar el carnet con el logo","Ser el puente entre la institución y la comunidad que servimos","Cumplir las metas del mes","Asistir a las reuniones"], c: 1,
+        fb: "Cada promotor es la cara de FUNDACOOFISAM ante la comunidad — eso es más que un carnet." },
+    ],
+    temas: [
+      { num: 1, nombre: "Sentido de pertenencia", tipo: "Video + frases para completar",
+        video: { id: "1rKs27gr6Yk", titulo: "¿Por qué importa sentirse parte de algo?" },
+        tarjetas: [
+          { icono: "📖", titulo: "Historia compartida", body: "Las historias crean raíces. Saber de dónde viene el equipo, qué ha logrado y qué ha superado nos conecta." },
+          { icono: "👁️", titulo: "Reconocimiento", body: "Sentir que el aporte de cada uno es visto. No solo cuando hay un resultado grande — en los pequeños momentos también." },
+          { icono: "🧭", titulo: "Propósito claro", body: "Entender para qué existe Conexión Social y cómo mi trabajo cotidiano contribuye a ese propósito." },
+        ],
+        reflexiones: [
+          { q: "Llegué a Conexión Social porque..." },
+          { q: "Lo que más valoro de trabajar aquí es..." },
+          { q: "Mi momento más orgulloso en el equipo fue..." },
+        ],
+      },
+      { num: 2, nombre: "Amor por el trabajo", tipo: "Video + impacto personal",
+        video: { id: "6_-8e3tqmW4", titulo: "El trabajo que importa — historias de impacto real" },
+        tarjetas: [
+          { icono: "🌱", titulo: "El impacto invisible", body: "A veces se planta una semilla que germina meses después. El impacto llega a personas que quizás no volvemos a ver." },
+          { icono: "🔗", titulo: "La cadena de valor", body: "Lo que hago bien hoy llega a una persona o comunidad que lo necesitaba. Esa cadena es el verdadero significado del trabajo." },
+        ],
+        reflexiones: [
+          { q: "¿Recuerdo algún momento en que mi trabajo en Conexión Social le cambió algo a alguien? ¿Qué fue?" },
+          { q: "¿Qué haría diferente si supiera que alguien depende directamente de cómo hago mi trabajo hoy?" },
+        ],
+      },
+      { num: 3, nombre: "Identidad del equipo", tipo: "Escudo del Equipo",
+        video: null,
+        tarjetas: [
+          { icono: "🧭", titulo: "La brújula interna", body: "Un equipo con identidad clara sabe cómo actuar en situaciones difíciles porque tiene una dirección interna." },
+          { icono: "🛡️", titulo: "El Escudo", body: "La identidad del equipo se construye respondiendo: ¿Para qué existimos? ¿Qué valores guían nuestro trabajo? ¿Qué nos diferencia?" },
+        ],
+        reflexiones: [
+          { q: "¿Cuál sería el lema perfecto del equipo Conexión Social?" },
+        ],
+        escudo: true,
+      },
+      { num: 4, nombre: "Relaciones interpersonales", tipo: "Video + Termómetro del Equipo",
+        video: { id: "5wjjF_GDj5o", titulo: "Cómo mejorar las relaciones en el equipo" },
+        tarjetas: [
+          { icono: "➕", titulo: "Relaciones que suman", body: "Generan energía, colaboración y confianza. Son las que todos queremos tener." },
+          { icono: "➖", titulo: "Relaciones que restan", body: "Generan tensión o desgaste. A veces no hay conflicto visible — solo incomodidad que se evita pero afecta el trabajo." },
+          { icono: "÷", titulo: "Relaciones que dividen", body: "Generan bandos, chismes o exclusión. Son las más peligrosas porque dañan la cultura en silencio." },
+        ],
+        reflexiones: [
+          { q: "¿Hay alguien en el equipo con quien la relación no fluya? ¿Qué podría hacer yo para mejorarla?" },
+          { q: "¿Hay alguna conversación pendiente que estoy evitando?" },
+        ],
+        termometro: {
+          titulo: "Termómetro del Equipo",
+          sub: "Califica del 1 al 10 cada afirmación. 1 = casi nunca, 10 = siempre.",
+          items: [
+            "Nos comunicamos abiertamente y sin miedo en el equipo",
+            "Nos apoyamos cuando alguien tiene dificultades",
+            "Resolvemos los conflictos de forma constructiva",
+            "Nos sentimos orgullosos de pertenecer a Conexión Social",
+            "Cada persona aporta lo mejor de sí al equipo",
+          ],
+        },
+      },
+      { num: 5, nombre: "Identidad por la Fundación", tipo: "Video + Muro de Orgullo",
+        video: { id: "aF2eMSgAErs", titulo: "El orgullo de representar lo que amamos" },
+        tarjetas: [
+          { icono: "🌉", titulo: "El puente", body: "Conexión Social no es solo un equipo operativo — es el puente entre FUNDACOOFISAM y las personas que servimos." },
+          { icono: "🎖️", titulo: "Embajador, no empleado", body: "La identidad por la Fundación es actuar como embajador: entender la misión, creerla y hacerla visible en cada interacción." },
+        ],
+        reflexiones: [
+          { q: "¿Cómo describo FUNDACOOFISAM cuando alguien me pregunta dónde trabajo?" },
+          { q: "¿Qué puede hacer YO desde mi rol para que la Fundación sea cada vez más valorada?" },
+        ],
+        muro: true,
+      },
+    ],
   },
-};
-const COLORES = {
-  artistica: { main: '#7D3C0F', claro: '#FAD7A0', muted: '#E67E22' },
-  conexion_social: { main: '#1A5C2E', claro: '#D5F5E3', muted: '#27AE60' },
-};
+}
 
-let moduloActivo = 'artistica';
-let seccionActiva = 'panel';
-let unsubs = [];
 
-// ── LOGIN ────────────────────────────────────────────────
-window.loginAdmin = function() {
-  const val = document.getElementById('inp-admin-pass').value.trim().toUpperCase();
-  if (val !== ADMIN_CODE) {
-    document.getElementById('login-error').classList.add('show'); return;
+function irA(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  var t=document.getElementById(id);
+  if(t){t.classList.add('active');t.scrollTop=0;}
+}
+function loading(show,txt){
+  var el=document.getElementById('loading');
+  if(show){el.style.display='flex';document.getElementById('loading-txt').textContent=txt||'Guardando...';}
+  else el.style.display='none';
+}
+
+// ══ ACCESO ════════════════════════════════════════════════
+function ingresar(){
+  var nombre=document.getElementById('inp-nombre').value.trim();
+  var codigo=document.getElementById('inp-codigo').value.trim().toUpperCase();
+  var err=document.getElementById('error-acceso');
+  if(!nombre){err.textContent="Escribe tu nombre.";err.classList.add('show');return;}
+  if(!CODIGOS[codigo]){err.textContent="Código incorrecto.";err.classList.add('show');return;}
+  err.classList.remove('show');
+  var info=CODIGOS[codigo];
+  estado.nombre=nombre; estado.modulo=info.modulo; estado.moduloNombre=info.nombre;
+  document.getElementById('modo-saludo').textContent='¡Hola, '+nombre.split(' ')[0]+'! 👋';
+  document.getElementById('modo-sub').textContent='Equipo: '+info.nombre;
+  irA('s-modo');
+}
+
+// ══ MODO ══════════════════════════════════════════════════
+function elegirModo(modo){
+  estado.modo=modo;
+  document.querySelectorAll('.modo-card').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('card-'+modo).classList.add('selected');
+  document.getElementById('btn-modo').disabled=false;
+}
+function confirmarModo(){construirBienvenida();irA('s-bienvenida');}
+
+// ══ BIENVENIDA ════════════════════════════════════════════
+function construirBienvenida(){
+  var C=CONTENIDO[estado.modulo];
+  document.getElementById('bv-modulo-nombre').textContent=estado.moduloNombre;
+  document.getElementById('bv-modo-label').textContent=estado.modo==='taller'?'Modo Taller':'Modo Escuela';
+  document.getElementById('bv-titulo').textContent=C.bienvenidaTitulo;
+  document.getElementById('bv-desc').textContent=C.bienvenidaDesc;
+  document.getElementById('bv-duracion').textContent='Duración total: '+C.duracion;
+  document.getElementById('bv-chip').innerHTML='<span class="chip '+C.chip.clase+'">'+C.chip.texto+'</span>';
+  document.getElementById('bv-hero').style.background='linear-gradient(135deg,'+C.colorClaro+' 0%,#FFFFFF 100%)';
+  document.getElementById('bv-progreso-fill').style.background=C.color;
+  var pasos=['Quiz de identidad'].concat(C.temas.map(function(t){return t.nombre;}));
+  document.getElementById('bv-temas-lista').innerHTML=pasos.map(function(n,i){
+    var done=estado.completados.indexOf(i)>-1;
+    return '<div class="tema-item fade-up" style="animation-delay:'+(i*.06)+'s">'+
+      '<div class="tema-num" style="background:'+(done?C.color:'var(--gris-2)')+';color:'+(done?'#fff':'var(--gris-txt)')+';">'+(i+1)+'</div>'+
+      '<div class="tema-info"><div class="tema-nombre">'+n+'</div>'+
+      '<div class="tema-tipo">'+(i===0?'🎮 Quiz interactivo':(C.temas[i-1]?C.temas[i-1].tipo:''))+'</div></div>'+
+      '<span class="tema-check">'+(done?'✅':'○')+'</span></div>';
+  }).join('');
+  actualizarProgreso();
+}
+function actualizarProgreso(){
+  var total=CONTENIDO[estado.modulo].temas.length+1;
+  var hecho=estado.completados.length;
+  document.getElementById('bv-progreso-txt').textContent=hecho+' de '+total+' completados';
+  document.getElementById('bv-progreso-fill').style.width=((hecho/total)*100)+'%';
+}
+function iniciarRecorrido(){
+  if(estado.completados.indexOf(0)<0) iniciarQuiz();
+  else irATemaSiguiente();
+}
+function irATemaSiguiente(){
+  var todos=[0];
+  CONTENIDO[estado.modulo].temas.forEach(function(_,i){todos.push(i+1);});
+  var sig=null;
+  for(var i=0;i<todos.length;i++){if(estado.completados.indexOf(todos[i])<0){sig=todos[i];break;}}
+  if(sig===null){mostrarCierre();return;}
+  if(sig===0) iniciarQuiz(); else iniciarTema(sig-1);
+}
+
+// ══ QUIZ ══════════════════════════════════════════════════
+function iniciarQuiz(){
+  estado.quizIndex=0; estado.quizScore=0;
+  renderQuizPregunta(); irA('s-quiz');
+}
+function renderQuizPregunta(){
+  var preguntas=CONTENIDO[estado.modulo].quiz;
+  var i=estado.quizIndex;
+  if(i>=preguntas.length){mostrarScoreQuiz();return;}
+  var q=preguntas[i];
+  document.getElementById('quiz-step-label').textContent=(i+1)+' de '+preguntas.length;
+  document.getElementById('quiz-progress').style.width=(((i+1)/preguntas.length)*100)+'%';
+  var opcsHtml=q.ops.map(function(o,j){
+    return '<button class="quiz-opcion" onclick="responderQuiz('+j+')">'+o+'</button>';
+  }).join('');
+  document.getElementById('quiz-body').innerHTML=
+    '<div class="quiz-pregunta-wrap fade-up">'+
+    '<div><div class="quiz-num">Pregunta '+(i+1)+' de '+preguntas.length+'</div>'+
+    '<div class="quiz-enunciado">'+q.p+'</div>'+
+    '<div class="quiz-opciones">'+opcsHtml+'</div></div>'+
+    '<div class="quiz-feedback" id="quiz-fb"></div>'+
+    '<button class="btn btn-primary" id="quiz-next-btn" style="display:none;" onclick="siguienteQuiz()">'+
+    (i<preguntas.length-1?'Siguiente →':'Ver resultado →')+'</button></div>';
+}
+function responderQuiz(j){
+  var q=CONTENIDO[estado.modulo].quiz[estado.quizIndex];
+  var btns=document.querySelectorAll('.quiz-opcion');
+  btns.forEach(function(b){b.disabled=true;});
+  btns[j].classList.add(j===q.c?'correcto':'incorrecto');
+  if(j!==q.c) btns[q.c].classList.add('correcto');
+  if(j===q.c) estado.quizScore++;
+  var fb=document.getElementById('quiz-fb');
+  fb.textContent=(j===q.c?'✅ ':'❌ ')+q.fb;
+  fb.classList.add('show',j===q.c?'ok':'fail');
+  document.getElementById('quiz-next-btn').style.display='flex';
+}
+function siguienteQuiz(){estado.quizIndex++;renderQuizPregunta();}
+function mostrarScoreQuiz(){
+  var total=CONTENIDO[estado.modulo].quiz.length;
+  var sc=estado.quizScore;
+  var msgs=["¡Buen comienzo!","¡Bien!","¡Muy bien!","¡Excelente!","¡Perfecto!"];
+  var msg=msgs[Math.min(Math.floor(sc/total*5),4)];
+  document.getElementById('quiz-step-label').textContent='Resultado';
+  document.getElementById('quiz-progress').style.width='100%';
+  document.getElementById('quiz-body').innerHTML=
+    '<div class="quiz-score-final fade-up">'+
+    '<div class="quiz-score-num">'+sc+'/'+total+'</div>'+
+    '<div class="quiz-score-label">respuestas correctas</div>'+
+    '<div class="quiz-score-msg">'+msg+'</div>'+
+    '<div style="margin-top:24px;"><button class="btn btn-primary" onclick="completarEtapa(0)">Continuar →</button></div></div>';
+}
+
+// ══ TEMAS ════════════════════════════════════════════════
+function iniciarTema(idx){
+  estado.temaActual=idx;
+  var tema=CONTENIDO[estado.modulo].temas[idx];
+  var C=CONTENIDO[estado.modulo];
+  document.getElementById('tema-titulo-bar').textContent='Tema '+tema.num+': '+tema.nombre;
+  document.getElementById('tema-sub-bar').textContent=tema.tipo;
+  document.getElementById('tema-step-label').textContent=(idx+1)+'/'+C.temas.length;
+  document.getElementById('tema-back-btn').onclick=function(){irA('s-bienvenida');};
+  var html='';
+  if(tema.video){
+    html+='<div style="margin-bottom:16px;"><div class="video-wrap">'+
+      '<div class="video-placeholder" onclick="reproducirVideo(\''+tema.video.id+'\',this)">'+
+      '<div class="video-play-btn">▶</div>'+
+      '<div class="video-titulo">'+tema.video.titulo+'</div></div></div>'+
+      '<p style="font-size:.78rem;color:var(--gris-txt);text-align:center;">Toca para reproducir</p></div>';
   }
-  document.getElementById('s-login').classList.remove('active');
-  document.getElementById('s-portal').classList.add('active');
-  iniciarPortal();
-};
+  if(tema.tarjetas&&tema.tarjetas.length){
+    html+='<p style="font-size:.85rem;font-weight:700;color:var(--gris-txt);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em;">Puntos clave</p>'+
+      '<div class="tarjetas-wrap">';
+    tema.tarjetas.forEach(function(t){
+      html+='<div class="tarjeta-slide" style="background:'+C.colorClaro+';border-color:'+C.color+'20;">'+
+        '<div class="tarjeta-icono">'+t.icono+'</div>'+
+        '<div class="tarjeta-titulo" style="color:'+C.color+';">'+t.titulo+'</div>'+
+        '<div class="tarjeta-body">'+t.body+'</div></div>';
+    });
+    html+='</div>';
+  }
+  if(tema.reflexiones&&tema.reflexiones.length){
+    html+='<p style="font-size:.85rem;font-weight:700;color:var(--gris-txt);margin:16px 0 8px;text-transform:uppercase;letter-spacing:.04em;">Reflexión personal</p>'+
+      '<div class="reflx-wrap">';
+    tema.reflexiones.forEach(function(r,i){
+      html+='<div class="reflx-pregunta"><div class="reflx-q">'+r.q+'</div>'+
+        '<textarea class="reflx-input" id="reflx-'+idx+'-'+i+'" placeholder="Escribe tu reflexión..." rows="2"></textarea></div>';
+    });
+    html+='</div>';
+  }
+  if(tema.termometro) html+='<button class="btn btn-primary" style="margin-top:16px;" onclick="abrirTermometro('+idx+')">🌡️ Abrir Termómetro →</button>';
+  if(tema.escudo)     html+='<button class="btn btn-verde" style="margin-top:16px;" onclick="irA(\'s-escudo\')">🛡️ Construir el Escudo →</button>';
+  if(tema.muro)       html+='<button class="btn btn-verde" style="margin-top:16px;" onclick="abrirMuro()">💛 Ir al Muro de Orgullo →</button>';
+  html+='<button class="btn btn-primary" style="margin-top:20px;" onclick="completarEtapa('+(idx+1)+')">Marcar como completado ✓</button>';
+  document.getElementById('tema-body').innerHTML=html;
+  irA('s-tema');
+}
+function reproducirVideo(id,el){
+  var iframe=document.createElement('iframe');
+  iframe.className='video-frame';
+  iframe.src='https://www.youtube.com/embed/'+id+'?autoplay=1&rel=0';
+  iframe.allow='autoplay; encrypted-media';
+  el.parentElement.innerHTML='';
+  el.parentElement.appendChild(iframe);
+}
 
-window.salir = function() {
-  unsubs.forEach(u => u());
-  document.getElementById('s-portal').classList.remove('active');
-  document.getElementById('s-login').classList.add('active');
-  document.getElementById('inp-admin-pass').value = '';
-};
-
-// ── MÓDULO / SECCIÓN ─────────────────────────────────────
-window.cambiarModulo = function(mod) {
-  moduloActivo = mod;
-  document.querySelectorAll('.mod-tab').forEach(t => t.classList.remove('active-a','active-c'));
-  document.getElementById(`tab-${mod === 'artistica' ? 'artistica' : 'conexion'}`).classList.add(mod === 'artistica' ? 'active-a' : 'active-c');
-  // mostrar/ocultar tabs específicas de conexión social
-  ['tab-muro','tab-acuerdo'].forEach(id => {
-    document.getElementById(id).style.display = mod === 'conexion_social' ? 'block' : 'none';
+// ══ TERMÓMETRO ════════════════════════════════════════════
+function abrirTermometro(temaIdx){
+  var t=CONTENIDO[estado.modulo].temas[temaIdx].termometro;
+  document.getElementById('termo-titulo').textContent=t.titulo;
+  document.getElementById('termo-sub').textContent=t.sub;
+  document.getElementById('termo-back-btn').onclick=function(){irA('s-tema');};
+  var html='<p style="font-size:.9rem;color:var(--gris-txt);margin-bottom:16px;">'+t.sub+'</p>';
+  t.items.forEach(function(item,i){
+    html+='<div class="termo-item"><div class="termo-label">'+item+'</div>'+
+      '<div class="termo-slider-wrap">'+
+      '<span style="font-size:.78rem;color:var(--gris-txt);">Poco</span>'+
+      '<input type="range" class="termo-slider" id="ts-'+i+'" min="1" max="10" value="5" '+
+      'oninput="actualizarTermo('+i+')" '+
+      'style="background:linear-gradient(to right,#E67E22 0%,#E67E22 40%,#ddd 40%)">'+
+      '<span style="font-size:.78rem;color:var(--gris-txt);">Mucho</span>'+
+      '<div class="termo-val" id="tv-'+i+'" style="background:#E67E22;color:#fff;">5</div></div>'+
+      '<div class="termo-etiquetas"><span>1</span><span>5</span><span>10</span></div></div>';
   });
-  refrescarTodo();
-};
-
-window.cambiarSeccion = function(sec, el) {
-  seccionActiva = sec;
-  document.querySelectorAll('.sec-tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
-  document.getElementById(`sec-${sec}`).classList.add('active');
-  cargarSeccion(sec);
-};
-
-function iniciarPortal() {
-  refrescarTodo();
+  html+='<div class="termo-resultado" id="termo-resultado"></div>';
+  html+='<button class="btn btn-primary" style="margin-top:8px;" onclick="calcularTermo('+temaIdx+')">Ver mi resultado →</button>';
+  document.getElementById('termo-body').innerHTML=html;
+  irA('s-termo');
+}
+function actualizarTermo(i){
+  var val=parseInt(document.getElementById('ts-'+i).value);
+  var pct=((val-1)/9)*100;
+  var color=val<=3?'#27AE60':val<=6?'#E67E22':'#E74C3C';
+  document.getElementById('tv-'+i).textContent=val;
+  document.getElementById('tv-'+i).style.background=color;
+  document.getElementById('ts-'+i).style.background=
+    'linear-gradient(to right,'+color+' 0%,'+color+' '+pct+'%,#ddd '+pct+'%)';
+}
+function calcularTermo(temaIdx){
+  var items=CONTENIDO[estado.modulo].temas[temaIdx].termometro.items;
+  var vals=items.map(function(_,i){return parseInt(document.getElementById('ts-'+i)?document.getElementById('ts-'+i).value:5);});
+  var prom=vals.reduce(function(a,b){return a+b;},0)/vals.length;
+  estado.termometro[temaIdx]={vals:vals,prom:prom.toFixed(1)};
+  var color=prom<=3?'#1A5C2E':prom<=6?'#E67E22':'#E74C3C';
+  var emoji=prom<=3?'🟢':prom<=6?'🟡':'🔴';
+  var msg=prom<=3?'Puntajes bajos aquí son positivos.':prom<=6?'¡Reconocerlo es el primer paso!':'Estos temas necesitan atención del equipo.';
+  var res=document.getElementById('termo-resultado');
+  res.innerHTML='<div style="font-size:1.5rem;margin-bottom:8px;">'+emoji+'</div>'+
+    '<div style="font-size:1rem;font-weight:700;color:'+color+';margin-bottom:6px;">Promedio: '+prom.toFixed(1)+'/10</div>'+
+    '<div style="font-size:.88rem;color:var(--gris-txt);">'+msg+'</div>';
+  res.style.background=color+'15';
+  res.style.border='1px solid '+color+'50';
+  res.classList.add('show');
+  db.collection('talleres/'+estado.modulo+'/termometros').doc(estado.nombre+'_t'+temaIdx)
+    .set({nombre:estado.nombre,temaIdx:temaIdx,vals:vals,prom:prom.toFixed(1),ts:Date.now()})
+    .catch(function(e){console.log('Firebase error:',e);});
 }
 
-window.refrescarTodo = function() {
-  unsubs.forEach(u => { try { u(); } catch(e){} });
-  unsubs = [];
-  cargarSeccion(seccionActiva);
-};
-
-function cargarSeccion(sec) {
-  if (sec === 'panel')       cargarPanel();
-  if (sec === 'termometro')  cargarTermometros();
-  if (sec === 'reflexiones') cargarReflexiones();
-  if (sec === 'muro')        cargarMuro();
-  if (sec === 'acuerdo')     cargarAcuerdo();
+// ══ ESCUDO ════════════════════════════════════════════════
+function editarCuadrante(idx){
+  estado.escudoCuadranteActual=idx;
+  var labels=['Lo que nos define — ¿Quiénes somos?',
+    'Lo que nos enorgullece — ¿Qué nos hace especiales?',
+    'Lo que queremos ser — ¿Cómo queremos ser recordados?',
+    'Nuestro lema — Una frase que nos represente'];
+  document.getElementById('modal-escudo-label').textContent=labels[idx];
+  document.getElementById('modal-escudo-input').value=estado.escudo[idx]||'';
+  document.getElementById('modal-escudo').style.display='flex';
+}
+function cerrarModalEscudo(){document.getElementById('modal-escudo').style.display='none';}
+function guardarCuadrante(){
+  var idx=estado.escudoCuadranteActual;
+  var val=document.getElementById('modal-escudo-input').value.trim();
+  if(!val) return;
+  estado.escudo[idx]=val;
+  document.getElementById('eq-'+idx+'-prompt').style.display='none';
+  document.getElementById('eq-'+idx+'-resp').textContent=val;
+  document.getElementById('eq-'+idx+'-resp').style.display='block';
+  document.getElementById('eq-'+idx+'-edit').style.display='block';
+  cerrarModalEscudo();
+  var llenos=estado.escudo.filter(function(v){return v;}).length;
+  document.getElementById('escudo-progreso').textContent=llenos+'/4 completados';
+  document.getElementById('escudo-btn').disabled=llenos<4;
+  if(llenos===4){
+    document.getElementById('escudo-lema-display').textContent='"'+estado.escudo[3]+'"';
+    document.getElementById('escudo-lema-display').style.display='block';
+    document.getElementById('escudo-grid').classList.add('escudo-brillo');
+  }
+}
+function guardarEscudo(){
+  loading(true,'Guardando escudo...');
+  db.collection('talleres/conexion_social/escudos').doc(estado.nombre)
+    .set({nombre:estado.nombre,escudo:estado.escudo,ts:Date.now()})
+    .catch(function(e){console.log(e);})
+    .then(function(){loading(false);completarEtapa(3);});
 }
 
-// ── PANEL GENERAL ────────────────────────────────────────
-async function cargarPanel() {
-  const mod = moduloActivo;
-  const col = COLORES[mod];
-  try {
-    // escuchas en tiempo real para reflexiones y termómetros
-    const refSnap = await db.collection(`talleres/${mod}/reflexiones`).get();
-    const terSnap = await db.collection(`talleres/${mod}/termometros`).get();
-    const escudoSnap = mod === 'conexion_social' ? await db.collection(`talleres/${mod}/escudos`).get() : null;
-    const muroSnap = mod === 'conexion_social' ? await db.collection(`talleres/${mod}/muro`).get() : null;
-
-    // agrupar por nombre
-    const participantes = {};
-    refSnap.docs.forEach(d => {
-      const data = d.data();
-      if (!participantes[data.nombre]) participantes[data.nombre] = { reflexiones: 0, termometro: false, escudo: false, muro: false };
-      participantes[data.nombre].reflexiones++;
-    });
-    terSnap.docs.forEach(d => {
-      const data = d.data();
-      if (!participantes[data.nombre]) participantes[data.nombre] = { reflexiones: 0, termometro: false, escudo: false, muro: false };
-      participantes[data.nombre].termometro = true;
-    });
-    if (escudoSnap) escudoSnap.docs.forEach(d => {
-      const nm = d.data().nombre;
-      if (!participantes[nm]) participantes[nm] = { reflexiones: 0, termometro: false, escudo: false, muro: false };
-      participantes[nm].escudo = true;
-    });
-    if (muroSnap) muroSnap.docs.forEach(d => {
-      const nm = d.data().nombre;
-      if (!participantes[nm]) participantes[nm] = { reflexiones: 0, termometro: false, escudo: false, muro: false };
-      participantes[nm].muro = true;
-    });
-
-    const total = Object.keys(participantes).length;
-    const conTermo = Object.values(participantes).filter(p => p.termometro).length;
-    const conReflx = Object.values(participantes).filter(p => p.reflexiones > 0).length;
-    const esperados = mod === 'artistica' ? 6 : 22;
-    const pctIngreso = Math.round((total / esperados) * 100);
-
-    // STATS
-    document.getElementById('stat-grid').innerHTML = `
-      <div class="stat-card" style="border-color:${col.muted}">
-        <div class="stat-num" style="color:${col.main}">${total}</div>
-        <div class="stat-label">Participantes activos</div>
-        <div class="stat-detail">${pctIngreso}% del total esperado (${esperados})</div>
-      </div>
-      <div class="stat-card" style="border-color:#2980B9">
-        <div class="stat-num" style="color:#154360">${conTermo}</div>
-        <div class="stat-label">Completaron termómetro</div>
-        <div class="stat-detail">${total > 0 ? Math.round(conTermo/total*100) : 0}% de los activos</div>
-      </div>
-      <div class="stat-card" style="border-color:#9B59B6">
-        <div class="stat-num" style="color:#4A235A">${conReflx}</div>
-        <div class="stat-label">Enviaron reflexiones</div>
-        <div class="stat-detail">${total > 0 ? Math.round(conReflx/total*100) : 0}% de los activos</div>
-      </div>
-      ${mod === 'conexion_social' ? `
-      <div class="stat-card" style="border-color:${col.muted}">
-        <div class="stat-num" style="color:${col.main}">${escudoSnap?.size || 0}</div>
-        <div class="stat-label">Escudos completados</div>
-        <div class="stat-detail">De ${esperados} esperados</div>
-      </div>` : ''}
-    `;
-
-    // TABLA
-    if (total === 0) {
-      document.getElementById('tabla-participantes').innerHTML =
-        `<div class="empty-state"><div class="empty-icon">⏳</div><div class="empty-txt">Aún no hay participantes. El panel se actualiza en tiempo real.</div></div>`;
+// ══ MURO ══════════════════════════════════════════════════
+function abrirMuro(){
+  irA('s-muro');
+  db.collection('talleres/conexion_social/muro').orderBy('ts').onSnapshot(function(snap){
+    if(snap.empty){
+      document.getElementById('muro-posts').innerHTML='<p style="font-size:.85rem;color:var(--gris-txt);text-align:center;padding:20px 0;">¡Sé el/la primero/a!</p>';
       return;
     }
-
-    window._participantesData = participantes;
-    window._moduloData = mod;
-
-    document.getElementById('tabla-participantes').innerHTML = Object.entries(participantes).map(([nombre, datos]) => {
-      const etapas = (datos.reflexiones > 0 ? 1 : 0) + (datos.termometro ? 1 : 0) + (datos.escudo ? 1 : 0);
-      const pct = Math.round((etapas / 3) * 100);
-      const badge = pct >= 80 ? ['badge-ok','Avanzado'] : pct >= 40 ? ['badge-mid','En proceso'] : ['badge-no','Inicio'];
-      return `<div class="tabla-row">
-        <div style="flex-shrink:0;width:36px;height:36px;border-radius:50%;background:${col.claro};
-          display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;color:${col.main};">
-          ${nombre.charAt(0).toUpperCase()}
-        </div>
-        <div style="flex:1;">
-          <div class="tabla-nombre">${nombre}</div>
-          <div class="tabla-sub">${datos.termometro ? '🌡️ ' : ''}${datos.reflexiones > 0 ? '💭 ' : ''}${datos.escudo ? '🛡️ ' : ''}${datos.muro ? '💛 ' : ''}</div>
-        </div>
-        <div class="tabla-progress">
-          <div class="mini-bar"><div class="mini-bar-fill" style="width:${pct}%;background:${col.muted};"></div></div>
-          <div class="tabla-pct" style="color:${col.main};">${pct}%</div>
-        </div>
-        <span class="tabla-badge ${badge[0]}">${badge[1]}</span>
-      </div>`;
+    var cols=['#D5F5E3','#D6EAF8','#FAD7A0','#E8DAEF','#FADBD8'];
+    document.getElementById('muro-posts').innerHTML=snap.docs.map(function(d,i){
+      var p=d.data();
+      return '<div class="muro-post" style="background:'+cols[i%5]+';"><div class="muro-post-nombre">'+p.nombre+'</div><div>'+p.texto+'</div></div>';
     }).join('');
+  },function(e){console.log('Muro error:',e);});
+}
+function publicarMuro(){
+  var txt=document.getElementById('muro-input').value.trim();
+  if(!txt) return;
+  loading(true,'Publicando...');
+  db.collection('talleres/conexion_social/muro').add({nombre:estado.nombre,texto:txt,ts:Date.now()})
+    .catch(function(e){console.log(e);})
+    .then(function(){loading(false);document.getElementById('muro-input').value='';});
+}
 
-  } catch(e) {
-    console.error(e);
-    document.getElementById('stat-grid').innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-txt">Error al cargar. Verifica que Firestore esté activo.</div></div>`;
+// ══ ACUERDO ═══════════════════════════════════════════════
+function abrirAcuerdoScreen(){
+  irA('s-acuerdo');
+  db.collection('talleres/conexion_social/compromisos').orderBy('votos','desc').onSnapshot(function(snap){
+    var lista=document.getElementById('acuerdo-lista');
+    if(!snap.docs.length){lista.innerHTML='<p style="font-size:.85rem;color:var(--gris-txt);">Aún no hay compromisos.</p>';return;}
+    lista.innerHTML=snap.docs.map(function(d){
+      var data=d.data();
+      var yoVote=(data.votantes||[]).indexOf(estado.nombre)>-1;
+      return '<div class="acuerdo-comp">'+
+        '<div style="flex:1;"><div>'+data.texto+'</div>'+
+        '<div class="acuerdo-comp-num">🙋 '+(data.votos||0)+' personas se unen</div></div>'+
+        '<button class="acuerdo-comp-voto '+(yoVote?'voted':'')+'" onclick="votarCompromiso(\''+d.id+'\','+yoVote+')">'+
+        (yoVote?'✓ Me uno':'+ Me uno')+'</button></div>';
+    }).join('');
+  },function(e){console.log('Acuerdo error:',e);});
+  db.collection('talleres/conexion_social/acuerdo').doc('firmantes').onSnapshot(function(snap){
+    if(!snap.exists) return;
+    var firmantes=snap.data().lista||[];
+    if(!firmantes.length) return;
+    document.getElementById('acuerdo-firmantes').style.display='block';
+    document.getElementById('firmantes-lista').innerHTML=firmantes.map(function(n){
+      return '<span class="firmante-chip">'+n+'</span>';
+    }).join('');
+  });
+}
+function publicarCompromiso(){
+  var txt=document.getElementById('acuerdo-input').value.trim();
+  if(!txt) return;
+  loading(true,'Publicando compromiso...');
+  db.collection('talleres/conexion_social/compromisos')
+    .add({nombre:estado.nombre,texto:txt,votos:0,votantes:[],ts:Date.now()})
+    .catch(function(e){console.log(e);})
+    .then(function(){loading(false);document.getElementById('acuerdo-input').value='';});
+}
+function votarCompromiso(docId,yoVote){
+  if(yoVote) return;
+  db.collection('talleres/conexion_social/compromisos').doc(docId).get().then(function(snap){
+    var d=snap.data();
+    snap.ref.update({votos:(d.votos||0)+1,votantes:firebase.firestore.FieldValue.arrayUnion(estado.nombre)});
+  });
+}
+function firmarAcuerdo(){
+  loading(true,'Firmando...');
+  db.collection('talleres/conexion_social/acuerdo').doc('firmantes')
+    .set({lista:firebase.firestore.FieldValue.arrayUnion(estado.nombre)},{merge:true})
+    .catch(function(e){console.log(e);})
+    .then(function(){
+      loading(false);
+      document.getElementById('btn-firmar').textContent='✅ ¡Firmaste el Acuerdo!';
+      document.getElementById('btn-firmar').disabled=true;
+      lanzarConfeti();
+    });
+}
+
+// ══ COMPLETAR ETAPA ═══════════════════════════════════════
+function completarEtapa(idx){
+  if(estado.completados.indexOf(idx)<0) estado.completados.push(idx);
+  var temaIdx=idx-1;
+  if(temaIdx>=0){
+    var tema=CONTENIDO[estado.modulo].temas[temaIdx];
+    var resps={};
+    if(tema.reflexiones) tema.reflexiones.forEach(function(r,i){
+      var el=document.getElementById('reflx-'+temaIdx+'-'+i);
+      if(el&&el.value) resps[i]=el.value;
+    });
+    if(Object.keys(resps).length){
+      estado.reflexiones[temaIdx]=resps;
+      db.collection('talleres/'+estado.modulo+'/reflexiones').doc(estado.nombre+'_t'+temaIdx)
+        .set({nombre:estado.nombre,temaIdx:temaIdx,resps:resps,ts:Date.now()})
+        .catch(function(e){console.log(e);});
+    }
+  }
+  construirBienvenida();
+  var total=CONTENIDO[estado.modulo].temas.length+1;
+  if(estado.completados.length>=total){mostrarCierre();return;}
+  irA('s-bienvenida');
+}
+
+// ══ CIERRE ════════════════════════════════════════════════
+function mostrarCierre(){
+  var nombre1=estado.nombre.split(' ')[0];
+  var C=CONTENIDO[estado.modulo];
+  document.getElementById('cierre-titulo').textContent='¡Lo lograste, '+nombre1+'!';
+  document.getElementById('cierre-nombre').textContent=estado.moduloNombre+' — '+(estado.modo==='taller'?'Modo Taller':'Modo Escuela');
+  var html='';
+  if(Object.keys(estado.termometro).length){
+    var t=Object.values(estado.termometro)[0];
+    html+='<div class="resumen-card"><div class="resumen-card-header" style="background:'+C.colorClaro+';color:'+C.color+';">🌡️ Mi Termómetro</div>'+
+      '<div class="resumen-card-body">Promedio: <strong>'+t.prom+'/10</strong></div></div>';
+  }
+  if(Object.keys(estado.reflexiones).length){
+    var r=Object.values(estado.reflexiones)[0];
+    if(r[0]) html+='<div class="resumen-card"><div class="resumen-card-header" style="background:'+C.colorClaro+';color:'+C.color+';">💭 Mi reflexión</div>'+
+      '<div class="resumen-card-body">"'+r[0]+'"</div></div>';
+  }
+  if(estado.escudo[3]) html+='<div class="resumen-card"><div class="resumen-card-header" style="background:var(--verde-c);color:var(--verde);">🛡️ Mi lema de equipo</div>'+
+    '<div class="resumen-card-body" style="font-style:italic;font-weight:600;">"'+estado.escudo[3]+'"</div></div>';
+  html+='<div class="resumen-card"><div class="resumen-card-header" style="background:'+C.colorClaro+';color:'+C.color+';">✅ Completado</div>'+
+    '<div class="resumen-card-body">'+estado.completados.length+' de '+(C.temas.length+1)+' etapas</div></div>';
+  document.getElementById('resumen-body').innerHTML=html;
+  irA('s-cierre');
+  lanzarConfeti();
+}
+function compartirResumen(){
+  var texto='Completé el taller de FUNDACOOFISAM — '+estado.moduloNombre+' 🎉\n"'+(estado.escudo[3]||'Aprendimos juntos')+'"';
+  if(navigator.share) navigator.share({title:'Mi taller FUNDACOOFISAM',text:texto});
+  else{navigator.clipboard&&navigator.clipboard.writeText(texto);alert('Resumen copiado');}
+}
+function lanzarConfeti(){
+  var cols=['#E67E22','#27AE60','#2980B9','#9B59B6','#F1C40F'];
+  for(var i=0;i<40;i++){
+    var c=document.createElement('div');
+    c.className='confeti-piece';
+    c.style.cssText='left:'+Math.random()*100+'vw;top:-10px;background:'+cols[Math.floor(Math.random()*5)]+';animation-delay:'+Math.random()*1.5+'s;animation-duration:'+(2+Math.random())+'s;';
+    document.body.appendChild(c);
+    setTimeout(function(){if(c.parentElement)c.parentElement.removeChild(c);},4000);
   }
 }
 
-// ── TERMÓMETROS ──────────────────────────────────────────
-async function cargarTermometros() {
-  const mod = moduloActivo;
-  const col = COLORES[mod];
-  const items = TERMOMETRO_ITEMS[mod];
-  const container = document.getElementById('termo-admin-content');
-  container.innerHTML = `<div class="loading-inline"><div class="spinner"></div><div>Cargando...</div></div>`;
-  try {
-    const snap = await db.collection(`talleres/${mod}/termometros`).get();
-    if (snap.empty) {
-      container.innerHTML = `<div class="empty-state"><div class="empty-icon">🌡️</div><div class="empty-txt">Aún no hay respuestas del termómetro.</div></div>`;
-      return;
-    }
-    // acumular promedios por ítem
-    const sumas = Array(items.length).fill(0);
-    const conteos = Array(items.length).fill(0);
-    const porPersona = [];
-    snap.docs.forEach(d => {
-      const data = d.data();
-      if (data.vals) {
-        data.vals.forEach((v, i) => { sumas[i] += v; conteos[i]++; });
-        porPersona.push({ nombre: data.nombre, prom: parseFloat(data.prom) });
-      }
-    });
-    const promedios = sumas.map((s, i) => conteos[i] > 0 ? (s / conteos[i]).toFixed(1) : '—');
-    const promGeneral = (porPersona.reduce((a,b) => a + b.prom, 0) / porPersona.length).toFixed(1);
+// ══ INIT ═════════════════════════════════════════════════
+document.getElementById('inp-nombre').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('inp-codigo').focus();});
+document.getElementById('inp-codigo').addEventListener('keydown',function(e){if(e.key==='Enter')ingresar();});
+document.getElementById('inp-codigo').addEventListener('input',function(){this.value=this.value.toUpperCase();});
+document.getElementById('modal-escudo').addEventListener('click',function(e){if(e.target===this)cerrarModalEscudo();});
 
-    // detectar alertas (promedio > 6)
-    const alertas = promedios.filter(p => parseFloat(p) > 6);
-
-    let html = `<div class="termo-admin-card">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-        <div class="termo-admin-titulo">Resultados del equipo</div>
-        <div style="font-size:.8rem;color:var(--gris-txt);">${snap.size} respuestas</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;padding:14px;background:${col.claro};border-radius:var(--radio-sm);">
-        <div style="font-size:2rem;font-weight:800;color:${col.main};">${promGeneral}</div>
-        <div>
-          <div style="font-size:.85rem;font-weight:700;color:${col.main};">Promedio general del equipo</div>
-          <div style="font-size:.75rem;color:var(--gris-txt);">Basado en ${snap.size} participante${snap.size !== 1 ? 's' : ''}</div>
-        </div>
-      </div>`;
-
-    // items
-    html += items.map(([temaKey, label], i) => {
-      const prom = parseFloat(promedios[i]) || 0;
-      const pct = (prom / 10) * 100;
-      const color = prom <= 3 ? '#27AE60' : prom <= 6 ? '#E67E22' : '#E74C3C';
-      const nivel = prom <= 3 ? 'Bajo — positivo' : prom <= 6 ? 'Medio — atención' : '⚠️ Alto — prioridad';
-      return `<div class="termo-item-admin">
-        <div class="termo-item-label">
-          <span>${label}</span>
-          <span class="termo-prom" style="color:${color};">${promedios[i]}/10</span>
-        </div>
-        <div class="termo-bar-wrap">
-          <div class="termo-bar-fill" style="width:${pct}%;background:${color};"></div>
-        </div>
-        <div class="termo-respondieron" style="color:${color};">${nivel} · ${conteos[i]} respuestas</div>
-      </div>`;
-    }).join('');
-
-    if (alertas.length > 0) {
-      html += `<div class="termo-alerta">⚠️ <strong>${alertas.length} ítem${alertas.length > 1 ? 's' : ''}</strong> con promedio alto — posibles temas prioritarios para trabajar en el grupo.</div>`;
-    }
-    html += `</div>`;
-
-    // por persona
-    html += `<div class="tabla-wrap"><div class="tabla-header">Por participante</div>`;
-    html += porPersona.sort((a,b) => b.prom - a.prom).map(p => {
-      const color = p.prom <= 3 ? '#27AE60' : p.prom <= 6 ? '#E67E22' : '#E74C3C';
-      return `<div class="tabla-row">
-        <div style="flex:1;font-size:.9rem;font-weight:600;">${p.nombre}</div>
-        <div style="font-size:1rem;font-weight:800;color:${color};">${p.prom}/10</div>
-        <span class="tabla-badge" style="background:${color}20;color:${color};">
-          ${p.prom <= 3 ? 'Bajo' : p.prom <= 6 ? 'Medio' : 'Alto'}
-        </span>
-      </div>`;
-    }).join('');
-    html += `</div>`;
-
-    container.innerHTML = html;
-  } catch(e) {
-    container.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-txt">Error al cargar termómetros.</div></div>`;
-    console.error(e);
-  }
-}
-
-// ── REFLEXIONES ──────────────────────────────────────────
-async function cargarReflexiones() {
-  const mod = moduloActivo;
-  const col = COLORES[mod];
-  const labels = REFLEXIONES_LABELS[mod];
-  const container = document.getElementById('reflx-admin-content');
-  container.innerHTML = `<div class="loading-inline"><div class="spinner"></div><div>Cargando reflexiones...</div></div>`;
-  try {
-    const snap = await db.collection(`talleres/${mod}/reflexiones`).get();
-    if (snap.empty) {
-      container.innerHTML = `<div class="empty-state"><div class="empty-icon">💭</div><div class="empty-txt">Aún no hay reflexiones enviadas.</div></div>`;
-      return;
-    }
-    // agrupar por temaIdx y pregunta
-    const agrupadas = {}; // {temaIdx: {pregIdx: [{nombre, texto}]}}
-    snap.docs.forEach(d => {
-      const data = d.data();
-      const ti = data.temaIdx;
-      if (!agrupadas[ti]) agrupadas[ti] = {};
-      if (data.resps) {
-        Object.entries(data.resps).forEach(([pi, txt]) => {
-          if (!agrupadas[ti][pi]) agrupadas[ti][pi] = [];
-          agrupadas[ti][pi].push({ nombre: data.nombre, texto: txt });
-        });
-      }
-    });
-
-    const bgColors = ['#FEF5E7','#EAFAF1','#EBF5FB','#F4ECF7','#FDEEEE'];
-    let html = '';
-    const temas = TEMAS[mod];
-    Object.entries(agrupadas).sort(([a],[b]) => a - b).forEach(([ti, pregs]) => {
-      html += `<div style="margin-bottom:20px;">
-        <div style="font-size:.9rem;font-weight:800;color:${col.main};margin-bottom:10px;padding:8px 12px;background:${col.claro};border-radius:var(--radio-sm);">
-          Tema ${parseInt(ti)+1}: ${temas[ti] || ''}
-        </div>`;
-      Object.entries(pregs).sort(([a],[b]) => a - b).forEach(([pi, resps]) => {
-        const label = labels[ti]?.[pi] || `Pregunta ${parseInt(pi)+1}`;
-        html += `<div class="reflx-card">
-          <div class="reflx-pregunta-label">${label}</div>
-          ${resps.length === 0 ? '<div class="reflx-empty">Sin respuestas aún.</div>' :
-            resps.map((r, i) => `
-              <div class="reflx-respuesta" style="background:${bgColors[i%5]};border-left-color:${col.muted};">
-                <div class="reflx-autor">${r.nombre}</div>
-                <div>${r.texto}</div>
-              </div>`).join('')
-          }
-          <div style="font-size:.75rem;color:var(--gris-txt);margin-top:8px;">${resps.length} respuesta${resps.length !== 1 ? 's' : ''}</div>
-        </div>`;
-      });
-      html += `</div>`;
-    });
-    container.innerHTML = html || `<div class="empty-state"><div class="empty-icon">💭</div><div class="empty-txt">Sin reflexiones aún.</div></div>`;
-  } catch(e) {
-    container.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-txt">Error al cargar reflexiones.</div></div>`;
-    console.error(e);
-  }
-}
-
-// ── MURO DE ORGULLO ──────────────────────────────────────
-async function cargarMuro() {
-  const container = document.getElementById('muro-admin-content');
-  container.innerHTML = `<div class="loading-inline"><div class="spinner"></div></div>`;
-  try {
-    const unsub = db.collection('talleres/conexion_social/muro').orderBy('ts', 'asc').onSnapshot( snap => {
-      if (snap.empty) {
-        container.innerHTML = `<div class="empty-state"><div class="empty-icon">💛</div><div class="empty-txt">El muro está vacío todavía.</div></div>`;
-        return;
-      }
-      const colores = ['#D5F5E3','#D6EAF8','#FAD7A0','#E8DAEF','#FADBD8'];
-      container.innerHTML = `
-        <div style="font-size:.82rem;color:var(--gris-txt);margin-bottom:12px;">${snap.size} mensaje${snap.size !== 1 ? 's' : ''} publicado${snap.size !== 1 ? 's' : ''}</div>
-        ${snap.docs.map((d, i) => {
-          const p = d.data();
-          return `<div class="muro-admin-post" style="border-left:4px solid ${colores[i%5]};">
-            <div class="muro-admin-nombre">${p.nombre}</div>
-            <div class="muro-admin-texto">"${p.texto}"</div>
-          </div>`;
-        }).join('')}`;
-    });
-    unsubs.push(unsub);
-  } catch(e) { container.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-txt">Error al cargar muro.</div></div>`; }
-}
-
-// ── ACUERDO ──────────────────────────────────────────────
-async function cargarAcuerdo() {
-  const container = document.getElementById('acuerdo-admin-content');
-  container.innerHTML = `<div class="loading-inline"><div class="spinner"></div></div>`;
-  try {
-    // compromisos en tiempo real
-    const unsub = db.collection('talleres/conexion_social/compromisos').orderBy('votos', 'desc').onSnapshot( snap => {
-      let html = `<div style="font-size:.82rem;color:var(--gris-txt);margin-bottom:12px;">${snap.size} compromiso${snap.size !== 1 ? 's' : ''} publicado${snap.size !== 1 ? 's' : ''}</div>`;
-      if (!snap.empty) {
-        html += snap.docs.map((d, i) => {
-          const p = d.data();
-          const esTop = i < 5;
-          return `<div class="acuerdo-admin-item" style="${esTop ? 'border-left:4px solid #27AE60;' : ''}">
-            <div class="acuerdo-votos">
-              <div class="acuerdo-votos-num">${p.votos || 0}</div>
-              <div class="acuerdo-votos-label">votos</div>
-            </div>
-            <div>
-              <div class="acuerdo-texto">${p.texto}</div>
-              <div class="acuerdo-autor">— ${p.nombre}</div>
-            </div>
-            ${esTop ? '<span style="font-size:.72rem;font-weight:700;color:#1A5C2E;background:#D5F5E3;padding:3px 8px;border-radius:10px;flex-shrink:0;">TOP</span>' : ''}
-          </div>`;
-        }).join('');
-        // top 5 como acuerdo oficial
-        const top5 = snap.docs.slice(0, 5).map(d => d.data().texto);
-        html += `<div style="margin-top:20px;background:#D5F5E3;border-radius:var(--radio);padding:16px;border:1px solid #27AE60;">
-          <div style="font-size:.85rem;font-weight:800;color:#1A5C2E;margin-bottom:10px;">📜 Acuerdo Oficial (Top 5 por votos)</div>
-          ${top5.map((t, i) => `<div style="font-size:.88rem;margin-bottom:6px;padding:6px 0;border-bottom:1px solid rgba(0,0,0,.06);">
-            <strong>${i+1}.</strong> ${t}</div>`).join('')}
-        </div>`;
-      }
-      // firmantes
-      db.collection('talleres/conexion_social/acuerdo').doc('firmantes').get().then(fSnap => {
-        const firmantes = fSnap.exists() ? (fSnap.data().lista || []) : [];
-        if (firmantes.length) {
-          html += `<div style="margin-top:16px;">
-            <div style="font-size:.82rem;font-weight:700;color:var(--gris-txt);margin-bottom:10px;text-transform:uppercase;letter-spacing:.04em;">✅ Firmantes (${firmantes.length})</div>
-            <div class="firmantes-wrap">${firmantes.map(n => `<span class="firmante-chip">${n}</span>`).join('')}</div>
-          </div>`;
-        }
-        container.innerHTML = html;
-      }).catch(() => { container.innerHTML = html; });
-    });
-    unsubs.push(unsub);
-  } catch(e) { container.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-txt">Error al cargar acuerdo.</div></div>`; }
-}
-
-// ── EXPORTAR CSV ─────────────────────────────────────────
-window.exportarCSV = function() {
-  const data = window._participantesData;
-  if (!data) { alert('Carga primero el panel.'); return; }
-  const rows = [['Nombre','Reflexiones','Termómetro','Escudo','Muro','Progreso']];
-  Object.entries(data).forEach(([nombre, d]) => {
-    const etapas = (d.reflexiones > 0 ? 1 : 0) + (d.termometro ? 1 : 0) + (d.escudo ? 1 : 0);
-    rows.push([nombre, d.reflexiones, d.termometro ? 'Sí' : 'No', d.escudo ? 'Sí' : 'No', d.muro ? 'Sí' : 'No', Math.round((etapas/3)*100)+'%']);
-  });
-  const csv = rows.map(r => r.map(c => `"${c}"`).join(',')).join('\n');
-  const a = document.createElement('a');
-  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
-  a.download = `resultados_${window._moduloData}_${new Date().toISOString().slice(0,10)}.csv`;
-  a.click();
-};
-
-// ── EVENT LISTENERS ─────────────────────────────────────
-document.addEventListener('DOMContentLoaded', function() {
-  
-// ══ EXPONER FUNCIONES GLOBALES ═══════════════════════
-window.loginAdmin = typeof loginAdmin !== "undefined" ? loginAdmin : function(){};
-window.salir = typeof salir !== "undefined" ? salir : function(){};
-window.refrescarTodo = typeof refrescarTodo !== "undefined" ? refrescarTodo : function(){};
-window.cambiarModulo = typeof cambiarModulo !== "undefined" ? cambiarModulo : function(){};
-window.cambiarSeccion = typeof cambiarSeccion !== "undefined" ? cambiarSeccion : function(){};
-window.exportarCSV = typeof exportarCSV !== "undefined" ? exportarCSV : function(){};
-window.cargarPanel = typeof cargarPanel !== "undefined" ? cargarPanel : function(){};
-window.cargarTermometros = typeof cargarTermometros !== "undefined" ? cargarTermometros : function(){};
-window.cargarReflexiones = typeof cargarReflexiones !== "undefined" ? cargarReflexiones : function(){};
-window.cargarMuro = typeof cargarMuro !== "undefined" ? cargarMuro : function(){};
-window.cargarAcuerdo = typeof cargarAcuerdo !== "undefined" ? cargarAcuerdo : function(){};
-
-document.getElementById('btn-login-admin').addEventListener('click', function() { window.loginAdmin(); });
-  document.getElementById('inp-admin-pass').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') window.loginAdmin();
-  });
-  document.getElementById('btn-refresh').addEventListener('click', function() { window.refrescarTodo(); });
-  document.getElementById('btn-salir').addEventListener('click', function() { window.salir(); });
-  var btnExp = document.getElementById('btn-export');
-  if (btnExp) btnExp.addEventListener('click', function() { window.exportarCSV(); });
-
-  document.querySelectorAll('[id^="modtab-"]').forEach(function(el) {
-    el.addEventListener('click', function() { window.cambiarModulo(el.id.replace('modtab-','')); });
-  });
-
-  document.querySelectorAll('.sec-tab[data-sec]').forEach(function(el) {
-    el.addEventListener('click', function() { window.cambiarSeccion(el.dataset.sec, el); });
-  });
-});
 </script>
 </body>
 </html>
+</head>
+<body>
+<div class="app" id="app">
+
+<!-- ══════════════════ ACCESO ══════════════════ -->
+<div class="screen active" id="s-acceso">
+  <div style="max-width:400px;width:100%;margin:auto;">
+    <div class="acceso-logo">🌱</div>
+    <h1 class="acceso-titulo">Taller Formativo<br>FUNDACOOFISAM</h1>
+    <p class="acceso-sub">Garzón, Huila · Julio 2025</p>
+    <div class="acceso-form card">
+      <div>
+        <label class="input-label" for="inp-nombre">Tu nombre completo</label>
+        <input class="input-field" id="inp-nombre" type="text" placeholder="Escribe tu nombre..." autocomplete="off">
+      </div>
+      <div>
+        <label class="input-label" for="inp-codigo">Código de acceso</label>
+        <input class="input-field" id="inp-codigo" type="text" placeholder="Código del equipo..." autocomplete="off" style="text-transform:uppercase;" oninput="this.value=this.value.toUpperCase()">
+      </div>
+      <div class="error-msg" id="error-acceso">Código incorrecto. Verifica con tu facilitador.</div>
+      <button class="btn btn-primary" onclick="ingresar()">Ingresar →</button>
+      <p style="font-size:.78rem;color:var(--gris-txt);text-align:center;margin-top:8px;">
+        Si no tienes el código, pídelo a tu facilitador antes del taller.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ MODO ══════════════════ -->
+<div class="screen" id="s-modo">
+  <div style="max-width:420px;width:100%;margin:auto;width:100%;padding:0 16px;">
+    <p class="modo-saludo" id="modo-saludo">¡Hola, nombre!</p>
+    <p class="modo-sub" id="modo-sub">¿Cómo vas a usar el taller hoy?</p>
+    <div class="modo-cards">
+      <div class="modo-card" onclick="elegirModo('taller')" id="card-taller">
+        <div class="modo-icono">🎯</div>
+        <div>
+          <div class="modo-nombre">Modo Taller</div>
+          <div class="modo-desc">Estás en la sesión con el/la facilitador/a. Las actividades siguen el ritmo del grupo.</div>
+        </div>
+      </div>
+      <div class="modo-card" onclick="elegirModo('escuela')" id="card-escuela">
+        <div class="modo-icono">🏫</div>
+        <div>
+          <div class="modo-nombre">Modo Escuela</div>
+          <div class="modo-desc">Entras a tu propio ritmo para completar los compromisos y el recorrido completo.</div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:20px;">
+      <button class="btn btn-primary" id="btn-modo" onclick="confirmarModo()" disabled>Continuar →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ BIENVENIDA ══════════════════ -->
+<div class="screen" id="s-bienvenida">
+  <div class="top-bar">
+    <button class="top-bar-back" onclick="irA('s-modo')">←</button>
+    <div class="top-bar-info">
+      <div class="top-bar-title" id="bv-modulo-nombre">Módulo Artística</div>
+      <div class="top-bar-sub" id="bv-modo-label">Modo Taller</div>
+    </div>
+    <button onclick="irA('s-acceso')" style="padding:7px 14px;border-radius:20px;background:var(--gris-2);color:var(--negro);font-size:.78rem;font-weight:600;border:none;cursor:pointer;">🏠 Inicio</button>
+  </div>
+  <div class="scroll-body" style="padding:0 0 32px;">
+    <div class="bienvenida-hero" id="bv-hero">
+      <div class="bienvenida-modulo-chip" id="bv-chip"></div>
+      <h2 class="bienvenida-titulo" id="bv-titulo">¡Bienvenido/a!</h2>
+      <p class="bienvenida-desc" id="bv-desc">Hoy vamos a trabajar juntos en temas que fortalecen al equipo.</p>
+    </div>
+    <!-- Barra de progreso global -->
+    <div style="padding:0 16px 16px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <span style="font-size:.8rem;font-weight:700;color:var(--gris-txt);">TU PROGRESO</span>
+        <span style="font-size:.8rem;color:var(--gris-txt);" id="bv-progreso-txt">0 de 6 completados</span>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="bv-progreso-fill" style="width:0%;background:var(--naranja);"></div>
+      </div>
+    </div>
+    <!-- Lista de temas -->
+    <div class="temas-lista" id="bv-temas-lista"></div>
+    <div class="bienvenida-footer">
+      <div class="duracion-badge">
+        <span>⏱</span>
+        <span id="bv-duracion">Duración total: ~45 minutos</span>
+      </div>
+      <button class="btn btn-primary" id="bv-btn-iniciar" onclick="iniciarRecorrido()">
+        Comenzar →
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ QUIZ ══════════════════ -->
+<div class="screen" id="s-quiz">
+  <div class="top-bar">
+    <button class="top-bar-back" onclick="irA('s-bienvenida')">←</button>
+    <div class="top-bar-info">
+      <div class="top-bar-title">Quiz de identidad</div>
+      <div class="top-bar-sub">¿Qué tanto nos conocemos?</div>
+    </div>
+    <div class="top-bar-step" id="quiz-step-label">1 de 5</div>
+    <button onclick="irA('s-acceso')" style="padding:7px 12px;border-radius:20px;background:var(--gris-2);color:var(--negro);font-size:.78rem;font-weight:600;border:none;cursor:pointer;">🏠</button>
+  </div>
+  <div style="padding:8px 16px 4px;">
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="quiz-progress" style="width:20%;background:var(--morado);"></div>
+    </div>
+  </div>
+  <div class="scroll-body" id="quiz-body">
+    <!-- JS rellena -->
+  </div>
+</div>
+
+<!-- ══════════════════ TEMA: VIDEO + CONTENIDO ══════════════════ -->
+<div class="screen" id="s-tema">
+  <div class="top-bar">
+    <button class="top-bar-back" id="tema-back-btn">←</button>
+    <div class="top-bar-info">
+      <div class="top-bar-title" id="tema-titulo-bar">Tema</div>
+      <div class="top-bar-sub" id="tema-sub-bar">Video + actividades</div>
+    </div>
+    <div class="top-bar-step" id="tema-step-label"></div>
+  </div>
+  <div class="scroll-body" id="tema-body">
+    <!-- JS rellena -->
+  </div>
+</div>
+
+<!-- ══════════════════ TERMÓMETRO ══════════════════ -->
+<div class="screen" id="s-termo">
+  <div class="top-bar">
+    <button class="top-bar-back" id="termo-back-btn">←</button>
+    <div class="top-bar-info">
+      <div class="top-bar-title" id="termo-titulo">Termómetro</div>
+      <div class="top-bar-sub" id="termo-sub">Evalúa al equipo</div>
+    </div>
+  </div>
+  <div class="scroll-body" id="termo-body"></div>
+</div>
+
+<!-- ══════════════════ ESCUDO ══════════════════ -->
+<div class="screen" id="s-escudo">
+  <div class="top-bar">
+    <button class="top-bar-back" onclick="irA('s-bienvenida')">←</button>
+    <div class="top-bar-info">
+      <div class="top-bar-title">Escudo del Equipo</div>
+      <div class="top-bar-sub">Construye la identidad del equipo</div>
+    </div>
+  </div>
+  <div class="scroll-body">
+    <p style="font-size:.9rem;color:var(--gris-txt);margin-bottom:16px;line-height:1.5;">
+      Toca cada cuadrante para completarlo. Cuando termines los 4, el escudo se iluminará.
+    </p>
+    <div class="escudo-grid" id="escudo-grid">
+      <div class="escudo-cuadrante" style="background:#D6EAF8;" onclick="editarCuadrante(0)">
+        <div class="escudo-q-label" style="color:#154360;">Lo que nos define</div>
+        <div class="escudo-q-prompt" id="eq-0-prompt">¿Quiénes somos?</div>
+        <div class="escudo-q-respuesta" id="eq-0-resp" style="display:none;color:#154360;"></div>
+        <span class="escudo-q-edit" id="eq-0-edit" style="display:none;">✏️</span>
+      </div>
+      <div class="escudo-cuadrante" style="background:#D5F5E3;" onclick="editarCuadrante(1)">
+        <div class="escudo-q-label" style="color:#1A5C2E;">Lo que nos enorgullece</div>
+        <div class="escudo-q-prompt" id="eq-1-prompt">¿Qué nos hace especiales?</div>
+        <div class="escudo-q-respuesta" id="eq-1-resp" style="display:none;color:#1A5C2E;"></div>
+        <span class="escudo-q-edit" id="eq-1-edit" style="display:none;">✏️</span>
+      </div>
+      <div class="escudo-cuadrante" style="background:#FAD7A0;" onclick="editarCuadrante(2)">
+        <div class="escudo-q-label" style="color:#7D3C0F;">Lo que queremos ser</div>
+        <div class="escudo-q-prompt" id="eq-2-prompt">¿Cómo queremos ser recordados?</div>
+        <div class="escudo-q-respuesta" id="eq-2-resp" style="display:none;color:#7D3C0F;"></div>
+        <span class="escudo-q-edit" id="eq-2-edit" style="display:none;">✏️</span>
+      </div>
+      <div class="escudo-cuadrante" style="background:#E8DAEF;" onclick="editarCuadrante(3)">
+        <div class="escudo-q-label" style="color:#4A235A;">Nuestro lema</div>
+        <div class="escudo-q-prompt" id="eq-3-prompt">Una frase que nos represente</div>
+        <div class="escudo-q-respuesta" id="eq-3-resp" style="display:none;color:#4A235A;"></div>
+        <span class="escudo-q-edit" id="eq-3-edit" style="display:none;">✏️</span>
+      </div>
+    </div>
+    <div class="escudo-lema" id="escudo-lema-display" style="display:none;"></div>
+    <div style="display:flex;gap:8px;margin-bottom:16px;">
+      <div style="flex:1;padding:10px;background:var(--gris-2);border-radius:var(--radio-sm);text-align:center;font-size:.78rem;color:var(--gris-txt);">
+        <span id="escudo-progreso">0/4 completados</span>
+      </div>
+    </div>
+    <button class="btn btn-verde" id="escudo-btn" onclick="guardarEscudo()" disabled>
+      Guardar mi escudo ✓
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════════ MURO DE ORGULLO ══════════════════ -->
+<div class="screen" id="s-muro">
+  <div class="top-bar">
+    <button class="top-bar-back" onclick="irA('s-bienvenida')">←</button>
+    <div class="top-bar-info">
+      <div class="top-bar-title">Muro de Orgullo</div>
+      <div class="top-bar-sub">FUNDACOOFISAM — Conexión Social</div>
+    </div>
+  </div>
+  <div class="scroll-body">
+    <div class="muro-input-wrap">
+      <p class="muro-titulo-sec">Tu mensaje</p>
+      <p style="font-size:.9rem;margin-bottom:12px;font-weight:600;">
+        Estoy orgulloso/a de FUNDACOOFISAM porque...
+      </p>
+      <textarea class="reflx-input" id="muro-input" placeholder="Escribe tu razón..." rows="3"></textarea>
+      <button class="btn btn-verde" style="margin-top:10px;" onclick="publicarMuro()">
+        Publicar en el muro ↗
+      </button>
+    </div>
+    <p class="muro-titulo-sec">Lo que dice el equipo</p>
+    <div class="muro-posts" id="muro-posts">
+      <p style="font-size:.85rem;color:var(--gris-txt);text-align:center;padding:20px 0;">
+        Aún no hay mensajes. ¡Sé el/la primero/a!
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ ACUERDO ══════════════════ -->
+<div class="screen" id="s-acuerdo">
+  <div class="top-bar">
+    <button class="top-bar-back" onclick="irA('s-bienvenida')">←</button>
+    <div class="top-bar-info">
+      <div class="top-bar-title">Acuerdo de Convivencia</div>
+      <div class="top-bar-sub">Construido por el equipo</div>
+    </div>
+  </div>
+  <div class="scroll-body">
+    <p style="font-size:.9rem;color:var(--gris-txt);margin-bottom:16px;line-height:1.5;">
+      Escribe tu compromiso. Los 5 con más votos formarán el Acuerdo Oficial del equipo.
+    </p>
+    <div class="muro-input-wrap" style="margin-bottom:16px;">
+      <p style="font-size:.9rem;font-weight:600;margin-bottom:10px;">
+        Para que este equipo sea lo que queremos ser, yo me comprometo a...
+      </p>
+      <textarea class="reflx-input" id="acuerdo-input" placeholder="Escribe tu compromiso..." rows="3"></textarea>
+      <button class="btn btn-verde" style="margin-top:10px;" onclick="publicarCompromiso()">
+        Agregar mi compromiso ↗
+      </button>
+    </div>
+    <p class="muro-titulo-sec">Compromisos del equipo</p>
+    <div class="acuerdo-compromisos" id="acuerdo-lista"></div>
+    <div class="acuerdo-firmantes" id="acuerdo-firmantes" style="display:none;">
+      <div class="acuerdo-firmantes-titulo">✅ Firmaron el Acuerdo</div>
+      <div class="firmantes-lista" id="firmantes-lista"></div>
+    </div>
+    <button class="btn btn-verde" style="margin-top:16px;" id="btn-firmar" onclick="firmarAcuerdo()">
+      Firmo este Acuerdo ✓
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════════ CIERRE ══════════════════ -->
+<div class="screen" id="s-cierre">
+  <div class="cierre-hero">
+    <div class="cierre-emoji">🎉</div>
+    <h2 class="cierre-titulo" id="cierre-titulo">¡Lo lograste!</h2>
+    <p class="cierre-nombre" id="cierre-nombre">Nombre del participante</p>
+  </div>
+  <div class="resumen-cards" id="resumen-body"></div>
+  <div style="display:flex;gap:10px;margin:0 16px 32px;">
+    <button onclick="irA('s-acceso')" style="flex:1;padding:14px;border-radius:50px;background:var(--gris-2);color:var(--negro);font-size:.95rem;font-weight:700;border:none;cursor:pointer;">🏠 Inicio</button>
+    <button onclick="compartirResumen()" style="flex:2;padding:14px;border-radius:50px;background:var(--naranja);color:#fff;font-size:.95rem;font-weight:700;border:none;cursor:pointer;">📤 Compartir</button>
+  </div>
+</div>
+
+<!-- LOADING -->
+<div class="loading-overlay" id="loading">
+  <div class="loading-spinner"></div>
+  <div class="loading-txt" id="loading-txt">Guardando...</div>
+</div>
+
+<!-- MODAL ESCUDO -->
+<div id="modal-escudo" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);
+  z-index:200;display:none;align-items:flex-end;">
+  <div style="background:var(--blanco);border-radius:20px 20px 0 0;padding:24px 20px;width:100%;max-height:80vh;">
+    <p style="font-size:.9rem;font-weight:700;margin-bottom:12px;" id="modal-escudo-label">Responde:</p>
+    <textarea id="modal-escudo-input" class="reflx-input" rows="3" style="margin-bottom:14px;"></textarea>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-secondary" style="flex:1;" onclick="cerrarModalEscudo()">Cancelar</button>
+      <button class="btn btn-verde" style="flex:1;" onclick="guardarCuadrante()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+</div>
