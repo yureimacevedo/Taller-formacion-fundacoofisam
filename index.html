@@ -715,6 +715,7 @@ function abrirTermometro(temaIdx){
   });
   html+='<div class="termo-resultado" id="tres"></div>';
   html+='<button class="btn-full" style="background:'+E.color+';margin-top:8px" onclick="calcTermo('+temaIdx+')">Ver mi resultado →</button>';
+  html+='<button class="btn-full" id="btn-termo-continuar" style="background:#1C1C18;margin-top:10px;display:none">Continuar →</button>';
   $('termo-body').innerHTML=html;
   vistaApp('termo');
 }
@@ -740,6 +741,12 @@ function calcTermo(temaIdx){
     '<div style="font-size:.95rem;font-weight:700;color:'+col+'">Promedio: '+prom.toFixed(1)+'/10</div>'+
     '<div style="font-size:.82rem;color:#5A5A54;margin-top:4px">'+msg+'</div>';
   r.style.background=col+'15';r.style.border='1px solid '+col+'50';r.classList.add('show');
+  // Mostrar botón continuar después del resultado
+  var btnCont=document.getElementById('btn-termo-continuar');
+  if(btnCont){
+    btnCont.style.display='';
+    btnCont.onclick=function(){guardarYCompletar(temaIdx);};
+  }
   db.collection('talleres').doc(E.modulo).collection('termometros').doc(E.nombre+'_t'+temaIdx)
     .set({nombre:E.nombre,temaIdx:temaIdx,vals:vals,prom:prom.toFixed(1),ts:Date.now()}).catch(function(){});
 }
