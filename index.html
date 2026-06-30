@@ -685,7 +685,7 @@ function guardarYCompletar(idx){
   });
   if(Object.keys(resps).length){
     E.reflexiones[idx]=resps;
-    db.collection('talleres/'+E.modulo+'/reflexiones').doc(E.nombre+'_t'+idx)
+    db.collection('talleres').doc(E.modulo).collection('reflexiones').doc(E.nombre+'_t'+idx)
       .set({nombre:E.nombre,temaIdx:idx,resps:resps,ts:Date.now()}).catch(function(){});
   }
   completar(idx+1);
@@ -740,7 +740,7 @@ function calcTermo(temaIdx){
     '<div style="font-size:.95rem;font-weight:700;color:'+col+'">Promedio: '+prom.toFixed(1)+'/10</div>'+
     '<div style="font-size:.82rem;color:#5A5A54;margin-top:4px">'+msg+'</div>';
   r.style.background=col+'15';r.style.border='1px solid '+col+'50';r.classList.add('show');
-  db.collection('talleres/'+E.modulo+'/termometros').doc(E.nombre+'_t'+temaIdx)
+  db.collection('talleres').doc(E.modulo).collection('termometros').doc(E.nombre+'_t'+temaIdx)
     .set({nombre:E.nombre,temaIdx:temaIdx,vals:vals,prom:prom.toFixed(1),ts:Date.now()}).catch(function(){});
 }
 
@@ -776,7 +776,7 @@ function guardarCuadrante(){
 }
 
 function guardarEscudo(){
-  db.collection('talleres/conexion_social/escudos').doc(E.nombre)
+  db.collection('talleres').doc('conexion_social').collection('escudos').doc(E.nombre)
     .set({nombre:E.nombre,escudo:E.escudo,ts:Date.now()}).catch(function(){});
   completar(4);
 }
@@ -786,7 +786,7 @@ var muroUnsub=null;
 function abrirMuro(){
   vistaApp('muro');
   if(muroUnsub) muroUnsub();
-  muroUnsub=db.collection('talleres/conexion_social/muro').orderBy('ts').onSnapshot(function(snap){
+  muroUnsub=db.collection('talleres').doc('conexion_social').collection('muro').orderBy('ts').onSnapshot(function(snap){
     if(snap.empty){$('muro-posts').innerHTML='<div class="vacio">¡Sé el/la primero/a!</div>';return;}
     var cols=['#D5F5E3','#D6EAF8','#FAD7A0','#E8DAEF','#FADBD8'];
     $('muro-posts').innerHTML=snap.docs.map(function(d,i){
@@ -799,7 +799,7 @@ function abrirMuro(){
 function publicarMuro(){
   var txt=$('muro-input').value.trim();
   if(!txt) return;
-  db.collection('talleres/conexion_social/muro').add({nombre:E.nombre,texto:txt,ts:Date.now()}).catch(function(){});
+  db.collection('talleres').doc('conexion_social').collection('muro').add({nombre:E.nombre,texto:txt,ts:Date.now()}).catch(function(){});
   $('muro-input').value='';
 }
 
@@ -807,7 +807,7 @@ function publicarMuro(){
 var acuerdoUnsub=null;
 function iniciarAcuerdo(){
   if(acuerdoUnsub) acuerdoUnsub();
-  acuerdoUnsub=db.collection('talleres/conexion_social/compromisos').orderBy('votos','desc').onSnapshot(function(snap){
+  acuerdoUnsub=db.collection('talleres').doc('conexion_social').collection('compromisos').orderBy('votos','desc').onSnapshot(function(snap){
     if(!snap.docs.length){$('acuerdo-lista').innerHTML='<p style="font-size:.85rem;color:#5A5A54">Aún no hay compromisos.</p>';return;}
     $('acuerdo-lista').innerHTML=snap.docs.map(function(d){
       var data=d.data();
@@ -821,14 +821,14 @@ function iniciarAcuerdo(){
     document.querySelectorAll('.btn-voto').forEach(function(btn){
       btn.addEventListener('click',function(){
         if(btn.dataset.yo==='true') return;
-        db.collection('talleres/conexion_social/compromisos').doc(btn.dataset.id).get().then(function(s){
+        db.collection('talleres').doc('conexion_social').collection('compromisos').doc(btn.dataset.id).get().then(function(s){
           var d=s.data();
           s.ref.update({votos:(d.votos||0)+1,votantes:firebase.firestore.FieldValue.arrayUnion(E.nombre)});
         });
       });
     });
   },function(){});
-  db.collection('talleres/conexion_social/acuerdo').doc('firmantes').onSnapshot(function(s){
+  db.collection('talleres').doc('conexion_social').collection('acuerdo').doc('firmantes').onSnapshot(function(s){
     if(!s.exists) return;
     var f=s.data().lista||[];
     if(!f.length) return;
@@ -840,12 +840,12 @@ function iniciarAcuerdo(){
 function publicarCompromiso(){
   var txt=$('acuerdo-input').value.trim();
   if(!txt) return;
-  db.collection('talleres/conexion_social/compromisos').add({nombre:E.nombre,texto:txt,votos:0,votantes:[],ts:Date.now()}).catch(function(){});
+  db.collection('talleres').doc('conexion_social').collection('compromisos').add({nombre:E.nombre,texto:txt,votos:0,votantes:[],ts:Date.now()}).catch(function(){});
   $('acuerdo-input').value='';
 }
 
 function firmarAcuerdo(){
-  db.collection('talleres/conexion_social/acuerdo').doc('firmantes')
+  db.collection('talleres').doc('conexion_social').collection('acuerdo').doc('firmantes')
     .set({lista:firebase.firestore.FieldValue.arrayUnion(E.nombre)},{merge:true}).catch(function(){});
   $('btn-firmar').textContent='✅ ¡Firmaste el Acuerdo!';
   $('btn-firmar').disabled=true;
@@ -902,10 +902,10 @@ function cargarPanel(){
   $('admin-stats').innerHTML='<div class="loading"><div class="spinner"></div></div>';
   $('admin-participantes').innerHTML='';
   Promise.all([
-    db.collection('talleres/'+mod+'/reflexiones').get(),
-    db.collection('talleres/'+mod+'/termometros').get(),
-    mod==='conexion_social'?db.collection('talleres/'+mod+'/escudos').get():Promise.resolve({docs:[]}),
-    mod==='conexion_social'?db.collection('talleres/'+mod+'/muro').get():Promise.resolve({docs:[]})
+    db.collection('talleres').doc(mod).collection('reflexiones').get(),
+    db.collection('talleres').doc(mod).collection('termometros').get(),
+    mod==='conexion_social'?db.collection('talleres').doc(mod).collection('escudos').get():Promise.resolve({docs:[]}),
+    mod==='conexion_social'?db.collection('talleres').doc(mod).collection('muro').get():Promise.resolve({docs:[]})
   ]).then(function(results){
     var refSnap=results[0],terSnap=results[1],escSnap=results[2],muroSnap=results[3];
     var parts={};
@@ -943,7 +943,7 @@ function cargarTermometros(){
   var items=TERMO_ITEMS[mod];
   var col=mod==='artistica'?'#7D3C0F':'#1A5C2E';
   $('admin-termometros').innerHTML='<div class="loading"><div class="spinner"></div></div>';
-  db.collection('talleres/'+mod+'/termometros').get().then(function(snap){
+  db.collection('talleres').doc(mod).collection('termometros').get().then(function(snap){
     if(snap.empty){$('admin-termometros').innerHTML='<div class="vacio">Aún no hay respuestas del termómetro.</div>';return;}
     var sumas=Array(items.length).fill(0);
     var conts=Array(items.length).fill(0);
@@ -989,7 +989,7 @@ function cargarReflexiones(){
   var col=mod==='artistica'?'#7D3C0F':'#1A5C2E';
   var claro=mod==='artistica'?'#FAD7A0':'#D5F5E3';
   $('admin-reflexiones').innerHTML='<div class="loading"><div class="spinner"></div></div>';
-  db.collection('talleres/'+mod+'/reflexiones').get().then(function(snap){
+  db.collection('talleres').doc(mod).collection('reflexiones').get().then(function(snap){
     if(snap.empty){$('admin-reflexiones').innerHTML='<div class="vacio">Aún no hay reflexiones.</div>';return;}
     var agrup={};
     snap.docs.forEach(function(d){
@@ -1018,7 +1018,7 @@ function cargarReflexiones(){
 
 function cargarMuroAdmin(){
   $('admin-muro').innerHTML='<div class="loading"><div class="spinner"></div></div>';
-  db.collection('talleres/conexion_social/muro').orderBy('ts','asc').onSnapshot(function(snap){
+  db.collection('talleres').doc('conexion_social').collection('muro').orderBy('ts','asc').onSnapshot(function(snap){
     if(snap.empty){$('admin-muro').innerHTML='<div class="vacio">El muro está vacío.</div>';return;}
     var cols=['#D5F5E3','#D6EAF8','#FAD7A0','#E8DAEF','#FADBD8'];
     $('admin-muro').innerHTML='<p style="font-size:.78rem;color:#5A5A54;margin-bottom:12px">'+snap.size+' mensajes</p>'+
@@ -1031,7 +1031,7 @@ function cargarMuroAdmin(){
 
 function cargarAcuerdoAdmin(){
   $('admin-acuerdo').innerHTML='<div class="loading"><div class="spinner"></div></div>';
-  db.collection('talleres/conexion_social/compromisos').orderBy('votos','desc').onSnapshot(function(snap){
+  db.collection('talleres').doc('conexion_social').collection('compromisos').orderBy('votos','desc').onSnapshot(function(snap){
     var html='';
     if(!snap.empty){
       html='<p style="font-size:.78rem;color:#5A5A54;margin-bottom:12px">'+snap.size+' compromisos</p>'+
@@ -1045,7 +1045,7 @@ function cargarAcuerdoAdmin(){
         '<div style="font-size:.8rem;font-weight:800;color:#1A5C2E;margin-bottom:8px">📜 Acuerdo Oficial (Top 5)</div>'+
         top5.map(function(t,i){return '<div style="font-size:.85rem;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid rgba(0,0,0,.06)"><strong>'+(i+1)+'.</strong> '+t+'</div>';}).join('')+'</div>';
     }
-    db.collection('talleres/conexion_social/acuerdo').doc('firmantes').get().then(function(s){
+    db.collection('talleres').doc('conexion_social').collection('acuerdo').doc('firmantes').get().then(function(s){
       if(s.exists){
         var f=s.data().lista||[];
         if(f.length) html+='<div style="margin-top:14px"><p style="font-size:.78rem;font-weight:700;color:#5A5A54;margin-bottom:8px">✅ Firmantes ('+f.length+')</p>'+
