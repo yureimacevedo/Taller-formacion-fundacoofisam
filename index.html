@@ -176,6 +176,19 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
 /* CONFETI */
 @keyframes caer{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
 .ci{position:fixed;width:9px;height:9px;border-radius:2px;pointer-events:none;z-index:999;animation:caer var(--d) var(--dl) both}
+
+@media print {
+  #pg-login, #pg-app { display: none !important; }
+  #pg-admin { display: block !important; position: static !important; }
+  .tb { background: #1C1C18 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .admin-mods, .admin-tabs, #btn-refresh-admin, #btn-imprimir-admin, #btn-salir-admin { display: none !important; }
+  .asec { display: block !important; page-break-inside: avoid; }
+  .acard, .stat-card, .p-row, .r-item, .acuerdo-item, .muro-post { break-inside: avoid; }
+  body { background: white; }
+  .pg { position: static; overflow: visible; }
+  #pg-admin { overflow: visible; height: auto; }
+  .asec { overflow: visible; height: auto; }
+}
 </style>
 </head>
 <body>
@@ -220,6 +233,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
     <div class="tb-titulo" style="color:#fff">📊 Panel Admin</div>
     <span class="live"><span class="live-dot"></span>EN VIVO</span>
     <button class="btn bg btn-sm" id="btn-refresh-admin" style="margin:0;padding:7px 12px;font-size:.78rem">↻</button>
+    <button class="btn bg btn-sm" id="btn-imprimir-admin" style="margin:0;padding:7px 12px;font-size:.78rem">🖨️ PDF</button>
     <button class="btn bg btn-sm" id="btn-salir-admin" style="margin:0;padding:7px 12px;font-size:.78rem">Salir</button>
   </div>
   <div class="admin-mods">
@@ -1145,6 +1159,195 @@ function adminAcuerdo(){
 }
 
 // ══════════════════════════════════════════════
+// IMPRIMIR REPORTE
+// ══════════════════════════════════════════════
+function imprimirReporte(){
+  var mod = S.adminMod;
+  var nomMod = mod==='artistica'?'Equipo Artístico':'Conexión Social';
+  var fecha = new Date().toLocaleDateString('es-CO',{day:'2-digit',month:'long',year:'numeric'});
+
+  // Cargar todos los datos y generar ventana de impresión
+  Promise.all([
+    subCol(mod,'quiz').get(),
+    subCol(mod,'reflexiones').get(),
+    subCol(mod,'termometros').get(),
+    subCol('conexion_social','compromisos').orderBy('votos','desc').get(),
+    subCol('conexion_social','acuerdo').doc('firmantes').get(),
+    subCol(mod,'reflexiones').get()
+  ]).then(function(res){
+    var quizSnap=res[0], refSnap=res[1], terSnap=res[2], compSnap=res[3], firmSnap=res[4];
+
+    // Panel general
+    var parts={};
+    quizSnap.docs.forEach(function(d){var n=d.data().nombre||'?';if(!parts[n])parts[n]={quiz:false,ref:0,ter:false};parts[n].quiz=true;});
+    refSnap.docs.forEach(function(d){var n=d.data().nombre||'?';if(!parts[n])parts[n]={quiz:false,ref:0,ter:false};parts[n].ref++;});
+    terSnap.docs.forEach(function(d){var n=d.data().nombre||'?';if(!parts[n])parts[n]={quiz:false,ref:0,ter:false};parts[n].ter=true;});
+    var total=Object.keys(parts).length;
+    var conQuiz=Object.values(parts).filter(function(p){return p.quiz;}).length;
+    var conTer=Object.values(parts).filter(function(p){return p.ter;}).length;
+    var conRef=Object.values(parts).filter(function(p){return p.ref>0;}).length;
+
+    // Termómetros
+    var items=TERMO[mod];
+    var sumas=Array(items.length).fill(0), conts=Array(items.length).fill(0);
+    terSnap.docs.forEach(function(d){
+      var data=d.data();
+      if(data.vals) data.vals.forEach(function(v,i){sumas[i]+=v;conts[i]++;});
+    });
+    var proms=sumas.map(function(s,i){return conts[i]>0?(s/conts[i]).toFixed(1):'—';});
+
+    // Reflexiones agrupadas
+    var agrup={};
+    var temas=TEMAS[mod];
+    refSnap.docs.forEach(function(d){
+      var data=d.data();
+      var ti=data.temaIdx;
+      if(!agrup[ti]) agrup[ti]=[];
+      if(data.resps) Object.values(data.resps).forEach(function(txt){
+        agrup[ti].push({nombre:data.nombre||'?',texto:txt});
+      });
+    });
+
+    // Compromisos
+    var compromisos=compSnap.docs.map(function(d){return d.data();});
+    var firmantes=firmSnap.exists?(firmSnap.data().lista||[]):[];
+
+    // Generar HTML del reporte
+    var html='<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">'+
+      '<title>Reporte '+nomMod+' — FUNDACOOFISAM</title>'+
+      '<style>'+
+        'body{font-family:Arial,sans-serif;font-size:13px;color:#1C1C18;margin:0;padding:0}'+
+        '.portada{background:#1C1C18;color:#fff;padding:48px 40px;margin-bottom:32px}'+
+        '.portada h1{font-size:24px;font-weight:800;margin-bottom:6px}'+
+        '.portada p{font-size:14px;opacity:.7}'+
+        '.seccion{padding:0 40px 28px}'+
+        '.sec-titulo{font-size:16px;font-weight:800;padding:10px 16px;margin-bottom:16px;border-radius:6px}'+
+        '.stat-row{display:flex;gap:12px;margin-bottom:20px}'+
+        '.stat{flex:1;border:1.5px solid #E8E8E2;border-radius:8px;padding:14px;text-align:center}'+
+        '.stat-n{font-size:28px;font-weight:800}'+
+        '.stat-l{font-size:11px;color:#5A5A54;text-transform:uppercase;letter-spacing:.04em;margin-top:3px}'+
+        '.p-table{width:100%;border-collapse:collapse;margin-bottom:16px}'+
+        '.p-table th{background:#F4F4F0;padding:8px 12px;text-align:left;font-size:12px;font-weight:700;text-transform:uppercase}'+
+        '.p-table td{padding:8px 12px;border-bottom:1px solid #F4F4F0;font-size:12px}'+
+        '.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700}'+
+        '.bv{background:#D5F5E3;color:#1A5C2E} .bn{background:#E8E8E2;color:#5A5A54}'+
+        '.termo-item{margin-bottom:10px}'+
+        '.termo-label{font-size:12px;font-weight:600;margin-bottom:4px;display:flex;justify-content:space-between}'+
+        '.termo-bar{height:8px;background:#E8E8E2;border-radius:4px;overflow:hidden}'+
+        '.termo-fill{height:100%;border-radius:4px}'+
+        '.r-bloque{margin-bottom:16px;padding:12px 14px;border-left:3px solid #E67E22;background:#FFF9F5;border-radius:0 6px 6px 0}'+
+        '.r-tema{font-size:11px;font-weight:700;color:#7D3C0F;text-transform:uppercase;margin-bottom:6px}'+
+        '.r-item{margin-bottom:6px;font-size:12px;line-height:1.5}'+
+        '.r-autor{font-size:11px;font-weight:700;color:#5A5A54;margin-bottom:2px}'+
+        '.comp-item{padding:10px 14px;border:1px solid #E8E8E2;border-radius:6px;margin-bottom:8px;font-size:12px;display:flex;gap:10px}'+
+        '.comp-votos{font-size:18px;font-weight:800;color:#1A5C2E;min-width:28px;text-align:center}'+
+        '.acuerdo-oficial{background:#D5F5E3;border-radius:8px;padding:16px;border:1px solid #27AE60;margin-bottom:16px}'+
+        '.acuerdo-oficial h4{color:#1A5C2E;font-size:13px;margin-bottom:10px}'+
+        '.acuerdo-oficial ol{padding-left:18px;font-size:12px;line-height:1.8}'+
+        '.firmantes{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}'+
+        '.firmante{background:#D5F5E3;color:#1A5C2E;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600}'+
+        '.pie{text-align:center;padding:24px 40px;font-size:11px;color:#5A5A54;border-top:1px solid #E8E8E2;margin-top:24px}'+
+        '@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}'+
+      '</style></head><body>';
+
+    // PORTADA
+    html+='<div class="portada">'+
+      '<p style="font-size:12px;opacity:.5;margin-bottom:12px;text-transform:uppercase;letter-spacing:.08em">FUNDACOOFISAM</p>'+
+      '<h1>Reporte Semana Formativa</h1>'+
+      '<p style="font-size:16px;opacity:.9;margin-bottom:8px">'+nomMod+'</p>'+
+      '<p>Garzón, Huila — '+fecha+'</p>'+
+      '<p style="margin-top:16px;font-size:12px;opacity:.5">Generado desde el Panel Admin del Taller Formativo</p>'+
+    '</div>';
+
+    // SECCIÓN 1: PANEL GENERAL
+    html+='<div class="seccion">'+
+      '<div class="sec-titulo" style="background:#F4F4F0;color:#1C1C18">📊 1. Avance General</div>'+
+      '<div class="stat-row">'+
+        '<div class="stat"><div class="stat-n" style="color:#7D3C0F">'+total+'</div><div class="stat-l">Participantes activos</div></div>'+
+        '<div class="stat"><div class="stat-n" style="color:#4A235A">'+conQuiz+'</div><div class="stat-l">Completaron quiz</div></div>'+
+        '<div class="stat"><div class="stat-n" style="color:#154360">'+conTer+'</div><div class="stat-l">Termómetro</div></div>'+
+        '<div class="stat"><div class="stat-n" style="color:#1A5C2E">'+conRef+'</div><div class="stat-l">Reflexiones</div></div>'+
+      '</div>';
+    // Tabla de participantes
+    html+='<table class="p-table"><tr><th>Participante</th><th>Quiz</th><th>Termómetro</th><th>Reflexiones</th></tr>';
+    Object.entries(parts).forEach(function(e){
+      var n=e[0],d=e[1];
+      html+='<tr><td><strong>'+n+'</strong></td>'+
+        '<td><span class="badge '+(d.quiz?'bv':'bn')+'">'+(d.quiz?'✓ Completó':'Pendiente')+'</span></td>'+
+        '<td><span class="badge '+(d.ter?'bv':'bn')+'">'+(d.ter?'✓ Completó':'Pendiente')+'</span></td>'+
+        '<td><span class="badge '+(d.ref>0?'bv':'bn')+'">'+(d.ref>0?d.ref+' respuesta'+(d.ref>1?'s':''):'Pendiente')+'</span></td></tr>';
+    });
+    html+='</table></div>';
+
+    // SECCIÓN 2: TERMÓMETROS
+    if(terSnap.size>0){
+      html+='<div class="seccion">'+
+        '<div class="sec-titulo" style="background:#D6EAF8;color:#154360">🌡️ 2. Termómetro del Equipo</div>';
+      items.forEach(function(item,i){
+        var p=parseFloat(proms[i])||0;
+        var pct=(p/10)*100;
+        var col3=p<=3?'#27AE60':p<=6?'#E67E22':'#E74C3C';
+        var nivel=p<=3?'Bajo (positivo)':p<=6?'Medio — requiere atención':'Alto — prioridad';
+        html+='<div class="termo-item">'+
+          '<div class="termo-label"><span>'+item+'</span><span style="color:'+col3+';font-weight:800">'+proms[i]+'/10 — '+nivel+'</span></div>'+
+          '<div class="termo-bar"><div class="termo-fill" style="width:'+pct+'%;background:'+col3+'"></div></div>'+
+        '</div>';
+      });
+      html+='</div>';
+    }
+
+    // SECCIÓN 3: REFLEXIONES
+    if(Object.keys(agrup).length>0){
+      html+='<div class="seccion">'+
+        '<div class="sec-titulo" style="background:#FEF5E7;color:#7D3C0F">💭 3. Reflexiones de los participantes</div>';
+      Object.keys(agrup).sort(function(a,b){return a-b;}).forEach(function(ti){
+        html+='<div class="r-bloque">'+
+          '<div class="r-tema">Tema '+(parseInt(ti)+1)+': '+(temas[ti]?temas[ti].nom:'')+'</div>';
+        agrup[ti].forEach(function(r){
+          html+='<div class="r-item"><div class="r-autor">'+r.nombre+'</div>"'+r.texto+'"</div>';
+        });
+        html+='</div>';
+      });
+      html+='</div>';
+    }
+
+    // SECCIÓN 4: ACUERDO (solo conexión social)
+    if(mod==='conexion_social'&&compromisos.length>0){
+      html+='<div class="seccion">'+
+        '<div class="sec-titulo" style="background:#D5F5E3;color:#1A5C2E">📜 4. Acuerdo de Convivencia</div>';
+      // Top 5 oficial
+      html+='<div class="acuerdo-oficial">'+
+        '<h4>Acuerdo Oficial del Equipo (Top 5 por votos)</h4>'+
+        '<ol>'+compromisos.slice(0,5).map(function(c){return '<li>'+c.texto+'</li>';}).join('')+'</ol>'+
+      '</div>';
+      // Todos los compromisos
+      html+='<p style="font-size:12px;font-weight:700;margin-bottom:10px">Todos los compromisos ('+compromisos.length+')</p>';
+      compromisos.forEach(function(c){
+        html+='<div class="comp-item"><div class="comp-votos">'+c.votos+'</div>'+
+          '<div><div>'+c.texto+'</div><div style="font-size:11px;color:#5A5A54;margin-top:3px">'+c.nombre+' · '+c.votos+' votos</div></div></div>';
+      });
+      // Firmantes
+      if(firmantes.length){
+        html+='<p style="font-size:12px;font-weight:700;margin:14px 0 8px">Firmantes del Acuerdo ('+firmantes.length+')</p>'+
+          '<div class="firmantes">'+firmantes.map(function(f){return '<span class="firmante">✓ '+f+'</span>';}).join('')+'</div>';
+      }
+      html+='</div>';
+    }
+
+    html+='<div class="pie">Reporte generado el '+fecha+' — FUNDACOOFISAM Semana Formativa Garzón, Huila</div>';
+    html+='</body></html>';
+
+    // Abrir ventana e imprimir
+    var win=window.open('','_blank','width=900,height=700');
+    win.document.write(html);
+    win.document.close();
+    win.onload=function(){win.print();};
+  }).catch(function(e){
+    alert('Error al generar el reporte: '+e.message);
+  });
+}
+
+// ══════════════════════════════════════════════
 // EVENT LISTENERS
 // ══════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded',function(){
@@ -1161,6 +1364,7 @@ document.addEventListener('DOMContentLoaded',function(){
   $('modal-escudo').addEventListener('click',function(e){if(e.target===this)cerrarModal();});
   // Admin
   $('btn-salir-admin').addEventListener('click',function(){pg('pg-login');});
+  $('btn-imprimir-admin').addEventListener('click',imprimirReporte);
   $('btn-refresh-admin').addEventListener('click',function(){
     var sec=document.querySelector('.atab.on');
     if(sec) cargarSecAdmin(sec.dataset.sec);
