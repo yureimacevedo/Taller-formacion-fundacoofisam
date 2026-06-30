@@ -2,956 +2,1028 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Taller Formativo — FUNDACOOFISAM</title>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 firebase.initializeApp({
-  apiKey: "AIzaSyBNBuTUgQPGngvz1Sg_S33W2Qvb05wO-aI",
-  authDomain: "escuela-de-formacion-31efb.firebaseapp.com",
-  projectId: "escuela-de-formacion-31efb",
-  storageBucket: "escuela-de-formacion-31efb.firebasestorage.app",
-  messagingSenderId: "780641260708",
-  appId: "1:780641260708:web:ba857f6022d727961b4231"
+  apiKey:"AIzaSyBNBuTUgQPGngvz1Sg_S33W2Qvb05wO-aI",
+  authDomain:"escuela-de-formacion-31efb.firebaseapp.com",
+  projectId:"escuela-de-formacion-31efb",
+  storageBucket:"escuela-de-formacion-31efb.firebasestorage.app",
+  messagingSenderId:"780641260708",
+  appId:"1:780641260708:web:ba857f6022d727961b4231"
 });
 var db = firebase.firestore();
 </script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F4F4F0;min-height:100vh;color:#1C1C18}
-.screen{display:none;min-height:100vh;flex-direction:column}
-.screen.active{display:flex}
-
-/* ACCESO */
-#s-acceso{background:linear-gradient(160deg,#FEF5E7,#EAFAF1);align-items:center;justify-content:center;padding:24px}
-.login-box{background:#fff;border-radius:20px;padding:36px 28px;width:100%;max-width:380px;box-shadow:0 4px 24px rgba(0,0,0,.1)}
-.login-logo{width:64px;height:64px;border-radius:18px;background:#7D3C0F;display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 16px}
-.login-titulo{font-size:1.5rem;font-weight:800;text-align:center;margin-bottom:4px}
-.login-sub{font-size:.85rem;color:#5A5A54;text-align:center;margin-bottom:24px}
-.campo{margin-bottom:14px}
-.campo label{display:block;font-size:.82rem;font-weight:600;color:#5A5A54;margin-bottom:6px}
-.campo input{width:100%;padding:13px 14px;border:1.5px solid #D0CFCA;border-radius:10px;font-size:1rem;outline:none;transition:border-color .15s}
-.campo input:focus{border-color:#E67E22}
-.btn-acceso{width:100%;padding:14px;border-radius:50px;background:#1C1C18;color:#fff;font-size:1rem;font-weight:700;border:none;cursor:pointer;margin-top:8px}
-.error-box{background:#FEE2E2;color:#991B1B;border-radius:8px;padding:10px 14px;font-size:.85rem;margin-top:10px;display:none}
-.error-box.show{display:block}
-
-/* TOP BAR */
-.topbar{background:#1C1C18;color:#fff;padding:12px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:50}
-.topbar-titulo{font-size:.95rem;font-weight:700;flex:1}
-.topbar-chip{padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:700}
-.chip-naranja{background:#FAD7A0;color:#7D3C0F}
-.chip-verde{background:#D5F5E3;color:#1A5C2E}
-.chip-admin{background:#E8DAEF;color:#4A235A}
-.topbar-salir{padding:6px 14px;border-radius:20px;background:rgba(255,255,255,.1);color:#fff;font-size:.78rem;border:none;cursor:pointer}
-
-/* BIENVENIDA */
-.bienvenida-hero{padding:32px 20px 24px;text-align:center}
-.bienvenida-titulo{font-size:1.6rem;font-weight:800;line-height:1.2;margin-bottom:8px}
-.bienvenida-desc{font-size:.9rem;color:#5A5A54;margin-bottom:20px}
-.progreso-wrap{padding:0 20px 16px}
-.progreso-label{display:flex;justify-content:space-between;font-size:.78rem;font-weight:600;color:#5A5A54;margin-bottom:6px}
-.progreso-bar{height:6px;background:#E8E8E2;border-radius:3px;overflow:hidden}
-.progreso-fill{height:100%;border-radius:3px;transition:width .4s}
-.temas-lista{padding:0 16px 16px;display:flex;flex-direction:column;gap:8px}
-.tema-item{display:flex;align-items:center;gap:12px;padding:13px 16px;border-radius:10px;background:#fff;border:1px solid #E8E8E2}
-.tema-num{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:700;flex-shrink:0}
-.tema-nombre{font-size:.9rem;font-weight:600;flex:1}
-.tema-tipo{font-size:.75rem;color:#5A5A54}
-.btn-iniciar{margin:0 16px 32px;padding:14px;border-radius:50px;font-size:1rem;font-weight:700;border:none;cursor:pointer;color:#fff;width:calc(100% - 32px)}
-
+html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F4F4F0;color:#1C1C18;font-size:15px}
+/* PANTALLAS */
+.pg{display:none;position:fixed;inset:0;flex-direction:column;background:#F4F4F0}
+.pg.on{display:flex}
+/* TOPBAR */
+.tb{display:flex;align-items:center;gap:10px;padding:12px 16px;background:#fff;border-bottom:1px solid #E8E8E2;flex-shrink:0}
+.tb-back{width:36px;height:36px;border-radius:50%;background:#E8E8E2;border:none;cursor:pointer;font-size:1rem;flex-shrink:0}
+.tb-titulo{font-weight:700;font-size:.95rem;flex:1}
+.tb-chip{padding:4px 10px;border-radius:20px;font-size:.72rem;font-weight:700}
+.cn{background:#FAD7A0;color:#7D3C0F}
+.cv{background:#D5F5E3;color:#1A5C2E}
+.ca{background:#E8DAEF;color:#4A235A}
 /* SCROLL */
-.scroll-body{flex:1;overflow-y:auto;padding:16px 16px 40px}
-
-/* QUIZ */
-.quiz-wrap{display:flex;flex-direction:column;gap:16px}
-.quiz-num{font-size:.78rem;font-weight:700;color:#5A5A54}
-.quiz-enunciado{font-size:1rem;font-weight:700;line-height:1.4;margin-bottom:14px}
-.quiz-opciones{display:flex;flex-direction:column;gap:9px}
-.quiz-opcion{padding:13px 16px;border-radius:10px;border:1.5px solid #D0CFCA;background:#fff;font-size:.92rem;text-align:left;cursor:pointer;transition:all .15s;font-weight:500}
-.quiz-opcion:hover{border-color:#E67E22;background:#FEF5E7}
-.quiz-opcion.ok{border-color:#27AE60;background:#D5F5E3}
-.quiz-opcion.mal{border-color:#E74C3C;background:#FDEEEE}
-.quiz-feedback{border-radius:10px;padding:12px 14px;font-size:.88rem;line-height:1.4;display:none}
-.quiz-feedback.show{display:block}
-.quiz-feedback.ok{background:#D5F5E3;color:#1A5C2E}
-.quiz-feedback.mal{background:#FDEEEE;color:#7B241C}
-.quiz-score{text-align:center;padding:32px 0}
-.quiz-score-num{font-size:3rem;font-weight:800}
-.quiz-score-msg{font-size:.95rem;color:#5A5A54;margin:8px 0 24px}
-
-/* PROGRESO QUIZ */
-.quiz-progress-wrap{padding:8px 16px 0}
-
-/* TARJETAS */
-.tarjetas-scroll{display:flex;overflow-x:auto;gap:12px;padding:4px 2px 12px;scroll-snap-type:x mandatory}
-.tarjeta{min-width:220px;max-width:240px;flex-shrink:0;border-radius:12px;padding:18px;scroll-snap-align:start;border:1px solid #E8E8E2}
-.tarjeta-icono{font-size:1.6rem;margin-bottom:8px}
-.tarjeta-titulo{font-size:.9rem;font-weight:700;margin-bottom:6px}
-.tarjeta-body{font-size:.82rem;color:#5A5A54;line-height:1.5}
-
+.sc{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.pad{padding:16px}
+/* LOGIN */
+#pg-login{background:linear-gradient(160deg,#FEF5E7,#EAFAF1);align-items:center;justify-content:center;padding:24px}
+.login-box{background:#fff;border-radius:20px;padding:32px 24px;width:100%;max-width:380px;box-shadow:0 4px 24px rgba(0,0,0,.1);text-align:center}
+.login-ico{width:60px;height:60px;border-radius:16px;background:#7D3C0F;display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto 14px}
+.login-t{font-size:1.4rem;font-weight:800;margin-bottom:4px}
+.login-s{font-size:.85rem;color:#5A5A54;margin-bottom:24px}
+.campo{margin-bottom:12px;text-align:left}
+.campo label{display:block;font-size:.8rem;font-weight:600;color:#5A5A54;margin-bottom:5px}
+.inp{width:100%;padding:13px 14px;border:1.5px solid #D0CFCA;border-radius:10px;font-size:.95rem;outline:none}
+.inp:focus{border-color:#E67E22}
+.btn-login{width:100%;padding:14px;border-radius:50px;background:#1C1C18;color:#fff;font-size:.95rem;font-weight:700;border:none;cursor:pointer;margin-top:6px}
+.err{background:#FEE2E2;color:#991B1B;border-radius:8px;padding:10px;font-size:.83rem;margin-top:10px;display:none}
+.err.on{display:block}
+/* PROGRESO */
+.prog-wrap{padding:12px 16px;background:#fff;border-bottom:1px solid #E8E8E2;flex-shrink:0}
+.prog-row{display:flex;justify-content:space-between;font-size:.75rem;font-weight:600;color:#5A5A54;margin-bottom:5px}
+.prog-bar{height:5px;background:#E8E8E2;border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;border-radius:3px;transition:width .4s}
+/* MENU TEMAS */
+.tema-card{background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;cursor:pointer;border:1.5px solid #E8E8E2;transition:border-color .15s}
+.tema-card:active{transform:scale(.98)}
+.tema-card.done{border-color:#27AE60}
+.tema-card.activo{border-color:#E67E22}
+.tema-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:700;flex-shrink:0}
+.tema-info{flex:1}
+.tema-nombre{font-size:.92rem;font-weight:600}
+.tema-tipo{font-size:.75rem;color:#5A5A54;margin-top:2px}
+.tema-estado{font-size:1rem}
+/* CONTENIDO TEMA */
+.sec-label{font-size:.75rem;font-weight:700;color:#5A5A54;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px}
+.tarjetas{display:flex;overflow-x:auto;gap:10px;padding-bottom:4px;scroll-snap-type:x mandatory}
+.tarjeta{min-width:200px;max-width:220px;flex-shrink:0;border-radius:10px;padding:16px;scroll-snap-align:start;border:1px solid #E8E8E2}
+.t-ico{font-size:1.5rem;margin-bottom:7px}
+.t-titulo{font-size:.88rem;font-weight:700;margin-bottom:5px}
+.t-body{font-size:.8rem;color:#5A5A54;line-height:1.5}
 /* REFLEXIÓN */
-.reflx-item{background:#fff;border-radius:10px;border:1px solid #E8E8E2;padding:14px;margin-bottom:10px}
-.reflx-q{font-size:.88rem;font-weight:600;margin-bottom:8px;line-height:1.4}
-.reflx-input{width:100%;border:1.5px solid #D0CFCA;border-radius:8px;padding:10px;font-size:.88rem;resize:none;outline:none;min-height:68px}
-.reflx-input:focus{border-color:#E67E22}
-
+.reflx{background:#fff;border-radius:10px;border:1px solid #E8E8E2;padding:14px;margin-bottom:10px}
+.reflx-q{font-size:.87rem;font-weight:600;margin-bottom:8px;line-height:1.4}
+.reflx-ta{width:100%;border:1.5px solid #D0CFCA;border-radius:8px;padding:10px;font-size:.87rem;resize:none;outline:none;min-height:64px;font-family:inherit}
+.reflx-ta:focus{border-color:#E67E22}
+/* QUIZ */
+.quiz-enunc{font-size:.97rem;font-weight:700;line-height:1.4;margin-bottom:14px}
+.quiz-ops{display:flex;flex-direction:column;gap:8px}
+.quiz-op{padding:13px 14px;border-radius:10px;border:1.5px solid #D0CFCA;background:#fff;font-size:.9rem;text-align:left;cursor:pointer;font-weight:500;transition:all .15s}
+.quiz-op.ok{border-color:#27AE60;background:#D5F5E3}
+.quiz-op.mal{border-color:#E74C3C;background:#FDEEEE}
+.quiz-fb{border-radius:10px;padding:12px;font-size:.85rem;line-height:1.4;margin-top:10px;display:none}
+.quiz-fb.on{display:block}
+.quiz-fb.ok{background:#D5F5E3;color:#1A5C2E}
+.quiz-fb.mal{background:#FDEEEE;color:#7B241C}
+.quiz-score{text-align:center;padding:24px 0}
+.score-num{font-size:2.8rem;font-weight:800;line-height:1}
+.score-msg{font-size:.9rem;color:#5A5A54;margin:8px 0 20px}
 /* TERMÓMETRO */
-.termo-item{background:#fff;border-radius:10px;border:1px solid #E8E8E2;padding:16px;margin-bottom:10px}
-.termo-label{font-size:.88rem;font-weight:600;margin-bottom:12px;line-height:1.4}
-.termo-row{display:flex;align-items:center;gap:10px}
-.termo-slider{flex:1;-webkit-appearance:none;height:6px;border-radius:3px;outline:none;cursor:pointer}
-.termo-val{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:700;color:#fff;flex-shrink:0;transition:background .2s}
+.termo-item{background:#fff;border-radius:10px;border:1px solid #E8E8E2;padding:14px;margin-bottom:10px}
+.termo-label{font-size:.87rem;font-weight:600;margin-bottom:10px;line-height:1.4}
+.termo-row{display:flex;align-items:center;gap:8px}
+.termo-sl{flex:1;-webkit-appearance:none;height:6px;border-radius:3px;outline:none;cursor:pointer}
+.termo-val{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:#fff;flex-shrink:0}
 .termo-etiq{display:flex;justify-content:space-between;font-size:.7rem;color:#5A5A54;margin-top:4px}
-.termo-resultado{border-radius:10px;padding:14px;text-align:center;display:none;margin-top:12px}
-.termo-resultado.show{display:block}
-
-/* VIDEO */
-.video-wrap{border-radius:12px;overflow:hidden;background:#000;aspect-ratio:16/9;margin-bottom:12px;cursor:pointer;position:relative}
-.video-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#1C1C18,#2C2C28);color:#fff}
-.video-play{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;font-size:1.4rem}
-.video-frame{width:100%;height:100%;border:none}
-
+.termo-res{border-radius:10px;padding:14px;text-align:center;display:none;margin:12px 0}
+.termo-res.on{display:block}
 /* ESCUDO */
-.escudo-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;border-radius:12px;overflow:hidden;border:3px solid #27AE60;margin-bottom:14px}
-.escudo-q{padding:16px 12px;min-height:120px;cursor:pointer;transition:opacity .15s}
-.escudo-q-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px;opacity:.7}
-.escudo-q-prompt{font-size:.78rem;opacity:.6;font-style:italic}
-.escudo-q-resp{font-size:.82rem;font-weight:600;line-height:1.4}
-.escudo-lema{text-align:center;font-size:.95rem;font-weight:700;font-style:italic;padding:12px 16px;border-radius:10px;background:#D5F5E3;color:#1A5C2E;border:1px solid #27AE60;margin-bottom:14px;display:none}
-
+.escudo-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;border-radius:12px;overflow:hidden;border:3px solid #27AE60;margin-bottom:12px}
+.eq{padding:14px 12px;min-height:110px;cursor:pointer}
+.eq-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px;opacity:.7}
+.eq-prompt{font-size:.78rem;opacity:.6;font-style:italic}
+.eq-resp{font-size:.82rem;font-weight:600;line-height:1.4;display:none}
+.escudo-lema{text-align:center;font-size:.92rem;font-weight:700;font-style:italic;padding:12px;border-radius:10px;background:#D5F5E3;color:#1A5C2E;border:1px solid #27AE60;margin-bottom:12px;display:none}
 /* MURO */
-.muro-post{border-radius:10px;padding:12px 14px;margin-bottom:8px;font-size:.88rem;line-height:1.45}
+.muro-post{border-radius:10px;padding:12px 14px;margin-bottom:8px;font-size:.87rem;line-height:1.45}
 .muro-autor{font-size:.72rem;font-weight:700;opacity:.6;margin-bottom:3px}
-
 /* ACUERDO */
-.acuerdo-item{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:#fff;border-radius:10px;border:1px solid #E8E8E2;margin-bottom:8px;font-size:.88rem}
-.btn-voto{padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:700;border:none;cursor:pointer;background:#D5F5E3;color:#1A5C2E;flex-shrink:0}
-.btn-voto.voted{background:#27AE60;color:#fff}
-.firmantes-wrap{display:flex;flex-wrap:wrap;gap:6px;padding:14px;background:#fff;border-radius:10px;border:1px solid #E8E8E2}
+.acuerdo-item{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:#fff;border-radius:10px;border:1px solid #E8E8E2;margin-bottom:8px;font-size:.87rem}
+.voto-btn{padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:700;border:none;cursor:pointer;background:#D5F5E3;color:#1A5C2E;flex-shrink:0}
+.voto-btn.on{background:#27AE60;color:#fff}
+.firmantes{display:flex;flex-wrap:wrap;gap:6px}
 .firmante{padding:4px 12px;background:#D5F5E3;color:#1A5C2E;border-radius:20px;font-size:.78rem;font-weight:600}
-
 /* CIERRE */
-.cierre-hero{text-align:center;padding:40px 24px 28px;background:linear-gradient(135deg,#FEF5E7,#EAFAF1)}
+.cierre-hero{text-align:center;padding:36px 24px 24px;background:linear-gradient(135deg,#FEF5E7,#EAFAF1);flex-shrink:0}
 .cierre-emoji{font-size:3rem;margin-bottom:10px}
-.cierre-titulo{font-size:1.4rem;font-weight:800;margin-bottom:6px}
-.resumen-card{background:#fff;border-radius:12px;overflow:hidden;margin:0 16px 12px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.resumen-header{padding:10px 16px;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
-.resumen-body{padding:14px 16px;font-size:.9rem;line-height:1.5}
-
+.cierre-t{font-size:1.3rem;font-weight:800;margin-bottom:6px}
+.res-card{background:#fff;border-radius:12px;overflow:hidden;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.res-h{padding:10px 16px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.res-b{padding:14px 16px;font-size:.88rem;line-height:1.5}
 /* ADMIN */
-.admin-tabs{display:flex;background:#fff;border-bottom:1px solid #E8E8E2;overflow-x:auto}
-.admin-tab{padding:13px 18px;font-size:.85rem;font-weight:600;cursor:pointer;border-bottom:3px solid transparent;color:#5A5A54;white-space:nowrap}
-.admin-tab.active{border-color:#4A235A;color:#4A235A}
-.admin-modulos{display:flex;gap:8px;padding:14px 16px;background:#F4F4F0}
-.admin-mod{padding:8px 16px;border-radius:20px;font-size:.82rem;font-weight:600;cursor:pointer;border:1.5px solid #D0CFCA;background:#fff;color:#5A5A54}
-.admin-mod.activo-a{background:#FAD7A0;border-color:#7D3C0F;color:#7D3C0F}
-.admin-mod.activo-c{background:#D5F5E3;border-color:#1A5C2E;color:#1A5C2E}
-.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:0 16px 16px}
-.stat-card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.admin-mods{display:flex;gap:8px;padding:12px 16px;background:#F4F4F0;flex-shrink:0}
+.amod{padding:8px 16px;border-radius:20px;font-size:.82rem;font-weight:600;cursor:pointer;border:1.5px solid #D0CFCA;background:#fff;color:#5A5A54}
+.amod.aa{background:#FAD7A0;border-color:#7D3C0F;color:#7D3C0F}
+.amod.ac{background:#D5F5E3;border-color:#1A5C2E;color:#1A5C2E}
+.admin-tabs{display:flex;background:#fff;border-bottom:1px solid #E8E8E2;flex-shrink:0;overflow-x:auto}
+.atab{padding:12px 16px;font-size:.83rem;font-weight:600;cursor:pointer;border-bottom:3px solid transparent;color:#5A5A54;white-space:nowrap}
+.atab.on{border-color:#4A235A;color:#4A235A}
+.asec{display:none;flex:1;overflow-y:auto}
+.asec.on{display:block}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px}
+.stat-card{background:#fff;border-radius:12px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
 .stat-num{font-size:1.8rem;font-weight:800;line-height:1}
-.stat-label{font-size:.72rem;font-weight:600;text-transform:uppercase;color:#5A5A54;margin-top:4px}
-.participante-row{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid #F4F4F0}
-.participante-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;flex-shrink:0}
-.participante-nombre{flex:1;font-size:.88rem;font-weight:600}
-.participante-iconos{font-size:.85rem}
-.mini-bar-wrap{width:70px}
-.mini-bar{height:5px;background:#E8E8E2;border-radius:3px;overflow:hidden}
-.mini-bar-fill{height:100%;border-radius:3px}
-.pct{font-size:.72rem;font-weight:700;text-align:right;margin-top:2px}
-.seccion{display:none}
-.seccion.activa{display:block}
-.card-admin{background:#fff;border-radius:12px;padding:18px;margin:0 16px 14px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
-.card-admin-titulo{font-size:.82rem;font-weight:700;color:#5A5A54;text-transform:uppercase;letter-spacing:.04em;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid #E8E8E2}
-.termo-admin-item{margin-bottom:14px}
-.termo-admin-label{font-size:.85rem;font-weight:600;margin-bottom:6px;display:flex;justify-content:space-between}
-.termo-admin-bar{height:10px;background:#E8E8E2;border-radius:5px;overflow:hidden;margin-bottom:3px}
-.termo-admin-fill{height:100%;border-radius:5px}
-.reflx-admin{border-left:3px solid #E67E22;padding:10px 14px;margin-bottom:8px;border-radius:0 8px 8px 0;font-size:.87rem;line-height:1.5}
-.reflx-admin-autor{font-size:.72rem;font-weight:700;opacity:.6;margin-bottom:3px}
-.seccion-label{font-size:.8rem;font-weight:700;color:#5A5A54;text-transform:uppercase;letter-spacing:.04em;padding:14px 16px 6px}
-.vacio{text-align:center;padding:40px 20px;color:#5A5A54;font-size:.9rem}
-.spinner{display:inline-block;width:24px;height:24px;border:3px solid #E8E8E2;border-top-color:#E67E22;border-radius:50%;animation:spin 1s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.loading{text-align:center;padding:40px 0}
-
+.stat-lbl{font-size:.7rem;font-weight:600;text-transform:uppercase;color:#5A5A54;margin-top:4px}
+.p-row{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid #F4F4F0}
+.p-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;flex-shrink:0}
+.mbar{width:70px}
+.mbar-bg{height:5px;background:#E8E8E2;border-radius:3px;overflow:hidden}
+.mbar-fill{height:100%;border-radius:3px}
+.mpct{font-size:.72rem;font-weight:700;text-align:right;margin-top:2px}
+.acard{background:#fff;border-radius:12px;padding:16px;margin:0 16px 14px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.acard-t{font-size:.78rem;font-weight:700;color:#5A5A54;text-transform:uppercase;letter-spacing:.04em;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #E8E8E2}
+.ti-item{margin-bottom:14px}
+.ti-row{display:flex;justify-content:space-between;font-size:.83rem;font-weight:600;margin-bottom:5px}
+.ti-bar{height:9px;background:#E8E8E2;border-radius:5px;overflow:hidden;margin-bottom:3px}
+.ti-fill{height:100%;border-radius:5px}
+.quiz-admin-item{padding:10px 14px;border-left:3px solid #E67E22;margin-bottom:8px;background:#fff;border-radius:0 8px 8px 0;font-size:.87rem}
+.quiz-admin-autor{font-size:.72rem;font-weight:700;color:#5A5A54;margin-bottom:3px}
+.r-item{border-left:3px solid #E67E22;padding:10px 14px;margin-bottom:8px;background:#fff;border-radius:0 8px 8px 0;font-size:.87rem;line-height:1.5}
+.r-autor{font-size:.72px;font-weight:700;color:#5A5A54;margin-bottom:3px;font-size:.72rem}
+.vacio{text-align:center;padding:40px 20px;color:#5A5A54;font-size:.88rem}
+.spin{display:inline-block;width:22px;height:22px;border:3px solid #E8E8E2;border-top-color:#E67E22;border-radius:50%;animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.loading{text-align:center;padding:40px}
 /* MODAL */
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:flex-end}
-.modal.open{display:flex}
-.modal-inner{background:#fff;border-radius:20px 20px 0 0;padding:24px 20px;width:100%;max-height:80vh}
-.modal-label{font-size:.9rem;font-weight:700;margin-bottom:10px}
-.modal-input{width:100%;border:1.5px solid #D0CFCA;border-radius:8px;padding:10px;font-size:.9rem;resize:none;outline:none;min-height:80px;margin-bottom:14px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;display:none;align-items:flex-end}
+.modal.on{display:flex}
+.modal-box{background:#fff;border-radius:20px 20px 0 0;padding:22px 20px;width:100%}
+.modal-lbl{font-size:.9rem;font-weight:700;margin-bottom:10px}
+.modal-ta{width:100%;border:1.5px solid #D0CFCA;border-radius:8px;padding:10px;font-size:.9rem;resize:none;outline:none;min-height:75px;font-family:inherit;margin-bottom:12px}
 .modal-btns{display:flex;gap:10px}
-.btn-modal-cancel{flex:1;padding:12px;border-radius:25px;background:#E8E8E2;color:#1C1C18;font-size:.9rem;font-weight:600;border:none;cursor:pointer}
-.btn-modal-ok{flex:2;padding:12px;border-radius:25px;background:#1A5C2E;color:#fff;font-size:.9rem;font-weight:700;border:none;cursor:pointer}
-
+/* BOTONES */
+.btn{width:100%;padding:14px;border-radius:50px;font-size:.93rem;font-weight:700;border:none;cursor:pointer;margin-top:10px;transition:opacity .15s}
+.btn:active{opacity:.8}
+.bn{background:#1C1C18;color:#fff}
+.bv{background:#1A5C2E;color:#fff}
+.bo{background:#7D3C0F;color:#fff}
+.bp{background:#4A235A;color:#fff}
+.bg{background:#E8E8E2;color:#1C1C18}
+.btn-sm{padding:9px 20px;width:auto;margin-top:0}
+/* LIVE */
+.live{display:inline-flex;align-items:center;gap:4px;font-size:.72rem;color:rgba(255,255,255,.7)}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#EF4444;animation:lp 1.2s ease infinite}
+@keyframes lp{0%,100%{opacity:1}50%{opacity:.3}}
 /* CONFETI */
-.confeti{position:fixed;pointer-events:none;z-index:999}
-@keyframes caer{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
-
-/* UTILS */
-.btn-verde{background:#1A5C2E;color:#fff}
-.btn-naranja{background:#7D3C0F;color:#fff}
-.btn-morado{background:#4A235A;color:#fff}
-.btn-full{width:100%;padding:14px;border-radius:50px;font-size:.95rem;font-weight:700;border:none;cursor:pointer;margin-top:12px}
-.seccion-titulo{font-size:.82rem;font-weight:700;color:#5A5A54;text-transform:uppercase;letter-spacing:.04em;margin:16px 0 8px}
-.live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#EF4444;animation:pulse 1.2s ease infinite;margin-right:5px}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes caer{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.ci{position:fixed;width:9px;height:9px;border-radius:2px;pointer-events:none;z-index:999;animation:caer var(--d) var(--dl) both}
 </style>
 </head>
 <body>
 
-<!-- ══ ACCESO ══ -->
-<div class="screen active" id="s-acceso">
+<!-- ══ LOGIN ══ -->
+<div class="pg on" id="pg-login">
   <div class="login-box">
-    <div class="login-logo">🌱</div>
-    <h1 class="login-titulo">Taller Formativo</h1>
-    <p class="login-sub">FUNDACOOFISAM — Garzón, Huila</p>
-    <div class="campo">
-      <label>Tu nombre completo</label>
-      <input type="text" id="inp-nombre" placeholder="Escribe tu nombre...">
-    </div>
-    <div class="campo">
-      <label>Código de acceso</label>
-      <input type="text" id="inp-codigo" placeholder="Código del equipo..." style="text-transform:uppercase">
-    </div>
-    <button class="btn-acceso" id="btn-ingresar">Ingresar →</button>
-    <div class="error-box" id="error-acceso">Código incorrecto. Pídelo a tu facilitador.</div>
+    <div class="login-ico">🌱</div>
+    <h1 class="login-t">Taller Formativo</h1>
+    <p class="login-s">FUNDACOOFISAM — Garzón, Huila</p>
+    <div class="campo"><label>Tu nombre completo</label><input class="inp" id="inp-nombre" type="text" placeholder="Escribe tu nombre..."></div>
+    <div class="campo"><label>Código de acceso</label><input class="inp" id="inp-codigo" type="text" placeholder="Código del equipo..." style="text-transform:uppercase"></div>
+    <button class="btn-login" id="btn-ingresar">Ingresar →</button>
+    <div class="err" id="err-login">Código incorrecto. Pídelo a tu facilitador.</div>
   </div>
 </div>
 
-<!-- ══ APP PARTICIPANTES ══ -->
-<div class="screen" id="s-app">
-  <div class="topbar">
-    <div class="topbar-titulo" id="app-titulo">Taller</div>
-    <div class="topbar-chip" id="app-chip"></div>
-    <button class="topbar-salir" id="btn-salir-app">Salir</button>
+<!-- ══ APP PARTICIPANTE ══ -->
+<div class="pg" id="pg-app">
+  <!-- TOPBAR -->
+  <div class="tb">
+    <div class="tb-titulo" id="app-titulo">Taller</div>
+    <div class="tb-chip" id="app-chip"></div>
+    <button class="btn bg btn-sm" id="btn-salir-app" style="margin:0;padding:7px 14px;font-size:.78rem">Salir</button>
   </div>
-
-  <!-- BIENVENIDA -->
-  <div id="vista-bienvenida">
-    <div class="bienvenida-hero" id="bv-hero">
-      <h2 class="bienvenida-titulo" id="bv-titulo">Bienvenido/a</h2>
-      <p class="bienvenida-desc" id="bv-desc"></p>
-    </div>
-    <div class="progreso-wrap">
-      <div class="progreso-label">
-        <span>Tu progreso</span>
-        <span id="bv-progreso-txt">0 completados</span>
-      </div>
-      <div class="progreso-bar"><div class="progreso-fill" id="bv-progreso-fill" style="width:0%"></div></div>
-    </div>
-    <div class="temas-lista" id="bv-temas"></div>
-    <button class="btn-full" id="btn-iniciar-recorrido" style="margin:0 16px 32px;width:calc(100% - 32px)">Comenzar →</button>
+  <!-- PROGRESO -->
+  <div class="prog-wrap">
+    <div class="prog-row"><span>Progreso</span><span id="prog-txt">0 completados</span></div>
+    <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
   </div>
-
-  <!-- QUIZ -->
-  <div id="vista-quiz" style="display:none">
-    <div class="quiz-progress-wrap">
-      <div class="progreso-bar"><div class="progreso-fill" id="quiz-fill" style="width:0%"></div></div>
-    </div>
-    <div class="scroll-body" id="quiz-body"></div>
-  </div>
-
-  <!-- TEMA -->
-  <div id="vista-tema" style="display:none">
-    <div class="scroll-body" id="tema-body"></div>
-  </div>
-
-  <!-- TERMÓMETRO -->
-  <div id="vista-termo" style="display:none">
-    <div class="scroll-body" id="termo-body"></div>
-  </div>
-
-  <!-- ESCUDO -->
-  <div id="vista-escudo" style="display:none">
-    <div class="scroll-body">
-      <p style="font-size:.88rem;color:#5A5A54;margin-bottom:14px;">Toca cada cuadrante para completarlo.</p>
-      <div class="escudo-grid" id="escudo-grid">
-        <div class="escudo-q" style="background:#D6EAF8" id="eq-0"><div class="escudo-q-label" style="color:#154360">Lo que nos define</div><div class="escudo-q-prompt" id="eq-0-p">¿Quiénes somos?</div><div class="escudo-q-resp" id="eq-0-r" style="display:none;color:#154360"></div></div>
-        <div class="escudo-q" style="background:#D5F5E3" id="eq-1"><div class="escudo-q-label" style="color:#1A5C2E">Lo que nos enorgullece</div><div class="escudo-q-prompt" id="eq-1-p">¿Qué nos hace especiales?</div><div class="escudo-q-resp" id="eq-1-r" style="display:none;color:#1A5C2E"></div></div>
-        <div class="escudo-q" style="background:#FAD7A0" id="eq-2"><div class="escudo-q-label" style="color:#7D3C0F">Lo que queremos ser</div><div class="escudo-q-prompt" id="eq-2-p">¿Cómo queremos ser recordados?</div><div class="escudo-q-resp" id="eq-2-r" style="display:none;color:#7D3C0F"></div></div>
-        <div class="escudo-q" style="background:#E8DAEF" id="eq-3"><div class="escudo-q-label" style="color:#4A235A">Nuestro lema</div><div class="escudo-q-prompt" id="eq-3-p">Una frase que nos represente</div><div class="escudo-q-resp" id="eq-3-r" style="display:none;color:#4A235A"></div></div>
-      </div>
-      <div class="escudo-lema" id="escudo-lema"></div>
-      <p style="font-size:.78rem;color:#5A5A54;text-align:center;margin-bottom:12px" id="escudo-prog">0/4 completados</p>
-      <button class="btn-full btn-verde" id="btn-guardar-escudo" disabled style="margin:0 0 20px">Guardar mi escudo ✓</button>
-    </div>
-  </div>
-
-  <!-- MURO -->
-  <div id="vista-muro" style="display:none">
-    <div class="scroll-body">
-      <p style="font-size:.92rem;font-weight:600;margin-bottom:10px">Estoy orgulloso/a de FUNDACOOFISAM porque...</p>
-      <textarea class="reflx-input" id="muro-input" placeholder="Escribe tu mensaje..." rows="3" style="margin-bottom:10px"></textarea>
-      <button class="btn-full btn-verde" id="btn-publicar-muro" style="margin:0 0 20px">Publicar en el muro ↗</button>
-      <p class="seccion-titulo">Lo que dice el equipo</p>
-      <div id="muro-posts"><div class="vacio">Aún no hay mensajes. ¡Sé el/la primero/a!</div></div>
-    </div>
-  </div>
-
-  <!-- ACUERDO -->
-  <div id="vista-acuerdo" style="display:none">
-    <div class="scroll-body">
-      <p style="font-size:.88rem;color:#5A5A54;margin-bottom:14px">Escribe tu compromiso. Los 5 con más votos formarán el Acuerdo Oficial.</p>
-      <p style="font-size:.9rem;font-weight:600;margin-bottom:10px">Para que este equipo sea lo que queremos, yo me comprometo a...</p>
-      <textarea class="reflx-input" id="acuerdo-input" placeholder="Escribe tu compromiso..." rows="3" style="margin-bottom:10px"></textarea>
-      <button class="btn-full btn-verde" id="btn-publicar-acuerdo" style="margin:0 0 16px">Agregar mi compromiso ↗</button>
-      <p class="seccion-titulo">Compromisos del equipo</p>
-      <div id="acuerdo-lista"></div>
-      <div id="firmantes-seccion" style="display:none;margin-top:16px">
-        <p class="seccion-titulo">✅ Firmantes</p>
-        <div class="firmantes-wrap" id="firmantes-lista"></div>
-      </div>
-      <button class="btn-full btn-verde" id="btn-firmar" style="margin-top:16px">Firmo este Acuerdo ✓</button>
-    </div>
-  </div>
-
-  <!-- CIERRE -->
-  <div id="vista-cierre" style="display:none">
-    <div class="cierre-hero">
-      <div class="cierre-emoji">🎉</div>
-      <h2 class="cierre-titulo" id="cierre-titulo">¡Lo lograste!</h2>
-      <p style="font-size:.9rem;color:#5A5A54" id="cierre-sub"></p>
-    </div>
-    <div id="resumen-cards" style="padding-top:16px"></div>
-    <div style="display:flex;gap:10px;margin:0 16px 32px">
-      <button class="btn-full" id="btn-volver-inicio" style="background:#E8E8E2;color:#1C1C18;flex:1;margin:0">🏠 Inicio</button>
-      <button class="btn-full btn-naranja" id="btn-compartir" style="flex:2;margin:0">📤 Compartir</button>
-    </div>
+  <!-- CONTENIDO (una sola área de scroll que cambia) -->
+  <div class="sc" id="app-contenido"></div>
+  <!-- BOTÓN DE ACCIÓN PRINCIPAL (fijo abajo) -->
+  <div id="app-footer" style="padding:12px 16px;background:#fff;border-top:1px solid #E8E8E2;flex-shrink:0;display:none">
+    <button class="btn bn" id="btn-accion">Continuar →</button>
   </div>
 </div>
 
 <!-- ══ ADMIN ══ -->
-<div class="screen" id="s-admin">
-  <div class="topbar">
-    <div class="topbar-titulo">📊 Panel Admin</div>
-    <span><span class="live-dot"></span><span style="font-size:.75rem;color:rgba(255,255,255,.7)">EN VIVO</span></span>
-    <button class="topbar-salir" id="btn-actualizar">↻ Actualizar</button>
-    <button class="topbar-salir" id="btn-salir-admin">Salir</button>
+<div class="pg" id="pg-admin">
+  <div class="tb" style="background:#1C1C18">
+    <div class="tb-titulo" style="color:#fff">📊 Panel Admin</div>
+    <span class="live"><span class="live-dot"></span>EN VIVO</span>
+    <button class="btn bg btn-sm" id="btn-refresh-admin" style="margin:0;padding:7px 12px;font-size:.78rem">↻</button>
+    <button class="btn bg btn-sm" id="btn-salir-admin" style="margin:0;padding:7px 12px;font-size:.78rem">Salir</button>
   </div>
-  <div class="admin-modulos">
-    <button class="admin-mod activo-a" id="mod-artistica">🎭 Artística</button>
-    <button class="admin-mod" id="mod-conexion">🤝 Conexión Social</button>
+  <div class="admin-mods">
+    <button class="amod aa" id="amod-artistica">🎭 Artística</button>
+    <button class="amod" id="amod-conexion">🤝 Conexión Social</button>
   </div>
   <div class="admin-tabs">
-    <div class="admin-tab active" data-sec="panel">Panel</div>
-    <div class="admin-tab" data-sec="termometros">Termómetros</div>
-    <div class="admin-tab" data-sec="reflexiones">Reflexiones</div>
-    <div class="admin-tab" data-sec="muro" id="tab-muro" style="display:none">Muro</div>
-    <div class="admin-tab" data-sec="acuerdo" id="tab-acuerdo" style="display:none">Acuerdo</div>
+    <div class="atab on" data-sec="panel">Panel</div>
+    <div class="atab" data-sec="quiz">Quiz inicial</div>
+    <div class="atab" data-sec="termometros">Termómetros</div>
+    <div class="atab" data-sec="reflexiones">Reflexiones</div>
+    <div class="atab" data-sec="muro" id="atab-muro">Muro</div>
+    <div class="atab" data-sec="acuerdo" id="atab-acuerdo">Acuerdo</div>
   </div>
-  <div style="flex:1;overflow-y:auto">
-    <div class="seccion activa" id="sec-panel">
-      <div class="stat-grid" id="admin-stats"></div>
-      <p class="seccion-label">Participantes</p>
-      <div id="admin-participantes"></div>
-    </div>
-    <div class="seccion" id="sec-termometros">
-      <div id="admin-termometros"></div>
-    </div>
-    <div class="seccion" id="sec-reflexiones">
-      <div id="admin-reflexiones"></div>
-    </div>
-    <div class="seccion" id="sec-muro">
-      <div id="admin-muro" style="padding:16px"></div>
-    </div>
-    <div class="seccion" id="sec-acuerdo">
-      <div id="admin-acuerdo" style="padding:16px"></div>
-    </div>
-  </div>
+  <div class="asec on" id="asec-panel"></div>
+  <div class="asec" id="asec-quiz"></div>
+  <div class="asec" id="asec-termometros"></div>
+  <div class="asec" id="asec-reflexiones"></div>
+  <div class="asec" id="asec-muro" style="padding:16px"></div>
+  <div class="asec" id="asec-acuerdo" style="padding:16px"></div>
 </div>
 
 <!-- MODAL ESCUDO -->
 <div class="modal" id="modal-escudo">
-  <div class="modal-inner">
-    <p class="modal-label" id="modal-label">Responde:</p>
-    <textarea class="modal-input" id="modal-input"></textarea>
+  <div class="modal-box">
+    <p class="modal-lbl" id="modal-lbl">Responde:</p>
+    <textarea class="modal-ta" id="modal-ta"></textarea>
     <div class="modal-btns">
-      <button class="btn-modal-cancel" id="modal-cancel">Cancelar</button>
-      <button class="btn-modal-ok" id="modal-ok">Guardar</button>
+      <button class="btn bg btn-sm" id="modal-cancel" style="flex:1">Cancelar</button>
+      <button class="btn bv btn-sm" id="modal-ok" style="flex:2">Guardar</button>
     </div>
   </div>
 </div>
 
 <script>
-// ══ CODIGOS ══════════════════════════════════════════
+// ══════════════════════════════════════════════
+// DATOS
+// ══════════════════════════════════════════════
 var CODIGOS = {
-  "ARTE2025":     {modulo:"artistica",      nombre:"Equipo Artístico", color:"#7D3C0F", claro:"#FAD7A0", chip:"chip-naranja"},
-  "CONEXION2025": {modulo:"conexion_social", nombre:"Conexión Social",  color:"#1A5C2E", claro:"#D5F5E3", chip:"chip-verde"},
-  "ADMIN2025":    {modulo:"admin",           nombre:"Admin",            color:"#4A235A", claro:"#E8DAEF", chip:"chip-admin"}
+  "ARTE2025":    {mod:"artistica",      nom:"Equipo Artístico", col:"#7D3C0F", claro:"#FAD7A0", chip:"cn"},
+  "CONEXION2025":{mod:"conexion_social",nom:"Conexión Social",  col:"#1A5C2E", claro:"#D5F5E3", chip:"cv"},
+  "ADMIN2025":   {mod:"admin",          nom:"Admin",            col:"#4A235A", claro:"#E8DAEF", chip:"ca"}
 };
 
-// ══ ESTADO ═══════════════════════════════════════════
-var E = {
-  nombre:"", modulo:"", moduloNombre:"", color:"", claro:"",
-  quizIdx:0, quizScore:0, completados:[], reflexiones:{},
-  termometro:{}, escudo:["","","",""], escudoIdx:-1,
-  adminModulo:"artistica"
-};
-
-// ══ CONTENIDO ════════════════════════════════════════
-var TEMAS_LABELS = {
-  artistica: ["Trabajo en equipo","Controla tu ego","Disciplina","Respeto","Planeación"],
-  conexion_social: ["Sentido de pertenencia","Amor por el trabajo","Identidad del equipo","Relaciones interpersonales","Identidad por la Fundación"]
-};
-var TERMO_ITEMS = {
-  artistica: ["Me cuesta aceptar que modifiquen mi propuesta artística","Busco reconocimiento más que el buen resultado","Me incomoda cuando destacan más a un compañero","Critico el trabajo ajeno pero me cuesta recibir crítica del mío","Siento resentimiento cuando el equipo no valora lo que aporto"],
-  conexion_social: ["Nos comunicamos abiertamente y sin miedo","Nos apoyamos cuando alguien tiene dificultades","Resolvemos los conflictos de forma constructiva","Nos sentimos orgullosos de pertenecer a Conexión Social","Cada persona aporta lo mejor de sí al equipo"]
-};
 var QUIZ = {
-  artistica: [
-    {p:"¿Cuántas personas forman el equipo artístico?", ops:["5 personas","6 personas","7 personas","8 personas"], c:2, fb:"Somos 7: 1 líder, 4 profesores de música y 2 profesores de danzas."},
-    {p:"¿Cuándo el ego se vuelve un problema en el equipo?", ops:["Nunca","Cuando se vuelve más importante que el equipo","Solo cuando hay conflicto","Solo afecta al líder"], c:1, fb:"El ego en exceso rompe la sincronía y la confianza del equipo."},
-    {p:"Planear en un equipo artístico significa:", ops:["Hacer documentos que nadie lee","Improvisar con talento","Ponerse de acuerdo sobre qué, para qué, quién y cuándo","Copiar a otros equipos"], c:2, fb:"Las 4 preguntas clave: ¿Qué? ¿Para qué? ¿Quién? ¿Cuándo?"},
-    {p:"El respeto por la Fundación se expresa en:", ops:["Solo usar el carnet","Llegar preparado, cuidar los espacios y hablar bien de la institución","Asistir a todas las reuniones","Obedecer siempre al jefe"], c:1, fb:"Cada acción del equipo artístico construye o destruye la imagen de FUNDACOOFISAM."},
-    {p:"La comunicación efectiva en el equipo implica:", ops:["Hablar siempre primero","Escuchar para responder","Decir a tiempo lo que está pasando sin esperar que el otro adivine","Evitar los conflictos"], c:2, fb:"La comunicación a tiempo evita malentendidos y fortalece la confianza."}
+  artistica:[
+    {p:"¿Cuántas personas forman el equipo artístico?",ops:["5 personas","6 personas","7 personas","8 personas"],c:2,fb:"Somos 7: 1 líder, 4 profesores de música y 2 profesores de danzas."},
+    {p:"¿Cuándo el ego se vuelve un problema en el equipo?",ops:["Nunca","Cuando se vuelve más importante que el equipo","Solo cuando hay conflicto abierto","Solo afecta al líder"],c:1,fb:"El ego sin control rompe la sincronía y la confianza del equipo."},
+    {p:"La disciplina en un equipo artístico significa:",ops:["Perfección siempre","Hacer lo que hay que hacer cuando hay que hacerlo","Solo ensayar más","Obedecer al líder"],c:1,fb:"La disciplina convierte el talento en resultados consistentes."},
+    {p:"El respeto por FUNDACOOFISAM se expresa en:",ops:["Solo usar el carnet","Llegar preparado, cuidar los espacios y hablar bien de la institución","Asistir a todas las reuniones","Solo cumplir horarios"],c:1,fb:"Cada acción del equipo artístico construye o destruye la imagen de FUNDACOOFISAM."},
+    {p:"Planear una actividad artística significa:",ops:["Improvisar con talento","Hacer documentos que nadie lee","Responder: ¿Qué? ¿Para qué? ¿Quién? ¿Cuándo?","Copiar a otros equipos"],c:2,fb:"Las 4 preguntas clave garantizan que la actividad suceda de verdad."}
   ],
-  conexion_social: [
-    {p:"¿Cuántas personas forman el equipo Conexión Social?", ops:["15 personas","18 personas","20 personas","22 personas"], c:2, fb:"Somos 20: 19 promotoras y 1 líder de equipo."},
-    {p:"¿Qué construye identidad en un equipo?", ops:["Solo los resultados","Historia compartida, reconocimiento y propósito claro","El salario","El tamaño del equipo"], c:1, fb:"La identidad se construye con historia, reconocimiento y propósito — no con números."},
-    {p:"Una relación que RESTA en el equipo es:", ops:["La que genera energía","La que genera tensión o desgaste aunque no haya conflicto visible","La que divide en bandos","Solo las peleas abiertas"], c:1, fb:"Las relaciones que restan son las más difíciles de ver — no hay pelea, solo incomodidad acumulada."},
-    {p:"¿Qué significa representar a FUNDACOOFISAM como promotor?", ops:["Usar el carnet","Ser el puente entre la institución y la comunidad que servimos","Cumplir las metas del mes","Asistir a reuniones"], c:1, fb:"Cada promotor es la cara de FUNDACOOFISAM ante la comunidad."},
-    {p:"El amor por el trabajo en Conexión Social significa:", ops:["Que todos los días sean perfectos","Encontrar sentido incluso en los días difíciles","Solo hacer lo que me gusta","Trabajar sin descanso"], c:1, fb:"El propósito ancla — incluso en los días difíciles hay algo que nos mantiene."}
+  conexion_social:[
+    {p:"¿Cuántas personas forman el equipo Conexión Social?",ops:["15 personas","18 personas","20 personas","22 personas"],c:2,fb:"Somos 20: 19 promotoras y 1 líder de equipo."},
+    {p:"El sentido de pertenencia es:",ops:["Tener muchos años en la empresa","Sentir que este equipo y trabajo son parte de mí","Cumplir el horario","Recibir reconocimientos"],c:1,fb:"El sentido de pertenencia es el motor interno que ningún jefe puede encender por nosotros."},
+    {p:"¿Qué construye identidad en un equipo?",ops:["Solo los resultados","Historia compartida, reconocimiento y propósito claro","El salario","El tamaño del equipo"],c:1,fb:"La identidad se construye con historia, reconocimiento y propósito."},
+    {p:"Una relación que RESTA en el equipo es:",ops:["La que genera energía","La que genera tensión aunque no haya conflicto visible","La que divide en bandos","Solo las peleas abiertas"],c:1,fb:"Las relaciones que restan son las más difíciles de ver — no hay pelea, solo incomodidad acumulada."},
+    {p:"¿Qué significa representar a FUNDACOOFISAM como promotora?",ops:["Usar el carnet","Ser el puente entre la institución y la comunidad que servimos","Cumplir las metas del mes","Asistir a reuniones"],c:1,fb:"Cada promotora es la cara de FUNDACOOFISAM ante la comunidad."}
   ]
 };
+
 var TEMAS = {
-  artistica: [
-    {num:1, nombre:"Trabajo en equipo", tipo:"Video + tarjetas + reflexión",
-     video:{id:"9bHueFbX3uk", titulo:"¿Qué hace grande a un equipo?"},
+  artistica:[
+    {num:1,nom:"Trabajo en equipo",tipo:"Tarjetas + Reflexión",
      tarjetas:[
        {i:"🤝",t:"Confianza",b:"Cada integrante confía en que el otro cumple su parte. Sin confianza, cada quien intenta controlar el trabajo del otro."},
        {i:"💬",t:"Comunicación",b:"Decir a tiempo lo que está pasando, sin esperar que el otro adivine. En equipos artísticos esto se nota en los ensayos."},
        {i:"🧩",t:"Complementariedad",b:"El mejor equipo aprovecha que todos son diferentes. Esas diferencias son una fortaleza, no un problema."}
      ],
-     reflexiones:["¿Hay algún momento en que siento que trabajo más solo que en equipo? ¿Por qué?","¿Cuándo fue la última vez que reconocí el aporte de alguien del equipo?"]},
-    {num:2, nombre:"Controla tu ego", tipo:"Video + Termómetro del Ego",
-     video:{id:"H14bBuluwB8", titulo:"El ego vs. el equipo"},
+     reflexiones:["¿Hay algún momento en que sientes que trabajas más solo/a que en equipo? ¿Por qué?","¿Cuándo fue la última vez que reconociste el aporte de alguien del equipo?"]},
+    {num:2,nom:"Controla tu ego",tipo:"Tarjetas + Reflexión + Termómetro",
      tarjetas:[
        {i:"🪞",t:"¿Qué es el egocentrismo?",b:"No es arrogancia — es cuando el «yo» se vuelve más importante que el equipo. Viene en actitudes pequeñas que se acumulan."},
        {i:"⚠️",t:"Señales de alerta",b:"Necesito que mi idea sea la que se use. Me incomoda el reconocimiento de otros. Me cuesta aceptar críticas de mi trabajo."},
        {i:"🔑",t:"Cómo controlarlo",b:"Reconocer cuando actúa. Pausa antes de reaccionar. Ceder con dignidad. Celebrar al otro. Servir al mensaje colectivo."}
      ],
-     reflexiones:["¿Recuerdo algún momento en que mi ego me haya costado una relación en el equipo?","¿Hay alguien del equipo a quien me cueste reconocer? ¿Por qué?"],
+     reflexiones:["¿Recuerdas algún momento en que tu ego te haya costado una relación en el equipo?","¿Hay alguien del equipo a quien te cueste reconocer? ¿Por qué?"],
      termometro:true},
-    {num:3, nombre:"Disciplina", tipo:"Tarjetas + compromiso",
+    {num:3,nom:"Disciplina",tipo:"Tarjetas + Reflexión",
      tarjetas:[
-       {i:"👤",t:"Nivel 1 — Individual",b:"Cumplir con lo que me comprometí: llegar a tiempo, preparar el material, no cancelar sin avisar."},
-       {i:"👥",t:"Nivel 2 — De equipo",b:"Respetar los acuerdos colectivos. Si acordamos ensayar los martes a las 3pm, todos están los martes a las 3pm."},
-       {i:"🎨",t:"Nivel 3 — Creativa",b:"La disciplina crea el espacio para que aparezca la creatividad. Los grandes artistas no esperan el momento perfecto — crean el hábito."}
+       {i:"👤",t:"Individual",b:"Cumplir con lo que me comprometí: llegar a tiempo, preparar el material, no cancelar sin avisar."},
+       {i:"👥",t:"De equipo",b:"Respetar los acuerdos colectivos. Si acordamos ensayar los martes a las 3pm, todos están los martes a las 3pm."},
+       {i:"🎨",t:"Creativa",b:"La disciplina crea el espacio para que aparezca la creatividad. Los grandes artistas no esperan el momento perfecto — crean el hábito."}
      ],
-     reflexiones:["¿Hay algún compromiso del equipo que regularmente no cumplo? ¿Qué me lo impide realmente?","¿Qué hábito podría construir en 30 días que mejoraría mi aporte al equipo?"]},
-    {num:4, nombre:"Respeto", tipo:"Tarjetas + reflexión",
+     reflexiones:["¿Hay algún compromiso del equipo que regularmente no cumples? ¿Qué te lo impide realmente?","¿Qué hábito podrías construir en 30 días que mejoraría tu aporte al equipo?"]},
+    {num:4,nom:"Respeto",tipo:"Tarjetas + Reflexión",
      tarjetas:[
        {i:"🏛️",t:"Respeto institucional",b:"Llegar preparado. Cuidar los espacios y materiales. Hablar bien de la Fundación. Asumir con seriedad el impacto en la comunidad."},
-       {i:"🤲",t:"Respeto entre personas",b:"No es solo no insultarse. Es reconocer que el otro tiene tanto derecho de estar aquí como yo, con sus diferencias y su ritmo."}
+       {i:"🤲",t:"Respeto entre personas",b:"Es reconocer que el otro tiene tanto derecho de estar aquí como yo, con sus diferencias y su ritmo."}
      ],
-     reflexiones:["¿Hay alguna persona del equipo con quien me cueste relacionarme? ¿Qué genera eso en mí?","¿Cómo hablo de FUNDACOOFISAM cuando estoy fuera de ella?"]},
-    {num:5, nombre:"Planeación", tipo:"Video + Plan del Trimestre",
-     video:{id:"CAdE4bwwxWU", titulo:"De la idea a la realidad: planeación que funciona"},
+     reflexiones:["¿Hay alguna persona del equipo con quien te cueste relacionarte? ¿Qué genera eso en ti?","¿Cómo hablas de FUNDACOOFISAM cuando estás fuera de ella?"]},
+    {num:5,nom:"Planeación",tipo:"Tarjetas + Reflexión",
      tarjetas:[
        {i:"❓",t:"¿Qué?",b:"Nombre claro de la actividad. No «algo de música» — sino exactamente qué vamos a hacer."},
-       {i:"🎯",t:"¿Para qué?",b:"El objetivo real — no el que suena bonito, sino el que le importa a la comunidad y a la Fundación."},
-       {i:"🙋",t:"¿Quién?",b:"Responsable claro por fortaleza, no solo por cargo. ¿Quién lo hace mejor, aunque no sea «el que le toca»?"},
-       {i:"📅",t:"¿Cuándo?",b:"Fechas reales con margen para imprevistos. Una fecha sin compromiso no es una fecha."}
+       {i:"🎯",t:"¿Para qué?",b:"El objetivo real — el que le importa a la comunidad y a la Fundación."},
+       {i:"🙋",t:"¿Quién?",b:"Responsable claro por fortaleza, no solo por cargo."},
+       {i:"📅",t:"¿Cuándo?",b:"Fechas reales con margen para imprevistos."}
      ],
-     reflexiones:["¿Cuál es la actividad más importante del equipo en el próximo trimestre? Descríbela con las 4 preguntas.","¿Qué necesita cambiar en nuestra forma de planear para que esto realmente suceda?"]}
+     reflexiones:["¿Cuál es la actividad más importante del equipo en el próximo trimestre? Descríbela con las 4 preguntas.","¿Qué necesita cambiar en la forma de planear para que esto realmente suceda?"]}
   ],
-  conexion_social: [
-    {num:1, nombre:"Sentido de pertenencia", tipo:"Video + frases para completar",
-     video:{id:"1rKs27gr6Yk", titulo:"¿Por qué importa sentirse parte de algo?"},
+  conexion_social:[
+    {num:1,nom:"Sentido de pertenencia",tipo:"Tarjetas + Reflexión",
      tarjetas:[
        {i:"📖",t:"Historia compartida",b:"Las historias crean raíces. Saber de dónde viene el equipo, qué ha logrado y qué ha superado nos conecta."},
        {i:"👁️",t:"Reconocimiento",b:"Sentir que el aporte de cada uno es visto. No solo cuando hay un resultado grande — en los pequeños momentos también."},
        {i:"🧭",t:"Propósito claro",b:"Entender para qué existe Conexión Social y cómo mi trabajo cotidiano contribuye a ese propósito."}
      ],
      reflexiones:["Llegué a Conexión Social porque...","Lo que más valoro de trabajar aquí es...","Mi momento más orgulloso en el equipo fue..."]},
-    {num:2, nombre:"Amor por el trabajo", tipo:"Video + impacto personal",
-     video:{id:"6_-8e3tqmW4", titulo:"El trabajo que importa — historias de impacto real"},
+    {num:2,nom:"Amor por el trabajo",tipo:"Tarjetas + Reflexión",
      tarjetas:[
        {i:"🌱",t:"El impacto invisible",b:"A veces se planta una semilla que germina meses después. El impacto llega a personas que quizás no volvemos a ver."},
        {i:"🔗",t:"La cadena de valor",b:"Lo que hago bien hoy llega a una persona o comunidad que lo necesitaba. Esa cadena es el verdadero significado del trabajo."}
      ],
-     reflexiones:["¿Recuerdo algún momento en que mi trabajo en Conexión Social le cambió algo a alguien? ¿Qué fue?","¿Qué haría diferente si supiera que alguien depende directamente de cómo hago mi trabajo hoy?"]},
-    {num:3, nombre:"Identidad del equipo", tipo:"Escudo del Equipo",
+     reflexiones:["¿Recuerdas algún momento en que tu trabajo en Conexión Social le cambió algo a alguien? ¿Qué fue?","¿Qué harías diferente si supieras que alguien depende directamente de cómo haces tu trabajo hoy?"]},
+    {num:3,nom:"Identidad del equipo",tipo:"Tarjetas + Escudo del Equipo",
      tarjetas:[
        {i:"🧭",t:"La brújula interna",b:"Un equipo con identidad clara sabe cómo actuar en situaciones difíciles porque tiene una dirección interna."},
-       {i:"🛡️",t:"El Escudo",b:"La identidad del equipo se construye respondiendo: ¿Para qué existimos? ¿Qué valores guían nuestro trabajo? ¿Qué nos diferencia?"}
+       {i:"🛡️",t:"El Escudo",b:"La identidad se construye respondiendo: ¿Para qué existimos? ¿Qué valores guían nuestro trabajo? ¿Qué nos diferencia?"}
      ],
      reflexiones:["¿Cuál sería el lema perfecto del equipo Conexión Social?"],
      escudo:true},
-    {num:4, nombre:"Relaciones interpersonales", tipo:"Video + Termómetro del Equipo",
-     video:{id:"5wjjF_GDj5o", titulo:"Cómo mejorar las relaciones en el equipo"},
+    {num:4,nom:"Relaciones interpersonales",tipo:"Tarjetas + Reflexión + Termómetro",
      tarjetas:[
-       {i:"➕",t:"Relaciones que suman",b:"Generan energía, colaboración y confianza. Son las que todos queremos tener."},
+       {i:"➕",t:"Relaciones que suman",b:"Generan energía, colaboración y confianza."},
        {i:"➖",t:"Relaciones que restan",b:"Generan tensión o desgaste. A veces no hay conflicto visible — solo incomodidad que afecta el trabajo."},
        {i:"÷",t:"Relaciones que dividen",b:"Generan bandos, chismes o exclusión. Son las más peligrosas porque dañan la cultura en silencio."}
      ],
-     reflexiones:["¿Hay alguien en el equipo con quien la relación no fluya? ¿Qué podría hacer yo para mejorarla?","¿Hay alguna conversación pendiente que estoy evitando?"],
+     reflexiones:["¿Hay alguien en el equipo con quien la relación no fluya? ¿Qué podrías hacer tú para mejorarla?","¿Hay alguna conversación pendiente que estás evitando?"],
      termometro:true},
-    {num:5, nombre:"Identidad por la Fundación", tipo:"Video + Muro de Orgullo",
-     video:{id:"aF2eMSgAErs", titulo:"El orgullo de representar lo que amamos"},
+    {num:5,nom:"Identidad por la Fundación",tipo:"Tarjetas + Reflexión + Muro + Acuerdo",
      tarjetas:[
        {i:"🌉",t:"El puente",b:"Conexión Social es el puente entre FUNDACOOFISAM y las personas que servimos."},
-       {i:"🎖️",t:"Embajador",b:"Actuar como embajador: entender la misión, creerla y hacerla visible en cada interacción."}
+       {i:"🎖️",t:"Embajadora",b:"Actuar como embajadora: entender la misión, creerla y hacerla visible en cada interacción."}
      ],
-     reflexiones:["¿Cómo describo FUNDACOOFISAM cuando alguien me pregunta dónde trabajo?","¿Qué puedo hacer YO desde mi rol para que la Fundación sea cada vez más valorada?"],
-     muro:true,
-     acuerdo:true}
+     reflexiones:["¿Cómo describes FUNDACOOFISAM cuando alguien te pregunta dónde trabajas?","¿Qué puedes hacer tú desde tu rol para que la Fundación sea cada vez más valorada?"],
+     muro:true,acuerdo:true}
   ]
 };
 
-// ══ HELPERS ══════════════════════════════════════════
+var TERMO = {
+  artistica:["Me cuesta aceptar que modifiquen mi propuesta artística","Busco reconocimiento más que el buen resultado","Me incomoda cuando destacan más a un compañero","Critico el trabajo ajeno pero me cuesta recibir crítica del mío","Siento resentimiento cuando el equipo no valora lo que aporto"],
+  conexion_social:["Nos comunicamos abiertamente y sin miedo","Nos apoyamos cuando alguien tiene dificultades","Resolvemos los conflictos de forma constructiva","Nos sentimos orgullosos de pertenecer a Conexión Social","Cada persona aporta lo mejor de sí al equipo"]
+};
+
+// ══════════════════════════════════════════════
+// ESTADO
+// ══════════════════════════════════════════════
+var S = {
+  nombre:"",mod:"",nom:"",col:"",claro:"",chip:"",
+  etapa:0, // 0=quiz, 1..N=temas
+  quizIdx:0, quizScore:0, quizResps:[],
+  completados:[], reflexiones:{}, termometros:{},
+  escudo:["","","",""], escudoIdx:-1, escudoTema:-1,
+  muroUnsub:null, acuerdoUnsub:null,
+  adminMod:"artistica"
+};
+
+// ══════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════
 function $(id){return document.getElementById(id);}
-function mostrar(id){$(id).style.display='';}
-function ocultar(id){$(id).style.display='none';}
-function irA(screen){
-  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
-  $(screen).classList.add('active');
+function pg(id){
+  document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on');});
+  $(id).classList.add('on');
 }
-function vistaApp(v){
-  ['bienvenida','quiz','tema','termo','escudo','muro','acuerdo','cierre'].forEach(function(n){
-    $('vista-'+n).style.display = n===v ? '' : 'none';
-  });
-}
+function col(mod){return db.collection('talleres').doc(mod);}
+function subCol(mod,sub){return col(mod).collection(sub);}
 function confeti(){
-  var cols=['#E67E22','#27AE60','#2980B9','#9B59B6','#F1C40F'];
-  for(var i=0;i<40;i++){
+  var cs=['#E67E22','#27AE60','#2980B9','#9B59B6','#F1C40F'];
+  for(var i=0;i<35;i++){
     var c=document.createElement('div');
-    c.className='confeti';
-    c.style.cssText='left:'+Math.random()*100+'vw;top:-10px;width:10px;height:10px;border-radius:2px;background:'+cols[Math.floor(Math.random()*5)]+';animation:caer '+(2+Math.random())+'s '+Math.random()*1.5+'s both;';
+    c.className='ci';
+    c.style.left=Math.random()*100+'vw';
+    c.style.top='-10px';
+    c.style.background=cs[Math.floor(Math.random()*5)];
+    c.style.setProperty('--d',(2+Math.random()).toFixed(1)+'s');
+    c.style.setProperty('--dl',(Math.random()*1.2).toFixed(1)+'s');
     document.body.appendChild(c);
     setTimeout(function(){if(c.parentNode)c.parentNode.removeChild(c);},4000);
   }
 }
+function actualizarProgreso(){
+  var total=TEMAS[S.mod].length+1;
+  var hecho=S.completados.length;
+  $('prog-txt').textContent=hecho+' de '+total+' completados';
+  $('prog-fill').style.width=((hecho/total)*100)+'%';
+  $('prog-fill').style.background=S.col;
+}
+function guardarLocal(){
+  try{
+    localStorage.setItem('taller_'+S.nombre+'_'+S.mod, JSON.stringify({
+      completados:S.completados, escudo:S.escudo, etapa:S.etapa
+    }));
+  }catch(e){}
+}
+function cargarLocal(){
+  try{
+    var d=localStorage.getItem('taller_'+S.nombre+'_'+S.mod);
+    if(d){var o=JSON.parse(d);S.completados=o.completados||[];S.escudo=o.escudo||["","","",""];}
+  }catch(e){}
+}
 
-// ══ ACCESO ════════════════════════════════════════════
+// ══════════════════════════════════════════════
+// LOGIN
+// ══════════════════════════════════════════════
 function ingresar(){
   var nombre=$('inp-nombre').value.trim();
   var codigo=$('inp-codigo').value.trim().toUpperCase();
-  var err=$('error-acceso');
-  if(!nombre){err.textContent='Escribe tu nombre.';err.classList.add('show');return;}
-  if(!CODIGOS[codigo]){err.textContent='Código incorrecto.';err.classList.add('show');return;}
-  err.classList.remove('show');
+  var err=$('err-login');
+  if(!nombre){err.textContent='Escribe tu nombre.';err.classList.add('on');return;}
+  if(!CODIGOS[codigo]){err.textContent='Código incorrecto.';err.classList.add('on');return;}
+  err.classList.remove('on');
   var info=CODIGOS[codigo];
-  E.nombre=nombre; E.modulo=info.modulo; E.moduloNombre=info.nombre;
-  E.color=info.color; E.claro=info.claro;
-  if(info.modulo==='admin'){
-    irA('s-admin');
-    cargarAdmin();
+  S.nombre=nombre; S.mod=info.mod; S.nom=info.nom;
+  S.col=info.col; S.claro=info.claro; S.chip=info.chip;
+  if(info.mod==='admin'){
+    pg('pg-admin');
+    iniciarAdmin();
   } else {
-    E.completados=[]; E.reflexiones={}; E.termometro={}; E.escudo=["","","",""];
-    $('app-titulo').textContent=info.nombre;
-    $('app-chip').innerHTML='<span class="topbar-chip '+info.chip+'">'+info.nombre+'</span>';
-    irA('s-app');
-    construirBienvenida();
-    vistaApp('bienvenida');
+    cargarLocal();
+    $('app-titulo').textContent=S.nom;
+    $('app-chip').innerHTML='<span class="tb-chip '+S.chip+'">'+S.nom+'</span>';
+    pg('pg-app');
+    mostrarMenu();
   }
 }
 
-// ══ BIENVENIDA ════════════════════════════════════════
-function construirBienvenida(){
-  var temas=TEMAS[E.modulo];
-  $('bv-hero').style.background='linear-gradient(135deg,'+E.claro+',#fff)';
-  $('bv-titulo').textContent='¡Hola, '+E.nombre.split(' ')[0]+'!';
-  $('bv-desc').textContent='Bienvenido/a al taller. Aquí encontrarás los temas del día.';
-  $('btn-iniciar-recorrido').style.background=E.color;
+// ══════════════════════════════════════════════
+// MENÚ PRINCIPAL (bienvenida con temas)
+// ══════════════════════════════════════════════
+function mostrarMenu(){
+  actualizarProgreso();
+  $('app-footer').style.display='none';
+  var temas=TEMAS[S.mod];
   var total=temas.length+1;
-  var hecho=E.completados.length;
-  $('bv-progreso-txt').textContent=hecho+' de '+total+' completados';
-  $('bv-progreso-fill').style.width=((hecho/total)*100)+'%';
-  $('bv-progreso-fill').style.background=E.color;
-  var items=['Quiz de identidad'].concat(temas.map(function(t){return t.nombre;}));
-  $('bv-temas').innerHTML=items.map(function(n,i){
-    var done=E.completados.indexOf(i)>-1;
-    return '<div class="tema-item"><div class="tema-num" style="background:'+(done?E.color:'#E8E8E2')+';color:'+(done?'#fff':'#5A5A54')+';">'+(i+1)+'</div>'+
-      '<div><div class="tema-nombre">'+n+'</div><div class="tema-tipo">'+(i===0?'🎮 Quiz interactivo':(TEMAS[E.modulo][i-1]?TEMAS[E.modulo][i-1].tipo:''))+'</div></div>'+
-      '<span style="font-size:1.1rem">'+(done?'✅':'○')+'</span></div>';
-  }).join('');
-}
-
-function iniciarRecorrido(){
-  if(E.completados.indexOf(0)<0) iniciarQuiz();
-  else siguienteEtapa();
-}
-
-function siguienteEtapa(){
-  var total=TEMAS[E.modulo].length+1;
-  for(var i=0;i<total;i++){
-    if(E.completados.indexOf(i)<0){
-      if(i===0) iniciarQuiz();
-      else iniciarTema(i-1);
-      return;
-    }
+  var html='<div class="pad">';
+  html+='<h2 style="font-size:1.1rem;font-weight:800;margin-bottom:4px">¡Hola, '+S.nombre.split(' ')[0]+'!</h2>';
+  html+='<p style="font-size:.85rem;color:#5A5A54;margin-bottom:20px">Selecciona una actividad para comenzar.</p>';
+  // Quiz
+  var quizDone=S.completados.indexOf(0)>-1;
+  html+='<div class="tema-card '+(quizDone?'done':'activo')+'" id="tc-0">'+
+    '<div class="tema-num" style="background:'+(quizDone?S.col:'#E8E8E2')+';color:'+(quizDone?'#fff':'#5A5A54')+'">1</div>'+
+    '<div class="tema-info"><div class="tema-nombre">Quiz de identidad</div><div class="tema-tipo">🎮 5 preguntas interactivas</div></div>'+
+    '<div class="tema-estado">'+(quizDone?'✅':'▶')+' </div></div>';
+  // Temas
+  temas.forEach(function(t,i){
+    var done=S.completados.indexOf(i+1)>-1;
+    var prevDone=S.completados.indexOf(i)>-1;
+    var disponible=done||prevDone||(i===0&&S.completados.indexOf(0)>-1);
+    html+='<div class="tema-card '+(done?'done':disponible?'activo':'')+'" id="tc-'+(i+1)+'" style="'+(disponible?'':'opacity:.5;pointer-events:none')+'">' +
+      '<div class="tema-num" style="background:'+(done?S.col:disponible?'#E8E8E2':'#E8E8E2')+';color:'+(done?'#fff':'#5A5A54')+'">'+(i+2)+'</div>'+
+      '<div class="tema-info"><div class="tema-nombre">'+t.nom+'</div><div class="tema-tipo">'+t.tipo+'</div></div>'+
+      '<div class="tema-estado">'+(done?'✅':disponible?'▶':'🔒')+'</div></div>';
+  });
+  // Si todos completos
+  if(S.completados.length>=total){
+    html+='<button class="btn bv" id="btn-ver-cierre" style="margin-top:8px">🎉 Ver mi resumen final</button>';
   }
-  mostrarCierre();
+  html+='</div>';
+  $('app-contenido').innerHTML=html;
+  // eventos
+  var tc0=$('tc-0');
+  if(tc0) tc0.addEventListener('click',function(){iniciarQuiz();});
+  temas.forEach(function(_,i){
+    var el=$('tc-'+(i+1));
+    if(el) el.addEventListener('click',function(){iniciarTema(i);});
+  });
+  var btnCierre=$('btn-ver-cierre');
+  if(btnCierre) btnCierre.addEventListener('click',mostrarCierre);
 }
 
-// ══ QUIZ ══════════════════════════════════════════════
-function iniciarQuiz(){E.quizIdx=0;E.quizScore=0;renderPregunta();vistaApp('quiz');}
-
+// ══════════════════════════════════════════════
+// QUIZ
+// ══════════════════════════════════════════════
+function iniciarQuiz(){
+  S.quizIdx=0; S.quizScore=0; S.quizResps=[];
+  $('app-footer').style.display='none';
+  renderPregunta();
+}
 function renderPregunta(){
-  var qs=QUIZ[E.modulo];
-  var i=E.quizIdx;
+  var qs=QUIZ[S.mod];
+  var i=S.quizIdx;
   if(i>=qs.length){finQuiz();return;}
   var q=qs[i];
-  $('quiz-fill').style.width=(((i+1)/qs.length)*100)+'%';
-  $('quiz-body').innerHTML='<div class="quiz-wrap">'+
-    '<div class="quiz-num">Pregunta '+(i+1)+' de '+qs.length+'</div>'+
-    '<div class="quiz-enunciado">'+q.p+'</div>'+
-    '<div class="quiz-opciones">'+q.ops.map(function(o,j){
-      return '<button class="quiz-opcion" onclick="responder('+j+')">'+o+'</button>';
-    }).join('')+'</div>'+
-    '<div class="quiz-feedback" id="qfb"></div>'+
-    '<button class="btn-full" id="btn-qnext" style="display:none;background:'+E.color+';margin-top:8px" onclick="siguienteQ()">'+
-    (i<qs.length-1?'Siguiente →':'Ver resultado →')+'</button></div>';
+  // progreso quiz
+  $('prog-txt').textContent='Pregunta '+(i+1)+' de '+qs.length;
+  $('prog-fill').style.width=(((i+1)/qs.length)*100)+'%';
+  $('prog-fill').style.background=S.col;
+  var html='<div class="pad">';
+  html+='<p style="font-size:.75rem;font-weight:700;color:'+S.col+';text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Pregunta '+(i+1)+' de '+qs.length+'</p>';
+  html+='<p class="quiz-enunc">'+q.p+'</p>';
+  html+='<div class="quiz-ops">'+q.ops.map(function(o,j){
+    return '<button class="quiz-op" data-j="'+j+'">'+o+'</button>';
+  }).join('')+'</div>';
+  html+='<div class="quiz-fb" id="qfb"></div>';
+  html+='</div>';
+  $('app-contenido').innerHTML=html;
+  $('app-footer').style.display='none';
+  document.querySelectorAll('.quiz-op').forEach(function(btn){
+    btn.addEventListener('click',function(){responder(parseInt(btn.dataset.j));});
+  });
 }
-
 function responder(j){
-  var q=QUIZ[E.modulo][E.quizIdx];
-  document.querySelectorAll('.quiz-opcion').forEach(function(b){b.disabled=true;});
-  document.querySelectorAll('.quiz-opcion')[j].classList.add(j===q.c?'ok':'mal');
-  if(j!==q.c) document.querySelectorAll('.quiz-opcion')[q.c].classList.add('ok');
-  if(j===q.c) E.quizScore++;
+  var q=QUIZ[S.mod][S.quizIdx];
+  document.querySelectorAll('.quiz-op').forEach(function(b){b.disabled=true;});
+  document.querySelectorAll('.quiz-op')[j].classList.add(j===q.c?'ok':'mal');
+  if(j!==q.c) document.querySelectorAll('.quiz-op')[q.c].classList.add('ok');
+  if(j===q.c) S.quizScore++;
+  S.quizResps.push({pregunta:q.p,opcion:q.ops[j],correcta:q.ops[q.c],ok:j===q.c});
   var fb=$('qfb');
   fb.textContent=(j===q.c?'✅ ':'❌ ')+q.fb;
-  fb.classList.add('show',j===q.c?'ok':'mal');
-  $('btn-qnext').style.display='';
+  fb.classList.add('on',j===q.c?'ok':'mal');
+  // botón siguiente
+  $('app-footer').style.display='';
+  $('btn-accion').textContent=S.quizIdx<QUIZ[S.mod].length-1?'Siguiente →':'Ver resultado →';
+  $('btn-accion').onclick=function(){S.quizIdx++;renderPregunta();};
 }
-
-function siguienteQ(){E.quizIdx++;renderPregunta();}
-
 function finQuiz(){
-  var total=QUIZ[E.modulo].length;
-  var msgs=["¡Buen comienzo!","¡Bien!","¡Muy bien!","¡Excelente!","¡Perfecto!"];
-  var msg=msgs[Math.min(Math.floor(E.quizScore/total*5),4)];
-  $('quiz-body').innerHTML='<div class="quiz-score">'+
-    '<div class="quiz-score-num" style="color:'+E.color+'">'+E.quizScore+'/'+total+'</div>'+
-    '<div class="quiz-score-msg">'+msg+'</div>'+
-    '<button class="btn-full" style="background:'+E.color+'" onclick="completar(0)">Continuar →</button></div>';
+  var total=QUIZ[S.mod].length;
+  var msgs=["¡Buen comienzo! Hay mucho por descubrir.","¡Bien! Ya conoces bastante del equipo.","¡Muy bien! Tienes buen ojo para el equipo.","¡Excelente! Conoces muy bien a tu equipo.","¡Perfecto! Eres un referente del equipo."];
+  var msg=msgs[Math.min(Math.floor(S.quizScore/total*5),4)];
+  actualizarProgreso();
+  var html='<div class="pad"><div class="quiz-score">'+
+    '<div class="score-num" style="color:'+S.col+'">'+S.quizScore+'/'+total+'</div>'+
+    '<div class="score-msg">'+msg+'</div></div></div>';
+  $('app-contenido').innerHTML=html;
+  $('app-footer').style.display='';
+  $('btn-accion').textContent='Guardar y continuar →';
+  $('btn-accion').onclick=function(){
+    // Guardar quiz en Firebase
+    subCol(S.mod,'quiz').doc(S.nombre)
+      .set({nombre:S.nombre,score:S.quizScore,total:total,resps:S.quizResps,ts:Date.now()})
+      .catch(function(){});
+    completar(0);
+  };
 }
 
-// ══ TEMAS ════════════════════════════════════════════
+// ══════════════════════════════════════════════
+// TEMAS
+// ══════════════════════════════════════════════
 function iniciarTema(idx){
-  var t=TEMAS[E.modulo][idx];
-  var html='';
-  html+='<div style="padding:16px 16px 0"><p style="font-size:.78rem;font-weight:700;color:'+E.color+';text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">Tema '+t.num+' de '+TEMAS[E.modulo].length+'</p>'+
-    '<h2 style="font-size:1.1rem;font-weight:800;margin-bottom:14px">'+t.nombre+'</h2></div>';
-
+  var t=TEMAS[S.mod][idx];
+  var html='<div class="pad">';
+  // Encabezado
+  html+='<p style="font-size:.72rem;font-weight:700;color:'+S.col+';text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">Tema '+t.num+' de '+TEMAS[S.mod].length+'</p>';
+  html+='<h2 style="font-size:1.1rem;font-weight:800;margin-bottom:16px">'+t.nom+'</h2>';
+  // Tarjetas
   if(t.tarjetas){
-    html+='<p style="font-size:.78rem;font-weight:700;color:#5A5A54;text-transform:uppercase;letter-spacing:.04em;padding:0 16px;margin-bottom:8px">Puntos clave</p>'+
-      '<div class="tarjetas-scroll" style="padding:0 16px 12px">'+
+    html+='<p class="sec-label">Puntos clave — desliza →</p>';
+    html+='<div class="tarjetas" style="margin-bottom:16px">'+
       t.tarjetas.map(function(c){
-        return '<div class="tarjeta" style="background:'+E.claro+'">'+
-          '<div class="tarjeta-icono">'+c.i+'</div>'+
-          '<div class="tarjeta-titulo" style="color:'+E.color+'">'+c.t+'</div>'+
-          '<div class="tarjeta-body">'+c.b+'</div></div>';
+        return '<div class="tarjeta" style="background:'+S.claro+'">'+
+          '<div class="t-ico">'+c.i+'</div>'+
+          '<div class="t-titulo" style="color:'+S.col+'">'+c.t+'</div>'+
+          '<div class="t-body">'+c.b+'</div></div>';
       }).join('')+'</div>';
   }
+  // Reflexiones
   if(t.reflexiones){
-    html+='<p style="font-size:.78rem;font-weight:700;color:#5A5A54;text-transform:uppercase;letter-spacing:.04em;padding:0 16px;margin-bottom:8px">Reflexión personal</p>'+
-      '<div style="padding:0 16px">'+
-      t.reflexiones.map(function(r,i){
-        return '<div class="reflx-item"><div class="reflx-q">'+r+'</div>'+
-          '<textarea class="reflx-input" id="r-'+idx+'-'+i+'" placeholder="Escribe tu reflexión..." rows="2"></textarea></div>';
-      }).join('')+'</div>';
+    html+='<p class="sec-label" style="margin-top:8px">Reflexión personal</p>';
+    t.reflexiones.forEach(function(r,i){
+      html+='<div class="reflx"><div class="reflx-q">'+r+'</div>'+
+        '<textarea class="reflx-ta" id="ref-'+idx+'-'+i+'" placeholder="Escribe tu reflexión..." rows="2"></textarea></div>';
+    });
   }
+  // Termómetro
   if(t.termometro){
-    html+='<div style="padding:0 16px"><button class="btn-full" style="background:'+E.color+'" onclick="abrirTermometro('+idx+')">🌡️ Abrir Termómetro →</button></div>';
+    html+='<div id="bloque-termo" style="margin-top:8px">'+renderTermoHTML(idx)+'</div>';
   }
+  // Escudo
   if(t.escudo){
-    html+='<div style="padding:0 16px"><button class="btn-full btn-verde" onclick="abrirEscudo()">🛡️ Construir el Escudo del Equipo →</button></div>';
+    html+='<div id="bloque-escudo" style="margin-top:8px">'+renderEscudoHTML(idx)+'</div>';
   }
+  // Muro
   if(t.muro){
-    html+='<div style="padding:0 16px"><button class="btn-full btn-verde" onclick="abrirMuro()">💛 Ir al Muro de Orgullo →</button></div>';
+    html+='<div style="margin-top:8px"><p class="sec-label">Muro de Orgullo</p>'+
+      '<p style="font-size:.87rem;font-weight:600;margin-bottom:8px">Estoy orgullosa/o de FUNDACOOFISAM porque...</p>'+
+      '<textarea class="reflx-ta" id="muro-input" placeholder="Escribe tu mensaje..." rows="2" style="margin-bottom:8px"></textarea>'+
+      '<button class="btn bv" id="btn-pub-muro" style="margin-top:0;margin-bottom:12px">Publicar ↗</button>'+
+      '<div id="muro-posts"><div class="loading"><div class="spin"></div></div></div></div>';
   }
+  // Acuerdo
   if(t.acuerdo){
-    html+='<div style="padding:0 16px"><button class="btn-full btn-verde" onclick="vistaApp(\'acuerdo\')">📜 Acuerdo de Convivencia →</button></div>';
+    html+='<div style="margin-top:8px"><p class="sec-label">Acuerdo de Convivencia</p>'+
+      '<p style="font-size:.85rem;margin-bottom:8px">Para que este equipo sea lo que queremos, yo me comprometo a...</p>'+
+      '<textarea class="reflx-ta" id="acuerdo-input" placeholder="Escribe tu compromiso..." rows="2" style="margin-bottom:8px"></textarea>'+
+      '<button class="btn bv" id="btn-pub-acuerdo" style="margin-top:0;margin-bottom:12px">Agregar mi compromiso ↗</button>'+
+      '<div id="acuerdo-lista"></div>'+
+      '<div id="firmantes-sec" style="display:none;margin-top:12px"><p class="sec-label">✅ Firmantes</p><div class="firmantes" id="firmantes-lista"></div></div>'+
+      '<button class="btn bv" id="btn-firmar" style="margin-top:12px">Firmo este Acuerdo ✓</button></div>';
   }
-  html+='<div style="padding:0 16px 32px"><button class="btn-full" style="background:'+E.color+';margin-top:12px" onclick="guardarYCompletar('+idx+')">Marcar como completado ✓</button></div>';
-  $('tema-body').innerHTML=html;
-  vistaApp('tema');
+  html+='</div>';
+  $('app-contenido').innerHTML=html;
+  // Botón de acción principal
+  $('app-footer').style.display='';
+  $('btn-accion').textContent='Guardar y continuar →';
+  $('btn-accion').onclick=function(){guardarTema(idx);};
+  // Eventos dinámicos
+  if(t.termometro) iniciarEventosTermo(idx);
+  if(t.escudo) iniciarEventosEscudo(idx);
+  if(t.muro) iniciarMuro();
+  if(t.acuerdo) iniciarAcuerdo();
 }
 
-
-
-function guardarYCompletar(idx){
-  var t=TEMAS[E.modulo][idx];
-  var resps={};
-  if(t.reflexiones) t.reflexiones.forEach(function(_,i){
-    var el=$('r-'+idx+'-'+i);
-    if(el&&el.value.trim()) resps[i]=el.value.trim();
-  });
-  if(Object.keys(resps).length){
-    E.reflexiones[idx]=resps;
-    db.collection('talleres').doc(E.modulo).collection('reflexiones').doc(E.nombre+'_t'+idx)
-      .set({nombre:E.nombre,temaIdx:idx,resps:resps,ts:Date.now()}).catch(function(){});
-  }
-  completar(idx+1);
-}
-
-function completar(idx){
-  if(E.completados.indexOf(idx)<0) E.completados.push(idx);
-  construirBienvenida();
-  var total=TEMAS[E.modulo].length+1;
-  if(E.completados.length>=total){mostrarCierre();return;}
-  vistaApp('bienvenida');
-}
-
-// ══ TERMÓMETRO ════════════════════════════════════════
-function abrirTermometro(temaIdx){
-  var items=TERMO_ITEMS[E.modulo];
-  var html='<p style="font-size:.88rem;color:#5A5A54;margin-bottom:16px">Califica del 1 al 10 cada afirmación. 1 = casi nunca, 10 = siempre.</p>';
+// ══════════════════════════════════════════════
+// TERMÓMETRO (inline en el tema)
+// ══════════════════════════════════════════════
+function renderTermoHTML(temaIdx){
+  var items=TERMO[S.mod];
+  var html='<p class="sec-label">Termómetro del equipo</p>';
+  html+='<p style="font-size:.82rem;color:#5A5A54;margin-bottom:10px">Califica del 1 al 10 cada afirmación.</p>';
   items.forEach(function(item,i){
-    html+='<div class="termo-item"><div class="termo-label">'+item+'</div>'+
+    html+='<div class="termo-item">'+
+      '<div class="termo-label">'+item+'</div>'+
       '<div class="termo-row">'+
-      '<span style="font-size:.75rem;color:#5A5A54">Poco</span>'+
-      '<input type="range" class="termo-slider" id="ts'+i+'" min="1" max="10" value="5" '+
-      'oninput="updateTermo('+i+')" style="background:linear-gradient(to right,#E67E22 0%,#E67E22 40%,#ddd 40%)">'+
-      '<span style="font-size:.75rem;color:#5A5A54">Mucho</span>'+
-      '<div class="termo-val" id="tv'+i+'" style="background:#E67E22">5</div></div>'+
+      '<span style="font-size:.7rem;color:#5A5A54">Poco</span>'+
+      '<input type="range" class="termo-sl" id="ts'+temaIdx+'_'+i+'" min="1" max="10" value="5" '+
+      'style="background:linear-gradient(to right,#E67E22 40%,#ddd 40%)">'+
+      '<span style="font-size:.7rem;color:#5A5A54">Mucho</span>'+
+      '<div class="termo-val" id="tv'+temaIdx+'_'+i+'" style="background:#E67E22">5</div></div>'+
       '<div class="termo-etiq"><span>1</span><span>5</span><span>10</span></div></div>';
   });
-  html+='<div class="termo-resultado" id="tres"></div>';
-  html+='<button class="btn-full" style="background:'+E.color+';margin-top:8px" onclick="calcTermo('+temaIdx+')">Ver mi resultado →</button>';
-  html+='<button class="btn-full" id="btn-termo-continuar" style="background:#1C1C18;margin-top:10px;display:none">Continuar →</button>';
-  $('termo-body').innerHTML=html;
-  vistaApp('termo');
+  html+='<div class="termo-res" id="tres-'+temaIdx+'"></div>';
+  return html;
 }
-
-function updateTermo(i){
-  var v=parseInt($('ts'+i).value);
+function iniciarEventosTermo(temaIdx){
+  TERMO[S.mod].forEach(function(_,i){
+    var sl=$('ts'+temaIdx+'_'+i);
+    if(sl) sl.addEventListener('input',function(){updateTermo(temaIdx,i);});
+  });
+}
+function updateTermo(ti,i){
+  var v=parseInt($('ts'+ti+'_'+i).value);
   var p=((v-1)/9)*100;
   var col=v<=3?'#27AE60':v<=6?'#E67E22':'#E74C3C';
-  $('tv'+i).textContent=v;$('tv'+i).style.background=col;
-  $('ts'+i).style.background='linear-gradient(to right,'+col+' 0%,'+col+' '+p+'%,#ddd '+p+'%)';
+  $('tv'+ti+'_'+i).textContent=v;
+  $('tv'+ti+'_'+i).style.background=col;
+  $('ts'+ti+'_'+i).style.background='linear-gradient(to right,'+col+' 0%,'+col+' '+p+'%,#ddd '+p+'%)';
+  // calcular y mostrar resultado al momento
+  calcTermoSilencioso(ti);
 }
-
-function calcTermo(temaIdx){
-  var items=TERMO_ITEMS[E.modulo];
-  var vals=items.map(function(_,i){return parseInt($('ts'+i)?$('ts'+i).value:5);});
+function calcTermoSilencioso(ti){
+  var items=TERMO[S.mod];
+  var vals=items.map(function(_,i){
+    var el=$('ts'+ti+'_'+i);
+    return el?parseInt(el.value):5;
+  });
   var prom=vals.reduce(function(a,b){return a+b;},0)/vals.length;
-  E.termometro[temaIdx]={vals:vals,prom:prom.toFixed(1)};
   var col=prom<=3?'#1A5C2E':prom<=6?'#E67E22':'#E74C3C';
   var emoji=prom<=3?'🟢':prom<=6?'🟡':'🔴';
   var msg=prom<=3?'Puntajes bajos aquí son positivos.':prom<=6?'¡Reconocerlo es el primer paso!':'Estos temas necesitan atención del equipo.';
-  var r=$('tres');
-  r.innerHTML='<div style="font-size:1.3rem;margin-bottom:6px">'+emoji+'</div>'+
-    '<div style="font-size:.95rem;font-weight:700;color:'+col+'">Promedio: '+prom.toFixed(1)+'/10</div>'+
-    '<div style="font-size:.82rem;color:#5A5A54;margin-top:4px">'+msg+'</div>';
-  r.style.background=col+'15';r.style.border='1px solid '+col+'50';r.classList.add('show');
-  // Mostrar botón continuar después del resultado
-  var btnCont=document.getElementById('btn-termo-continuar');
-  if(btnCont){
-    btnCont.style.display='';
-    btnCont.onclick=function(){guardarYCompletar(temaIdx);};
+  var r=$('tres-'+ti);
+  if(r){
+    r.innerHTML='<div style="font-size:1.1rem;margin-bottom:4px">'+emoji+'</div>'+
+      '<div style="font-size:.9rem;font-weight:700;color:'+col+'">Promedio: '+prom.toFixed(1)+'/10</div>'+
+      '<div style="font-size:.8rem;color:#5A5A54;margin-top:3px">'+msg+'</div>';
+    r.style.background=col+'15';r.style.border='1px solid '+col+'50';r.classList.add('on');
+    S.termometros[ti]={vals:vals,prom:prom.toFixed(1)};
   }
-  db.collection('talleres').doc(E.modulo).collection('termometros').doc(E.nombre+'_t'+temaIdx)
-    .set({nombre:E.nombre,temaIdx:temaIdx,vals:vals,prom:prom.toFixed(1),ts:Date.now()}).catch(function(){});
 }
 
-// ══ ESCUDO ════════════════════════════════════════════
-var ESCUDO_LABELS=['Lo que nos define — ¿Quiénes somos?','Lo que nos enorgullece — ¿Qué nos hace especiales?','Lo que queremos ser — ¿Cómo queremos ser recordados?','Nuestro lema — Una frase que nos represente'];
-
-function abrirEscudo(){vistaApp('escudo');}
-
-function editarCuadrante(idx){
-  E.escudoIdx=idx;
-  $('modal-label').textContent=ESCUDO_LABELS[idx];
-  $('modal-input').value=E.escudo[idx]||'';
-  $('modal-escudo').classList.add('open');
+// ══════════════════════════════════════════════
+// ESCUDO (inline en el tema)
+// ══════════════════════════════════════════════
+function renderEscudoHTML(temaIdx){
+  S.escudoTema=temaIdx;
+  var html='<p class="sec-label">Escudo del Equipo</p>';
+  html+='<p style="font-size:.82rem;color:#5A5A54;margin-bottom:10px">Toca cada cuadrante para completarlo.</p>';
+  html+='<div class="escudo-grid" id="escudo-grid">'+
+    '<div class="eq" style="background:#D6EAF8" id="eq-0"><div class="eq-label" style="color:#154360">Lo que nos define</div><div class="eq-prompt" id="eq-0-p">¿Quiénes somos?</div><div class="eq-resp" id="eq-0-r" style="color:#154360">'+S.escudo[0]+'</div></div>'+
+    '<div class="eq" style="background:#D5F5E3" id="eq-1"><div class="eq-label" style="color:#1A5C2E">Lo que nos enorgullece</div><div class="eq-prompt" id="eq-1-p">¿Qué nos hace especiales?</div><div class="eq-resp" id="eq-1-r" style="color:#1A5C2E">'+S.escudo[1]+'</div></div>'+
+    '<div class="eq" style="background:#FAD7A0" id="eq-2"><div class="eq-label" style="color:#7D3C0F">Lo que queremos ser</div><div class="eq-prompt" id="eq-2-p">¿Cómo queremos ser recordados?</div><div class="eq-resp" id="eq-2-r" style="color:#7D3C0F">'+S.escudo[2]+'</div></div>'+
+    '<div class="eq" style="background:#E8DAEF" id="eq-3"><div class="eq-label" style="color:#4A235A">Nuestro lema</div><div class="eq-prompt" id="eq-3-p">Una frase que nos represente</div><div class="eq-resp" id="eq-3-r" style="color:#4A235A">'+S.escudo[3]+'</div></div>'+
+  '</div>'+
+  '<div class="escudo-lema" id="escudo-lema">'+(S.escudo[3]?'"'+S.escudo[3]+'"':'')+'</div>'+
+  '<p style="font-size:.75rem;color:#5A5A54;text-align:center;margin-bottom:8px" id="escudo-prog">'+S.escudo.filter(function(x){return x;}).length+'/4 completados</p>';
+  // Aplicar estado si ya hay respuestas
+  return html;
 }
-
-function cerrarModal(){$('modal-escudo').classList.remove('open');}
-
+function iniciarEventosEscudo(temaIdx){
+  // Restaurar estado visual
+  [0,1,2,3].forEach(function(i){
+    actualizarCuadrante(i);
+    var el=$('eq-'+i);
+    if(el) el.addEventListener('click',function(){abrirModalEscudo(i);});
+  });
+  actualizarEscudoLema();
+}
+function actualizarCuadrante(i){
+  var p=$('eq-'+i+'-p');
+  var r=$('eq-'+i+'-r');
+  if(!p||!r) return;
+  if(S.escudo[i]){
+    p.style.display='none';
+    r.textContent=S.escudo[i];
+    r.style.display='';
+  } else {
+    p.style.display='';
+    r.style.display='none';
+  }
+}
+function actualizarEscudoLema(){
+  var llenos=S.escudo.filter(function(x){return x;}).length;
+  var prog=$('escudo-prog');
+  if(prog) prog.textContent=llenos+'/4 completados';
+  var lema=$('escudo-lema');
+  if(lema){
+    if(S.escudo[3]){lema.textContent='"'+S.escudo[3]+'"';lema.style.display='';}
+    else lema.style.display='none';
+  }
+}
+function abrirModalEscudo(idx){
+  S.escudoIdx=idx;
+  var labels=['Lo que nos define — ¿Quiénes somos?','Lo que nos enorgullece — ¿Qué nos hace especiales?','Lo que queremos ser — ¿Cómo queremos ser recordados?','Nuestro lema — Una frase que nos represente'];
+  $('modal-lbl').textContent=labels[idx];
+  $('modal-ta').value=S.escudo[idx]||'';
+  $('modal-escudo').classList.add('on');
+  setTimeout(function(){$('modal-ta').focus();},100);
+}
+function cerrarModal(){$('modal-escudo').classList.remove('on');}
 function guardarCuadrante(){
-  var v=$('modal-input').value.trim();
+  var v=$('modal-ta').value.trim();
   if(!v) return;
-  var i=E.escudoIdx;
-  E.escudo[i]=v;
-  $('eq-'+i+'-p').style.display='none';
-  $('eq-'+i+'-r').textContent=v;$('eq-'+i+'-r').style.display='';
+  S.escudo[S.escudoIdx]=v;
+  actualizarCuadrante(S.escudoIdx);
+  actualizarEscudoLema();
+  guardarLocal();
   cerrarModal();
-  var llenos=E.escudo.filter(function(x){return x;}).length;
-  $('escudo-prog').textContent=llenos+'/4 completados';
-  $('btn-guardar-escudo').disabled=llenos<4;
-  if(llenos===4){
-    $('escudo-lema').textContent='"'+E.escudo[3]+'"';
-    $('escudo-lema').style.display='';
-  }
 }
 
-function guardarEscudo(){
-  db.collection('talleres').doc('conexion_social').collection('escudos').doc(E.nombre)
-    .set({nombre:E.nombre,escudo:E.escudo,ts:Date.now()}).catch(function(){});
-  completar(4);
-}
-
-// ══ MURO ══════════════════════════════════════════════
-var muroUnsub=null;
-function abrirMuro(){
-  vistaApp('muro');
-  if(muroUnsub) muroUnsub();
-  muroUnsub=db.collection('talleres').doc('conexion_social').collection('muro').orderBy('ts').onSnapshot(function(snap){
-    if(snap.empty){$('muro-posts').innerHTML='<div class="vacio">¡Sé el/la primero/a!</div>';return;}
+// ══════════════════════════════════════════════
+// MURO
+// ══════════════════════════════════════════════
+function iniciarMuro(){
+  if(S.muroUnsub) S.muroUnsub();
+  S.muroUnsub=subCol('conexion_social','muro').orderBy('ts').onSnapshot(function(snap){
+    var el=$('muro-posts');
+    if(!el) return;
+    if(snap.empty){el.innerHTML='<div class="vacio">¡Sé la primera!</div>';return;}
     var cols=['#D5F5E3','#D6EAF8','#FAD7A0','#E8DAEF','#FADBD8'];
-    $('muro-posts').innerHTML=snap.docs.map(function(d,i){
+    el.innerHTML=snap.docs.map(function(d,i){
       var p=d.data();
       return '<div class="muro-post" style="background:'+cols[i%5]+'"><div class="muro-autor">'+p.nombre+'</div>'+p.texto+'</div>';
     }).join('');
   },function(){});
+  var btnMuro=$('btn-pub-muro');
+  if(btnMuro) btnMuro.addEventListener('click',function(){
+    var txt=$('muro-input').value.trim();
+    if(!txt) return;
+    subCol('conexion_social','muro').add({nombre:S.nombre,texto:txt,ts:Date.now()}).catch(function(){});
+    $('muro-input').value='';
+  });
 }
 
-function publicarMuro(){
-  var txt=$('muro-input').value.trim();
-  if(!txt) return;
-  db.collection('talleres').doc('conexion_social').collection('muro').add({nombre:E.nombre,texto:txt,ts:Date.now()}).catch(function(){});
-  $('muro-input').value='';
-}
-
-// ══ ACUERDO ═══════════════════════════════════════════
-var acuerdoUnsub=null;
+// ══════════════════════════════════════════════
+// ACUERDO
+// ══════════════════════════════════════════════
 function iniciarAcuerdo(){
-  if(acuerdoUnsub) acuerdoUnsub();
-  acuerdoUnsub=db.collection('talleres').doc('conexion_social').collection('compromisos').orderBy('votos','desc').onSnapshot(function(snap){
-    if(!snap.docs.length){$('acuerdo-lista').innerHTML='<p style="font-size:.85rem;color:#5A5A54">Aún no hay compromisos.</p>';return;}
-    $('acuerdo-lista').innerHTML=snap.docs.map(function(d){
+  if(S.acuerdoUnsub) S.acuerdoUnsub();
+  S.acuerdoUnsub=subCol('conexion_social','compromisos').orderBy('votos','desc').onSnapshot(function(snap){
+    var lista=$('acuerdo-lista');
+    if(!lista) return;
+    if(!snap.docs.length){lista.innerHTML='<p style="font-size:.83rem;color:#5A5A54">Aún no hay compromisos.</p>';return;}
+    lista.innerHTML=snap.docs.map(function(d){
       var data=d.data();
-      var yo=(data.votantes||[]).indexOf(E.nombre)>-1;
+      var yo=(data.votantes||[]).indexOf(S.nombre)>-1;
       return '<div class="acuerdo-item">'+
         '<div style="flex:1"><div>'+data.texto+'</div>'+
-        '<div style="font-size:.72rem;color:#5A5A54;margin-top:4px">🙋 '+(data.votos||0)+' se unen</div></div>'+
-        '<button class="btn-voto '+(yo?'voted':'')+'" data-id="'+d.id+'" data-yo="'+yo+'">'+
-        (yo?'✓ Me uno':'+ Me uno')+'</button></div>';
+        '<div style="font-size:.7rem;color:#5A5A54;margin-top:3px">🙋 '+(data.votos||0)+' se unen</div></div>'+
+        '<button class="voto-btn '+(yo?'on':'')+'" data-id="'+d.id+'" data-yo="'+yo+'">'+
+        (yo?'✓':'+')+' Me uno</button></div>';
     }).join('');
-    document.querySelectorAll('.btn-voto').forEach(function(btn){
+    document.querySelectorAll('.voto-btn').forEach(function(btn){
       btn.addEventListener('click',function(){
         if(btn.dataset.yo==='true') return;
-        db.collection('talleres').doc('conexion_social').collection('compromisos').doc(btn.dataset.id).get().then(function(s){
+        subCol('conexion_social','compromisos').doc(btn.dataset.id).get().then(function(s){
           var d=s.data();
-          s.ref.update({votos:(d.votos||0)+1,votantes:firebase.firestore.FieldValue.arrayUnion(E.nombre)});
+          s.ref.update({votos:(d.votos||0)+1,votantes:firebase.firestore.FieldValue.arrayUnion(S.nombre)});
         });
       });
     });
   },function(){});
-  db.collection('talleres').doc('conexion_social').collection('acuerdo').doc('firmantes').onSnapshot(function(s){
+  subCol('conexion_social','acuerdo').doc('firmantes').onSnapshot(function(s){
     if(!s.exists) return;
     var f=s.data().lista||[];
-    if(!f.length) return;
-    mostrar('firmantes-seccion');
+    var sec=$('firmantes-sec');
+    if(!f.length||!sec) return;
+    sec.style.display='';
     $('firmantes-lista').innerHTML=f.map(function(n){return '<span class="firmante">'+n+'</span>';}).join('');
+  });
+  var btnPub=$('btn-pub-acuerdo');
+  if(btnPub) btnPub.addEventListener('click',function(){
+    var txt=$('acuerdo-input').value.trim();
+    if(!txt) return;
+    subCol('conexion_social','compromisos').add({nombre:S.nombre,texto:txt,votos:0,votantes:[],ts:Date.now()}).catch(function(){});
+    $('acuerdo-input').value='';
+  });
+  var btnFirmar=$('btn-firmar');
+  if(btnFirmar) btnFirmar.addEventListener('click',function(){
+    subCol('conexion_social','acuerdo').doc('firmantes')
+      .set({lista:firebase.firestore.FieldValue.arrayUnion(S.nombre)},{merge:true}).catch(function(){});
+    btnFirmar.textContent='✅ ¡Firmaste el Acuerdo!';
+    btnFirmar.disabled=true;
   });
 }
 
-function publicarCompromiso(){
-  var txt=$('acuerdo-input').value.trim();
-  if(!txt) return;
-  db.collection('talleres').doc('conexion_social').collection('compromisos').add({nombre:E.nombre,texto:txt,votos:0,votantes:[],ts:Date.now()}).catch(function(){});
-  $('acuerdo-input').value='';
+// ══════════════════════════════════════════════
+// GUARDAR TEMA Y COMPLETAR
+// ══════════════════════════════════════════════
+function guardarTema(idx){
+  var t=TEMAS[S.mod][idx];
+  var resps={};
+  // Reflexiones
+  if(t.reflexiones) t.reflexiones.forEach(function(_,i){
+    var el=$('ref-'+idx+'-'+i);
+    if(el&&el.value.trim()) resps[i]=el.value.trim();
+  });
+  if(Object.keys(resps).length){
+    S.reflexiones[idx]=resps;
+    subCol(S.mod,'reflexiones').doc(S.nombre+'_t'+idx)
+      .set({nombre:S.nombre,temaIdx:idx,resps:resps,ts:Date.now()}).catch(function(){});
+  }
+  // Termómetro
+  if(t.termometro&&S.termometros[idx]){
+    subCol(S.mod,'termometros').doc(S.nombre+'_t'+idx)
+      .set({nombre:S.nombre,temaIdx:idx,vals:S.termometros[idx].vals,prom:S.termometros[idx].prom,ts:Date.now()})
+      .catch(function(){});
+  }
+  // Escudo
+  if(t.escudo){
+    subCol('conexion_social','escudos').doc(S.nombre)
+      .set({nombre:S.nombre,escudo:S.escudo,ts:Date.now()}).catch(function(){});
+  }
+  completar(idx+1);
+}
+function completar(idx){
+  if(S.completados.indexOf(idx)<0) S.completados.push(idx);
+  guardarLocal();
+  actualizarProgreso();
+  var total=TEMAS[S.mod].length+1;
+  if(S.completados.length>=total){mostrarCierre();return;}
+  mostrarMenu();
 }
 
-function firmarAcuerdo(){
-  db.collection('talleres').doc('conexion_social').collection('acuerdo').doc('firmantes')
-    .set({lista:firebase.firestore.FieldValue.arrayUnion(E.nombre)},{merge:true}).catch(function(){});
-  $('btn-firmar').textContent='✅ ¡Firmaste el Acuerdo!';
-  $('btn-firmar').disabled=true;
-  confeti();
-}
-
-// ══ CIERRE ════════════════════════════════════════════
+// ══════════════════════════════════════════════
+// CIERRE
+// ══════════════════════════════════════════════
 function mostrarCierre(){
-  $('cierre-titulo').textContent='¡Lo lograste, '+E.nombre.split(' ')[0]+'!';
-  $('cierre-sub').textContent=E.moduloNombre+' — Taller completado';
-  var html='';
-  if(Object.keys(E.termometro).length){
-    var t=Object.values(E.termometro)[0];
-    html+='<div class="resumen-card"><div class="resumen-header" style="background:'+E.claro+';color:'+E.color+'">🌡️ Mi Termómetro</div>'+
-      '<div class="resumen-body">Promedio: <strong>'+t.prom+'/10</strong></div></div>';
+  actualizarProgreso();
+  $('app-footer').style.display='none';
+  var html='<div class="cierre-hero">'+
+    '<div class="cierre-emoji">🎉</div>'+
+    '<h2 class="cierre-t">¡Lo lograste, '+S.nombre.split(' ')[0]+'!</h2>'+
+    '<p style="font-size:.85rem;color:#5A5A54">'+S.nom+' — Taller completado</p></div>';
+  html+='<div class="pad">';
+  // Resumen termómetros
+  Object.keys(S.termometros).forEach(function(ti){
+    var t=S.termometros[ti];
+    html+='<div class="res-card"><div class="res-h" style="background:'+S.claro+';color:'+S.col+'">🌡️ Termómetro — Tema '+(parseInt(ti)+1)+'</div>'+
+      '<div class="res-b">Promedio: <strong>'+t.prom+'/10</strong></div></div>';
+  });
+  // Primera reflexión
+  var primerRef=Object.values(S.reflexiones)[0];
+  if(primerRef&&primerRef[0]){
+    html+='<div class="res-card"><div class="res-h" style="background:'+S.claro+';color:'+S.col+'">💭 Mi reflexión</div>'+
+      '<div class="res-b">"'+primerRef[0]+'"</div></div>';
   }
-  var primerR=Object.values(E.reflexiones)[0];
-  if(primerR&&primerR[0]){
-    html+='<div class="resumen-card"><div class="resumen-header" style="background:'+E.claro+';color:'+E.color+'">💭 Mi reflexión</div>'+
-      '<div class="resumen-body">"'+primerR[0]+'"</div></div>';
+  // Escudo
+  if(S.escudo[3]){
+    html+='<div class="res-card"><div class="res-h" style="background:#D5F5E3;color:#1A5C2E">🛡️ Nuestro lema</div>'+
+      '<div class="res-b" style="font-style:italic;font-weight:600">"'+S.escudo[3]+'"</div></div>';
   }
-  if(E.escudo[3]){
-    html+='<div class="resumen-card"><div class="resumen-header" style="background:#D5F5E3;color:#1A5C2E">🛡️ Mi lema</div>'+
-      '<div class="resumen-body" style="font-style:italic;font-weight:600">"'+E.escudo[3]+'"</div></div>';
-  }
-  $('resumen-cards').innerHTML=html;
-  vistaApp('cierre');
+  html+='<button class="btn bg" id="btn-volver-menu" style="margin-bottom:8px">← Volver al inicio</button>';
+  html+='<button class="btn bo" id="btn-compartir">📤 Compartir mi resumen</button>';
+  html+='</div>';
+  $('app-contenido').innerHTML=html;
   confeti();
+  $('btn-volver-menu').addEventListener('click',mostrarMenu);
+  $('btn-compartir').addEventListener('click',function(){
+    var txt='Completé el taller de FUNDACOOFISAM — '+S.nom+' 🎉\n"'+(S.escudo[3]||'¡Aprendimos juntos!')+'"';
+    if(navigator.share) navigator.share({title:'Mi taller',text:txt});
+    else{navigator.clipboard&&navigator.clipboard.writeText(txt);alert('Copiado al portapapeles');}
+  });
 }
 
-// ══ ADMIN ════════════════════════════════════════════
-function cargarAdmin(){
-  cargarSeccion('panel');
-  var tabMuro=$('tab-muro');
-  var tabAcuerdo=$('tab-acuerdo');
-  if(tabMuro) tabMuro.style.display='';
-  if(tabAcuerdo) tabAcuerdo.style.display='';
+// ══════════════════════════════════════════════
+// ADMIN
+// ══════════════════════════════════════════════
+function iniciarAdmin(){
+  $('atab-muro').style.display='';
+  $('atab-acuerdo').style.display='';
+  cargarSecAdmin('panel');
+}
+function cargarSecAdmin(sec){
+  document.querySelectorAll('.asec').forEach(function(s){s.classList.remove('on');});
+  $('asec-'+sec).classList.add('on');
+  document.querySelectorAll('.atab').forEach(function(t){t.classList.remove('on');});
+  document.querySelector('.atab[data-sec="'+sec+'"]').classList.add('on');
+  var mod=S.adminMod;
+  if(sec==='panel') adminPanel(mod);
+  else if(sec==='quiz') adminQuiz(mod);
+  else if(sec==='termometros') adminTermometros(mod);
+  else if(sec==='reflexiones') adminReflexiones(mod);
+  else if(sec==='muro') adminMuro();
+  else if(sec==='acuerdo') adminAcuerdo();
 }
 
-function cargarSeccion(sec){
-  document.querySelectorAll('.seccion').forEach(function(s){s.classList.remove('activa');});
-  $('sec-'+sec).classList.add('activa');
-  document.querySelectorAll('.admin-tab').forEach(function(t){t.classList.remove('active');});
-  document.querySelector('.admin-tab[data-sec="'+sec+'"]').classList.add('active');
-  if(sec==='panel') cargarPanel();
-  else if(sec==='termometros') cargarTermometros();
-  else if(sec==='reflexiones') cargarReflexiones();
-  else if(sec==='muro') cargarMuroAdmin();
-  else if(sec==='acuerdo') cargarAcuerdoAdmin();
-}
-
-function cargarPanel(){
-  var mod=E.adminModulo;
-  $('admin-stats').innerHTML='<div class="loading"><div class="spinner"></div></div>';
-  $('admin-participantes').innerHTML='';
+function adminPanel(mod){
+  var el=$('asec-panel');
+  el.innerHTML='<div class="loading"><div class="spin"></div></div>';
+  var col2=mod==='artistica'?'#7D3C0F':'#1A5C2E';
+  var claro2=mod==='artistica'?'#FAD7A0':'#D5F5E3';
+  var esperados=mod==='artistica'?7:20;
   Promise.all([
-    db.collection('talleres').doc(mod).collection('reflexiones').get(),
-    db.collection('talleres').doc(mod).collection('termometros').get(),
-    mod==='conexion_social'?db.collection('talleres').doc(mod).collection('escudos').get():Promise.resolve({docs:[]}),
-    mod==='conexion_social'?db.collection('talleres').doc(mod).collection('muro').get():Promise.resolve({docs:[]})
-  ]).then(function(results){
-    var refSnap=results[0],terSnap=results[1],escSnap=results[2],muroSnap=results[3];
+    subCol(mod,'quiz').get(),
+    subCol(mod,'reflexiones').get(),
+    subCol(mod,'termometros').get(),
+    mod==='conexion_social'?subCol(mod,'escudos').get():Promise.resolve({docs:[]}),
+  ]).then(function(res){
+    var quizSnap=res[0],refSnap=res[1],terSnap=res[2],escSnap=res[3];
     var parts={};
-    refSnap.docs.forEach(function(d){var n=d.data().nombre;if(!parts[n])parts[n]={ref:0,ter:false,esc:false,muro:false};parts[n].ref++;});
-    terSnap.docs.forEach(function(d){var n=d.data().nombre;if(!parts[n])parts[n]={ref:0,ter:false,esc:false,muro:false};parts[n].ter=true;});
-    escSnap.docs.forEach(function(d){var n=d.data().nombre;if(!parts[n])parts[n]={ref:0,ter:false,esc:false,muro:false};parts[n].esc=true;});
-    muroSnap.docs.forEach(function(d){var n=d.data().nombre;if(!parts[n])parts[n]={ref:0,ter:false,esc:false,muro:false};parts[n].muro=true;});
+    quizSnap.docs.forEach(function(d){var n=d.data().nombre;if(!parts[n])parts[n]={quiz:false,ref:0,ter:false,esc:false};parts[n].quiz=true;});
+    refSnap.docs.forEach(function(d){var n=d.data().nombre;if(!parts[n])parts[n]={quiz:false,ref:0,ter:false,esc:false};parts[n].ref++;});
+    terSnap.docs.forEach(function(d){var n=d.data().nombre;if(!parts[n])parts[n]={quiz:false,ref:0,ter:false,esc:false};parts[n].ter=true;});
+    escSnap.docs.forEach(function(d){var n=d.data().nombre;if(!parts[n])parts[n]={quiz:false,ref:0,ter:false,esc:false};parts[n].esc=true;});
     var total=Object.keys(parts).length;
+    var conQuiz=Object.values(parts).filter(function(p){return p.quiz;}).length;
     var conTer=Object.values(parts).filter(function(p){return p.ter;}).length;
     var conRef=Object.values(parts).filter(function(p){return p.ref>0;}).length;
-    var col=mod==='artistica'?'#7D3C0F':'#1A5C2E';
-    var claro=mod==='artistica'?'#FAD7A0':'#D5F5E3';
-    $('admin-stats').innerHTML=
-      '<div class="stat-card" style="border-left:4px solid '+col+'"><div class="stat-num" style="color:'+col+'">'+total+'</div><div class="stat-label">Participantes activos</div></div>'+
-      '<div class="stat-card" style="border-left:4px solid #2980B9"><div class="stat-num" style="color:#154360">'+conTer+'</div><div class="stat-label">Completaron termómetro</div></div>'+
-      '<div class="stat-card" style="border-left:4px solid #9B59B6"><div class="stat-num" style="color:#4A235A">'+conRef+'</div><div class="stat-label">Enviaron reflexiones</div></div>'+
-      '<div class="stat-card" style="border-left:4px solid '+col+'"><div class="stat-num" style="color:'+col+'">'+(mod==='conexion_social'?escSnap.docs.length:'-')+'</div><div class="stat-label">'+(mod==='conexion_social'?'Escudos':'')+'</div></div>';
-    if(!total){$('admin-participantes').innerHTML='<div class="vacio">Aún no hay participantes.</div>';return;}
-    $('admin-participantes').innerHTML=Object.entries(parts).map(function(entry){
-      var n=entry[0],d=entry[1];
-      var etapas=(d.ref>0?1:0)+(d.ter?1:0)+(d.esc?1:0);
-      var pct=Math.round((etapas/3)*100);
-      return '<div class="participante-row">'+
-        '<div class="participante-avatar" style="background:'+claro+';color:'+col+'">'+n.charAt(0).toUpperCase()+'</div>'+
-        '<div class="participante-nombre">'+n+'</div>'+
-        '<div class="participante-iconos">'+(d.ter?'🌡️':'')+' '+(d.ref>0?'💭':'')+' '+(d.esc?'🛡️':'')+' '+(d.muro?'💛':'')+'</div>'+
-        '<div class="mini-bar-wrap"><div class="mini-bar"><div class="mini-bar-fill" style="width:'+pct+'%;background:'+col+'"></div></div>'+
-        '<div class="pct" style="color:'+col+'">'+pct+'%</div></div></div>';
-    }).join('');
-  }).catch(function(e){console.log(e);$('admin-stats').innerHTML='<div class="vacio">Error al cargar datos.</div>';});
+    var html='<div class="stat-grid">'+
+      '<div class="stat-card" style="border-left:4px solid '+col2+'"><div class="stat-num" style="color:'+col2+'">'+total+'</div><div class="stat-lbl">Activos de '+esperados+'</div></div>'+
+      '<div class="stat-card" style="border-left:4px solid #9B59B6"><div class="stat-num" style="color:#4A235A">'+conQuiz+'</div><div class="stat-lbl">Completaron quiz</div></div>'+
+      '<div class="stat-card" style="border-left:4px solid #2980B9"><div class="stat-num" style="color:#154360">'+conTer+'</div><div class="stat-lbl">Termómetro</div></div>'+
+      '<div class="stat-card" style="border-left:4px solid '+col2+'"><div class="stat-num" style="color:'+col2+'">'+conRef+'</div><div class="stat-lbl">Reflexiones</div></div>'+
+    '</div>';
+    html+='<p style="font-size:.75rem;font-weight:700;color:#5A5A54;text-transform:uppercase;padding:0 16px 8px">Participantes</p>';
+    if(!total){html+='<div class="vacio">Aún no hay participantes.</div>';}
+    else{
+      Object.entries(parts).forEach(function(e){
+        var n=e[0],d=e[1];
+        var etapas=(d.quiz?1:0)+(d.ref>0?1:0)+(d.ter?1:0)+(d.esc?1:0);
+        var pct=Math.round((etapas/4)*100);
+        html+='<div class="p-row">'+
+          '<div class="p-av" style="background:'+claro2+';color:'+col2+'">'+n.charAt(0).toUpperCase()+'</div>'+
+          '<div style="flex:1"><div style="font-size:.88rem;font-weight:600">'+n+'</div>'+
+          '<div style="font-size:.75rem;color:#5A5A54">'+(d.quiz?'🎮 ':'')+( d.ter?'🌡️ ':'')+( d.ref>0?'💭 ':'')+( d.esc?'🛡️ ':'')+' </div></div>'+
+          '<div class="mbar"><div class="mbar-bg"><div class="mbar-fill" style="width:'+pct+'%;background:'+col2+'"></div></div>'+
+          '<div class="mpct" style="color:'+col2+'">'+pct+'%</div></div></div>';
+      });
+    }
+    el.innerHTML=html;
+  }).catch(function(err){el.innerHTML='<div class="vacio">Error: '+err.message+'</div>';});
 }
 
-function cargarTermometros(){
-  var mod=E.adminModulo;
-  var items=TERMO_ITEMS[mod];
-  var col=mod==='artistica'?'#7D3C0F':'#1A5C2E';
-  $('admin-termometros').innerHTML='<div class="loading"><div class="spinner"></div></div>';
-  db.collection('talleres').doc(mod).collection('termometros').get().then(function(snap){
-    if(snap.empty){$('admin-termometros').innerHTML='<div class="vacio">Aún no hay respuestas del termómetro.</div>';return;}
+function adminQuiz(mod){
+  var el=$('asec-quiz');
+  el.innerHTML='<div class="loading"><div class="spin"></div></div>';
+  var col2=mod==='artistica'?'#7D3C0F':'#1A5C2E';
+  var claro2=mod==='artistica'?'#FAD7A0':'#D5F5E3';
+  subCol(mod,'quiz').get().then(function(snap){
+    if(snap.empty){el.innerHTML='<div class="vacio">Aún no hay respuestas del quiz.</div>';return;}
+    // Agrupar respuestas por pregunta
+    var pregs=QUIZ[mod];
+    var stats=pregs.map(function(){return {ok:0,total:0};});
+    var porPersona=[];
+    snap.docs.forEach(function(d){
+      var data=d.data();
+      porPersona.push({nombre:data.nombre,score:data.score,total:data.total,resps:data.resps||[]});
+      if(data.resps) data.resps.forEach(function(r,i){
+        if(stats[i]){stats[i].total++;if(r.ok)stats[i].ok++;}
+      });
+    });
+    var html='<div class="acard"><div class="acard-t">Resultados por pregunta ('+snap.size+' respuestas)</div>';
+    pregs.forEach(function(q,i){
+      var s=stats[i];
+      var pct=s.total>0?Math.round((s.ok/s.total)*100):0;
+      var col3=pct>=70?'#27AE60':pct>=50?'#E67E22':'#E74C3C';
+      html+='<div class="ti-item">'+
+        '<div class="ti-row"><span style="font-size:.82rem">'+q.p+'</span><span style="font-weight:800;color:'+col3+'">'+pct+'%</span></div>'+
+        '<div class="ti-bar"><div class="ti-fill" style="width:'+pct+'%;background:'+col3+'"></div></div>'+
+        '<div style="font-size:.7rem;color:#5A5A54">'+s.ok+' correctas de '+s.total+'</div></div>';
+    });
+    html+='</div>';
+    html+='<p style="font-size:.75rem;font-weight:700;color:#5A5A54;text-transform:uppercase;padding:0 16px 8px">Por participante</p>';
+    porPersona.sort(function(a,b){return b.score-a.score;}).forEach(function(p){
+      var pct=Math.round((p.score/p.total)*100);
+      var col3=pct>=80?'#27AE60':pct>=60?'#E67E22':'#E74C3C';
+      html+='<div class="p-row">'+
+        '<div class="p-av" style="background:'+claro2+';color:'+col2+'">'+p.nombre.charAt(0).toUpperCase()+'</div>'+
+        '<div style="flex:1;font-size:.88rem;font-weight:600">'+p.nombre+'</div>'+
+        '<span style="font-size:.95rem;font-weight:800;color:'+col3+'">'+p.score+'/'+p.total+'</span></div>';
+    });
+    el.innerHTML=html;
+  }).catch(function(err){el.innerHTML='<div class="vacio">Error: '+err.message+'</div>';});
+}
+
+function adminTermometros(mod){
+  var el=$('asec-termometros');
+  el.innerHTML='<div class="loading"><div class="spin"></div></div>';
+  var items=TERMO[mod];
+  var col2=mod==='artistica'?'#7D3C0F':'#1A5C2E';
+  var claro2=mod==='artistica'?'#FAD7A0':'#D5F5E3';
+  subCol(mod,'termometros').get().then(function(snap){
+    if(snap.empty){el.innerHTML='<div class="vacio">Aún no hay respuestas del termómetro.</div>';return;}
     var sumas=Array(items.length).fill(0);
     var conts=Array(items.length).fill(0);
     var porPersona=[];
@@ -962,157 +1034,148 @@ function cargarTermometros(){
     });
     var proms=sumas.map(function(s,i){return conts[i]>0?(s/conts[i]).toFixed(1):'—';});
     var promG=(porPersona.reduce(function(a,b){return a+b.prom;},0)/porPersona.length).toFixed(1);
-    var html='<div class="card-admin">'+
-      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">'+
-      '<span style="font-size:.9rem;font-weight:700">Promedio general del equipo</span>'+
-      '<span style="font-size:1.6rem;font-weight:800;color:'+col+'">'+promG+'/10</span></div>';
+    var html='<div class="acard">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">'+
+      '<span style="font-size:.88rem;font-weight:700">Promedio general</span>'+
+      '<span style="font-size:1.5rem;font-weight:800;color:'+col2+'">'+promG+'/10</span></div>';
     items.forEach(function(item,i){
       var p=parseFloat(proms[i])||0;
       var pct=(p/10)*100;
       var c=p<=3?'#27AE60':p<=6?'#E67E22':'#E74C3C';
-      html+='<div class="termo-admin-item">'+
-        '<div class="termo-admin-label"><span>'+item+'</span><span style="color:'+c+'">'+proms[i]+'/10</span></div>'+
-        '<div class="termo-admin-bar"><div class="termo-admin-fill" style="width:'+pct+'%;background:'+c+'"></div></div>'+
+      html+='<div class="ti-item">'+
+        '<div class="ti-row"><span style="font-size:.82rem">'+item+'</span><span style="font-weight:800;color:'+c+'">'+proms[i]+'/10</span></div>'+
+        '<div class="ti-bar"><div class="ti-fill" style="width:'+pct+'%;background:'+c+'"></div></div>'+
         '<div style="font-size:.7rem;color:'+c+'">'+(p<=3?'Bajo — positivo':p<=6?'Medio — atención':'⚠️ Alto — prioridad')+'</div></div>';
     });
     if(porPersona.some(function(p){return p.prom>6;})){
-      html+='<div style="background:#FEE2E2;border-radius:8px;padding:10px 14px;font-size:.82rem;color:#991B1B;margin-top:12px">⚠️ Hay ítems con promedio alto que merecen atención.</div>';
+      html+='<div style="background:#FEE2E2;border-radius:8px;padding:10px;font-size:.8rem;color:#991B1B;margin-top:10px">⚠️ Hay ítems con promedio alto — merecen atención en el grupo.</div>';
     }
     html+='</div>';
-    html+='<p class="seccion-label">Por participante</p>';
+    html+='<p style="font-size:.75rem;font-weight:700;color:#5A5A54;text-transform:uppercase;padding:0 16px 8px">Por participante</p>';
     porPersona.sort(function(a,b){return b.prom-a.prom;}).forEach(function(p){
       var c=p.prom<=3?'#27AE60':p.prom<=6?'#E67E22':'#E74C3C';
-      html+='<div class="participante-row">'+
+      html+='<div class="p-row">'+
+        '<div class="p-av" style="background:'+claro2+';color:'+col2+'">'+p.nombre.charAt(0).toUpperCase()+'</div>'+
         '<div style="flex:1;font-size:.88rem;font-weight:600">'+p.nombre+'</div>'+
         '<span style="font-size:.95rem;font-weight:800;color:'+c+'">'+p.prom+'/10</span></div>';
     });
-    $('admin-termometros').innerHTML=html;
-  }).catch(function(){$('admin-termometros').innerHTML='<div class="vacio">Error al cargar.</div>';});
+    el.innerHTML=html;
+  }).catch(function(err){el.innerHTML='<div class="vacio">Error: '+err.message+'</div>';});
 }
 
-function cargarReflexiones(){
-  var mod=E.adminModulo;
-  var temas=TEMAS_LABELS[mod];
-  var col=mod==='artistica'?'#7D3C0F':'#1A5C2E';
-  var claro=mod==='artistica'?'#FAD7A0':'#D5F5E3';
-  $('admin-reflexiones').innerHTML='<div class="loading"><div class="spinner"></div></div>';
-  db.collection('talleres').doc(mod).collection('reflexiones').get().then(function(snap){
-    if(snap.empty){$('admin-reflexiones').innerHTML='<div class="vacio">Aún no hay reflexiones.</div>';return;}
+function adminReflexiones(mod){
+  var el=$('asec-reflexiones');
+  el.innerHTML='<div class="loading"><div class="spin"></div></div>';
+  var temas=TEMAS[mod];
+  var col2=mod==='artistica'?'#7D3C0F':'#1A5C2E';
+  var claro2=mod==='artistica'?'#FAD7A0':'#D5F5E3';
+  subCol(mod,'reflexiones').get().then(function(snap){
+    if(snap.empty){el.innerHTML='<div class="vacio">Aún no hay reflexiones.</div>';return;}
     var agrup={};
     snap.docs.forEach(function(d){
       var data=d.data();
       var ti=data.temaIdx;
-      if(!agrup[ti]) agrup[ti]={};
-      if(data.resps) Object.entries(data.resps).forEach(function(e){
-        var pi=e[0],txt=e[1];
-        if(!agrup[ti][pi]) agrup[ti][pi]=[];
-        agrup[ti][pi].push({nombre:data.nombre,texto:txt});
+      if(!agrup[ti]) agrup[ti]=[];
+      if(data.resps) Object.values(data.resps).forEach(function(txt){
+        agrup[ti].push({nombre:data.nombre,texto:txt});
       });
     });
     var html='';
-    Object.keys(agrup).sort().forEach(function(ti){
-      html+='<div class="card-admin" style="margin-bottom:0"><div style="font-size:.82rem;font-weight:800;color:'+col+';background:'+claro+';padding:8px 12px;border-radius:8px;margin-bottom:12px">Tema '+(parseInt(ti)+1)+': '+(temas[ti]||'')+'</div>';
-      Object.values(agrup[ti]).forEach(function(resps){
-        resps.forEach(function(r){
-          html+='<div class="reflx-admin" style="border-left-color:'+col+'"><div class="reflx-admin-autor">'+r.nombre+'</div>'+r.texto+'</div>';
-        });
+    Object.keys(agrup).sort(function(a,b){return a-b;}).forEach(function(ti){
+      html+='<div class="acard">'+
+        '<div class="acard-t" style="color:'+col2+';background:'+claro2+';margin:-16px -16px 12px;padding:10px 16px;border-radius:10px 10px 0 0">'+
+        'Tema '+(parseInt(ti)+1)+': '+(temas[ti]?temas[ti].nom:'')+'</div>';
+      agrup[ti].forEach(function(r){
+        html+='<div class="r-item"><div class="r-autor">'+r.nombre+'</div>'+r.texto+'</div>';
       });
-      html+='</div><br>';
+      html+='</div>';
     });
-    $('admin-reflexiones').innerHTML=html||'<div class="vacio">Sin reflexiones aún.</div>';
-  }).catch(function(){$('admin-reflexiones').innerHTML='<div class="vacio">Error al cargar.</div>';});
+    el.innerHTML=html||'<div class="vacio">Sin reflexiones.</div>';
+  }).catch(function(err){el.innerHTML='<div class="vacio">Error: '+err.message+'</div>';});
 }
 
-function cargarMuroAdmin(){
-  $('admin-muro').innerHTML='<div class="loading"><div class="spinner"></div></div>';
-  db.collection('talleres').doc('conexion_social').collection('muro').orderBy('ts','asc').onSnapshot(function(snap){
-    if(snap.empty){$('admin-muro').innerHTML='<div class="vacio">El muro está vacío.</div>';return;}
+function adminMuro(){
+  var el=$('asec-muro');
+  el.innerHTML='<div class="loading"><div class="spin"></div></div>';
+  subCol('conexion_social','muro').orderBy('ts','asc').onSnapshot(function(snap){
+    if(snap.empty){el.innerHTML='<div class="vacio">El muro está vacío.</div>';return;}
     var cols=['#D5F5E3','#D6EAF8','#FAD7A0','#E8DAEF','#FADBD8'];
-    $('admin-muro').innerHTML='<p style="font-size:.78rem;color:#5A5A54;margin-bottom:12px">'+snap.size+' mensajes</p>'+
+    el.innerHTML='<p style="font-size:.75rem;color:#5A5A54;margin-bottom:10px">'+snap.size+' mensajes</p>'+
       snap.docs.map(function(d,i){
         var p=d.data();
-        return '<div class="muro-post" style="background:'+cols[i%5]+';border-left:4px solid #27AE60"><div class="muro-autor">'+p.nombre+'</div>'+p.texto+'</div>';
+        return '<div class="muro-post" style="background:'+cols[i%5]+';border-left:4px solid #27AE60">'+
+          '<div class="muro-autor">'+p.nombre+'</div>'+p.texto+'</div>';
       }).join('');
-  },function(){$('admin-muro').innerHTML='<div class="vacio">Error al cargar.</div>';});
+  },function(err){el.innerHTML='<div class="vacio">Error: '+err.message+'</div>';});
 }
 
-function cargarAcuerdoAdmin(){
-  $('admin-acuerdo').innerHTML='<div class="loading"><div class="spinner"></div></div>';
-  db.collection('talleres').doc('conexion_social').collection('compromisos').orderBy('votos','desc').onSnapshot(function(snap){
+function adminAcuerdo(){
+  var el=$('asec-acuerdo');
+  el.innerHTML='<div class="loading"><div class="spin"></div></div>';
+  subCol('conexion_social','compromisos').orderBy('votos','desc').onSnapshot(function(snap){
     var html='';
     if(!snap.empty){
-      html='<p style="font-size:.78rem;color:#5A5A54;margin-bottom:12px">'+snap.size+' compromisos</p>'+
-        snap.docs.map(function(d,i){
-          var p=d.data();
-          return '<div class="acuerdo-item" style="'+(i<5?'border-left:4px solid #27AE60':'')+'">'+(i<5?'<span style="font-size:.7rem;font-weight:700;color:#1A5C2E;background:#D5F5E3;padding:2px 8px;border-radius:10px;flex-shrink:0">TOP</span>':'')+
-            '<div style="flex:1"><div>'+p.texto+'</div><div style="font-size:.72rem;color:#5A5A54;margin-top:3px">'+p.votos+' votos — '+p.nombre+'</div></div></div>';
-        }).join('');
+      html='<p style="font-size:.75rem;color:#5A5A54;margin-bottom:10px">'+snap.size+' compromisos</p>';
+      snap.docs.forEach(function(d,i){
+        var p=d.data();
+        html+='<div class="acuerdo-item" style="'+(i<5?'border-left:4px solid #27AE60':'')+'">'+
+          (i<5?'<span style="font-size:.68rem;font-weight:700;color:#1A5C2E;background:#D5F5E3;padding:2px 8px;border-radius:10px;flex-shrink:0">TOP</span>':'')+
+          '<div style="flex:1"><div>'+p.texto+'</div>'+
+          '<div style="font-size:.7rem;color:#5A5A54;margin-top:3px">'+p.votos+' votos — '+p.nombre+'</div></div></div>';
+      });
       var top5=snap.docs.slice(0,5).map(function(d){return d.data().texto;});
-      html+='<div style="background:#D5F5E3;border-radius:10px;padding:14px;margin-top:16px;border:1px solid #27AE60">'+
-        '<div style="font-size:.8rem;font-weight:800;color:#1A5C2E;margin-bottom:8px">📜 Acuerdo Oficial (Top 5)</div>'+
-        top5.map(function(t,i){return '<div style="font-size:.85rem;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid rgba(0,0,0,.06)"><strong>'+(i+1)+'.</strong> '+t+'</div>';}).join('')+'</div>';
+      html+='<div style="background:#D5F5E3;border-radius:10px;padding:14px;margin-top:14px;border:1px solid #27AE60">'+
+        '<div style="font-size:.78rem;font-weight:800;color:#1A5C2E;margin-bottom:8px">📜 Acuerdo Oficial (Top 5)</div>'+
+        top5.map(function(t,i){return '<div style="font-size:.85rem;margin-bottom:5px;padding-bottom:5px;border-bottom:1px solid rgba(0,0,0,.06)"><strong>'+(i+1)+'.</strong> '+t+'</div>';}).join('')+'</div>';
     }
-    db.collection('talleres').doc('conexion_social').collection('acuerdo').doc('firmantes').get().then(function(s){
+    subCol('conexion_social','acuerdo').doc('firmantes').get().then(function(s){
       if(s.exists){
         var f=s.data().lista||[];
-        if(f.length) html+='<div style="margin-top:14px"><p style="font-size:.78rem;font-weight:700;color:#5A5A54;margin-bottom:8px">✅ Firmantes ('+f.length+')</p>'+
-          '<div class="firmantes-wrap">'+f.map(function(n){return '<span class="firmante">'+n+'</span>';}).join('')+'</div></div>';
+        if(f.length) html+='<div style="margin-top:14px"><p style="font-size:.75rem;font-weight:700;color:#5A5A54;text-transform:uppercase;margin-bottom:8px">✅ Firmantes ('+f.length+')</p>'+
+          '<div class="firmantes">'+f.map(function(n){return '<span class="firmante">'+n+'</span>';}).join('')+'</div></div>';
       }
-      $('admin-acuerdo').innerHTML=html||'<div class="vacio">Sin compromisos aún.</div>';
+      el.innerHTML=html||'<div class="vacio">Sin compromisos.</div>';
     });
-  },function(){$('admin-acuerdo').innerHTML='<div class="vacio">Error al cargar.</div>';});
+  },function(err){el.innerHTML='<div class="vacio">Error: '+err.message+'</div>';});
 }
 
-// ══ EVENT LISTENERS ═══════════════════════════════════
-document.addEventListener('DOMContentLoaded', function(){
-  // Acceso
-  $('btn-ingresar').addEventListener('click', ingresar);
+// ══════════════════════════════════════════════
+// EVENT LISTENERS
+// ══════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded',function(){
+  // Login
+  $('btn-ingresar').addEventListener('click',ingresar);
   $('inp-nombre').addEventListener('keydown',function(e){if(e.key==='Enter')$('inp-codigo').focus();});
   $('inp-codigo').addEventListener('keydown',function(e){if(e.key==='Enter')ingresar();});
   $('inp-codigo').addEventListener('input',function(){this.value=this.value.toUpperCase();});
-
   // App
-  $('btn-salir-app').addEventListener('click',function(){irA('s-acceso');});
-  $('btn-iniciar-recorrido').addEventListener('click',iniciarRecorrido);
-  $('btn-publicar-muro').addEventListener('click',publicarMuro);
-  $('btn-publicar-acuerdo').addEventListener('click',publicarCompromiso);
-  $('btn-firmar').addEventListener('click',firmarAcuerdo);
-  $('btn-guardar-escudo').addEventListener('click',guardarEscudo);
-  $('btn-volver-inicio').addEventListener('click',function(){construirBienvenida();vistaApp('bienvenida');});
-  $('btn-compartir').addEventListener('click',function(){
-    var txt='Completé el taller de FUNDACOOFISAM — '+E.moduloNombre+' 🎉';
-    if(navigator.share) navigator.share({title:'Mi taller',text:txt});
-    else{navigator.clipboard&&navigator.clipboard.writeText(txt);alert('Copiado al portapapeles');}
-  });
-
-  // Escudo
-  [0,1,2,3].forEach(function(i){
-    $('eq-'+i).addEventListener('click',function(){editarCuadrante(i);});
-  });
+  $('btn-salir-app').addEventListener('click',function(){pg('pg-login');});
+  // Modal escudo
   $('modal-cancel').addEventListener('click',cerrarModal);
   $('modal-ok').addEventListener('click',guardarCuadrante);
   $('modal-escudo').addEventListener('click',function(e){if(e.target===this)cerrarModal();});
-
-  // Acuerdo - iniciar escucha cuando se muestra
-  $('btn-firmar') && iniciarAcuerdo();
-
   // Admin
-  $('btn-salir-admin').addEventListener('click',function(){irA('s-acceso');});
-  $('btn-actualizar').addEventListener('click',function(){cargarSeccion(document.querySelector('.seccion.activa').id.replace('sec-',''));});
-  $('mod-artistica').addEventListener('click',function(){
-    E.adminModulo='artistica';
-    $('mod-artistica').classList.add('activo-a');$('mod-artistica').classList.remove('activo-c');
-    $('mod-conexion').classList.remove('activo-a','activo-c');
-    cargarSeccion(document.querySelector('.seccion.activa').id.replace('sec-',''));
+  $('btn-salir-admin').addEventListener('click',function(){pg('pg-login');});
+  $('btn-refresh-admin').addEventListener('click',function(){
+    var sec=document.querySelector('.atab.on');
+    if(sec) cargarSecAdmin(sec.dataset.sec);
   });
-  $('mod-conexion').addEventListener('click',function(){
-    E.adminModulo='conexion_social';
-    $('mod-conexion').classList.add('activo-c');$('mod-conexion').classList.remove('activo-a');
-    $('mod-artistica').classList.remove('activo-a','activo-c');
-    cargarSeccion(document.querySelector('.seccion.activa').id.replace('sec-',''));
+  $('amod-artistica').addEventListener('click',function(){
+    S.adminMod='artistica';
+    $('amod-artistica').classList.add('aa');$('amod-artistica').classList.remove('ac');
+    $('amod-conexion').classList.remove('aa','ac');
+    var sec=document.querySelector('.atab.on');
+    if(sec) cargarSecAdmin(sec.dataset.sec);
   });
-  document.querySelectorAll('.admin-tab').forEach(function(tab){
-    tab.addEventListener('click',function(){cargarSeccion(tab.dataset.sec);});
+  $('amod-conexion').addEventListener('click',function(){
+    S.adminMod='conexion_social';
+    $('amod-conexion').classList.add('ac');$('amod-conexion').classList.remove('aa');
+    $('amod-artistica').classList.remove('aa','ac');
+    var sec=document.querySelector('.atab.on');
+    if(sec) cargarSecAdmin(sec.dataset.sec);
+  });
+  document.querySelectorAll('.atab').forEach(function(tab){
+    tab.addEventListener('click',function(){cargarSecAdmin(tab.dataset.sec);});
   });
 });
 </script>
