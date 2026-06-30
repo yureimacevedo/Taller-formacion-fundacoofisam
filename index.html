@@ -959,7 +959,7 @@ function adminPanel(mod){
     if(!total){html+='<div class="vacio">Aún no hay participantes.</div>';}
     else{
       Object.entries(parts).forEach(function(e){
-        var n=e[0],d=e[1];
+        var n=e[0]||'(sin nombre)',d=e[1];
         var etapas=(d.quiz?1:0)+(d.ref>0?1:0)+(d.ter?1:0)+(d.esc?1:0);
         var pct=Math.round((etapas/4)*100);
         html+='<div class="p-row">'+
@@ -1004,13 +1004,16 @@ function adminQuiz(mod){
     });
     html+='</div>';
     html+='<p style="font-size:.75rem;font-weight:700;color:#5A5A54;text-transform:uppercase;padding:0 16px 8px">Por participante</p>';
-    porPersona.sort(function(a,b){return b.score-a.score;}).forEach(function(p){
-      var pct=Math.round((p.score/p.total)*100);
+    porPersona.sort(function(a,b){return (b.score||0)-(a.score||0);}).forEach(function(p){
+      var nombreSeguro=p.nombre||'(sin nombre)';
+      var totalSeguro=p.total||1;
+      var scoreSeguro=p.score||0;
+      var pct=Math.round((scoreSeguro/totalSeguro)*100);
       var col3=pct>=80?'#27AE60':pct>=60?'#E67E22':'#E74C3C';
       html+='<div class="p-row">'+
-        '<div class="p-av" style="background:'+claro2+';color:'+col2+'">'+p.nombre.charAt(0).toUpperCase()+'</div>'+
-        '<div style="flex:1;font-size:.88rem;font-weight:600">'+p.nombre+'</div>'+
-        '<span style="font-size:.95rem;font-weight:800;color:'+col3+'">'+p.score+'/'+p.total+'</span></div>';
+        '<div class="p-av" style="background:'+claro2+';color:'+col2+'">'+nombreSeguro.charAt(0).toUpperCase()+'</div>'+
+        '<div style="flex:1;font-size:.88rem;font-weight:600">'+nombreSeguro+'</div>'+
+        '<span style="font-size:.95rem;font-weight:800;color:'+col3+'">'+scoreSeguro+'/'+totalSeguro+'</span></div>';
     });
     el.innerHTML=html;
   }).catch(function(err){el.innerHTML='<div class="vacio">Error: '+err.message+'</div>';});
@@ -1052,12 +1055,14 @@ function adminTermometros(mod){
     }
     html+='</div>';
     html+='<p style="font-size:.75rem;font-weight:700;color:#5A5A54;text-transform:uppercase;padding:0 16px 8px">Por participante</p>';
-    porPersona.sort(function(a,b){return b.prom-a.prom;}).forEach(function(p){
-      var c=p.prom<=3?'#27AE60':p.prom<=6?'#E67E22':'#E74C3C';
+    porPersona.sort(function(a,b){return (b.prom||0)-(a.prom||0);}).forEach(function(p){
+      var nombreSeguro=p.nombre||'(sin nombre)';
+      var promSeguro=p.prom||0;
+      var c=promSeguro<=3?'#27AE60':promSeguro<=6?'#E67E22':'#E74C3C';
       html+='<div class="p-row">'+
-        '<div class="p-av" style="background:'+claro2+';color:'+col2+'">'+p.nombre.charAt(0).toUpperCase()+'</div>'+
-        '<div style="flex:1;font-size:.88rem;font-weight:600">'+p.nombre+'</div>'+
-        '<span style="font-size:.95rem;font-weight:800;color:'+c+'">'+p.prom+'/10</span></div>';
+        '<div class="p-av" style="background:'+claro2+';color:'+col2+'">'+nombreSeguro.charAt(0).toUpperCase()+'</div>'+
+        '<div style="flex:1;font-size:.88rem;font-weight:600">'+nombreSeguro+'</div>'+
+        '<span style="font-size:.95rem;font-weight:800;color:'+c+'">'+promSeguro+'/10</span></div>';
     });
     el.innerHTML=html;
   }).catch(function(err){el.innerHTML='<div class="vacio">Error: '+err.message+'</div>';});
