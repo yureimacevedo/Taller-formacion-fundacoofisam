@@ -923,8 +923,9 @@ function mostrarCierre(){
 // ADMIN
 // ══════════════════════════════════════════════
 function iniciarAdmin(){
-  $('atab-muro').style.display='';
-  $('atab-acuerdo').style.display='';
+  // Por defecto artística - ocultar tabs solo de conexión
+  $('atab-muro').style.display='none';
+  $('atab-acuerdo').style.display='none';
   cargarSecAdmin('panel');
 }
 function cargarSecAdmin(sec){
@@ -1373,15 +1374,21 @@ document.addEventListener('DOMContentLoaded',function(){
     S.adminMod='artistica';
     $('amod-artistica').classList.add('aa');$('amod-artistica').classList.remove('ac');
     $('amod-conexion').classList.remove('aa','ac');
-    var sec=document.querySelector('.atab.on');
-    if(sec) cargarSecAdmin(sec.dataset.sec);
+    $('atab-muro').style.display='none';
+    $('atab-acuerdo').style.display='none';
+    // Si estaba en muro o acuerdo, volver al panel
+    var secActiva=document.querySelector('.atab.on');
+    var secId=secActiva?secActiva.dataset.sec:'panel';
+    if(secId==='muro'||secId==='acuerdo') secId='panel';
+    cargarSecAdmin(secId);
   });
   $('amod-conexion').addEventListener('click',function(){
     S.adminMod='conexion_social';
     $('amod-conexion').classList.add('ac');$('amod-conexion').classList.remove('aa');
     $('amod-artistica').classList.remove('aa','ac');
-    var sec=document.querySelector('.atab.on');
-    if(sec) cargarSecAdmin(sec.dataset.sec);
+    $('atab-muro').style.display='';
+    $('atab-acuerdo').style.display='';
+    cargarSecAdmin('panel');
   });
   document.querySelectorAll('.atab').forEach(function(tab){
     tab.addEventListener('click',function(){cargarSecAdmin(tab.dataset.sec);});
